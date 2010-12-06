@@ -1,0 +1,43 @@
+body {
+  font-family: helvetica, arial;
+  font-size: 89.5%;	 /* 10px */
+  line-height: 1.4em; /* 15px */
+  color: #333;
+  background-color: #fff;
+  background-image:url('img/nyss_bg.png');
+  background-repeat: repeat-x;
+  margin:16px;
+  margin-top:1px;
+}
+
+.bad {
+	border:1px solid #FF3300;
+	margin:1em auto;
+	border-collapse:collapse;
+	background-color: #FECCBF;
+}
+
+.foot {
+	border-collapse:collapse;
+	font-size:85%;
+}
+
+.good {
+	border-collapse:collapse;
+	border:1px solid #009999;
+	background-color: #BFFFFE;
+}
+
+.main {
+	border-collapse:collapse;
+	border:1px solid #B2A100;
+	background-color: #FEF9BF;
+	width:800px;
+	position:75px;
+	left:15%;
+}
+
+h2 {
+	position:relative;
+	left:-355px;top:5px;
+}

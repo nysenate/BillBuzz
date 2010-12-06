@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/commons-dbcp-1.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/commons-lang-2.2.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/commons-pool-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-cache-2.0.0-release.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-connectionpool-2.0.0-release.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-core-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-db4o-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-enhancer-2.0.0-release.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-excel-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-jodatime-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-jpa-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-json-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-ldap-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-management-1.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-neodatis-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-odf-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-rdbms-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-rest-1.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-spatial-2.0.0-release.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-xml-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/datanucleus-xmltypeoracle-2.0.0-release.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/jdo2-api-2.3-ec.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/mail.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/mysql-connector-java-3.1.7-bin.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Wililiams/workspace/BBSignup/WebContent/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
+</classpath>
