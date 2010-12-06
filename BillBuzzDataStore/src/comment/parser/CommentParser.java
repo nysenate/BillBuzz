@@ -17,6 +17,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import comment.model.persist.DisqusThread;
+import comment.model.xml.Articles;
 import comments.generated.Disqus;
 import comments.generated.Post;
 
@@ -24,7 +25,7 @@ public class CommentParser {
 	
 	
 	public static void main(String[] args) throws IOException {
-		new CommentParser().doParsing(new File("xml/comments22.xml"));
+		new CommentParser().doParsing(new File("xml/old/comments21.xml"));
 			
 	}
 	
@@ -32,7 +33,7 @@ public class CommentParser {
 	public void doParsing(File f) {
 		
 		
-		Disqus disqus = null;
+		Articles disqus = null;
 		
 		try {
 			disqus = parseStream(new FileReader(f));
@@ -40,12 +41,10 @@ public class CommentParser {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+				
+//		HashMap<Integer,List<Post>> map = new HashMap<Integer,List<Post>>();
 		
-		List<Post> posts = disqus.getPosts().getPost();
-		
-		HashMap<Integer,List<Post>> map = new HashMap<Integer,List<Post>>();
-		
-		for(Post post:posts) {
+		/*for(Post post:posts) {
 			String url = post.getLink();
 			
 			if(url != null && !url.equals("")) {
@@ -58,20 +57,18 @@ public class CommentParser {
 				else {
 					thread = new ArrayList<Post>();
 				}
-				
-				System.out.println(post.get)
-				
+								
 				thread.add(post);
 				
 				map.put(threadNo, thread);
 			}
-		}
+		}*/
 		
 		/*for(Integer key:map.keySet()) {
 			System.out.println(key + ": " + map.get(key).size());
 		}*/
 				
-		/*comment.model.xml.Articles articles = null;
+		comment.model.xml.Articles articles = null;
 		try {
 			
 			articles = parseStream(new FileReader(f));
@@ -97,16 +94,16 @@ public class CommentParser {
 				}
 			}
 				
-		}*/
+		}
 		
 	}
 	
-	public Disqus parseStream(Reader reader) throws Exception {
+	public Articles parseStream(Reader reader) throws Exception {
 		
-		String packageName="comments.generated";
+		String packageName="comment.model.xml";
 		JAXBContext jc = JAXBContext.newInstance(packageName);
 		Unmarshaller u = jc.createUnmarshaller();
-		return (Disqus)u.unmarshal(reader);
+		return (Articles)u.unmarshal(reader);
 				
 	}
 }

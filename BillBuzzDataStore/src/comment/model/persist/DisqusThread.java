@@ -33,14 +33,15 @@ public class DisqusThread {
 		comments = new ArrayList<DisqusComment>();
 	}
 	
-	public DisqusThread (List<Post> posts) {
-		url = posts.iterator().next().getLink();
+	public DisqusThread (Article article) {
+		
+		url = article.getUrl();
 		bill = ObjectHelper.billFromUrl(url);
 		
 		comments = new ArrayList<DisqusComment>();
 		
-		for(Post p: posts) {
-			/*Date d = ObjectHelper.dateFromString(p.getCreatedAt());
+		for(Comment c: article.getComments().getComment()) {
+			Date d = ObjectHelper.dateFromString(c.getDate());
 			
 			if(first == null || d.before(first)) {
 				first = d;
@@ -49,7 +50,7 @@ public class DisqusThread {
 			if(last == null || d.after(last)) {
 				last = d;
 			}
-			comments.add(new DisqusComment(c));*/
+			comments.add(new DisqusComment(c));
 		}
 		
 		setSize();
