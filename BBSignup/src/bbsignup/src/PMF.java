@@ -9,8 +9,6 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-
-@SuppressWarnings("unchecked")
 public class PMF {
 	
 	private static PersistenceManagerFactory pmf = null;
@@ -23,17 +21,14 @@ public class PMF {
 	
 	public synchronized static PersistenceManager getPersistenceManager() {
 		if(pmf == null) {
-			
 			pmf = JDOHelper.getPersistenceManagerFactory("datanucleus.properties");
 		}
-		
 		return pmf.getPersistenceManager();
-		
 	}
 	
 	
 	
-	public static Object getDetachedObject(Class objClass, String key, String value) {
+	public static Object getDetachedObject(Class<?> objClass, String key, String value) {
 		PersistenceManager pm = getPersistenceManager();
 		Transaction tx = pm.currentTransaction();
 		
@@ -65,14 +60,14 @@ public class PMF {
 		return o;
 	}	
 	
-	public static Object getObject(PersistenceManager pm, Class objClass, String key, String value) {
+	public static Object getObject(PersistenceManager pm, Class<?> objClass, String key, String value) {
 		
-		Extent e = pm.getExtent(objClass,true);
+		Extent<?> e = pm.getExtent(objClass,true);
 		
 		Query q = pm.newQuery(e, key + "==\"" + value + "\"");
 		
 		
-		Collection c = (Collection)q.execute();
+		Collection<?> c = (Collection<?>)q.execute();
 		
 		if(c.isEmpty()) {
 			return null;
@@ -83,11 +78,11 @@ public class PMF {
 	}
 	
 	
-	public static Collection getDetachedObjects(Class objClass) {
+	public static Collection<?> getDetachedObjects(Class<?> objClass) {
 		PersistenceManager pm = getPersistenceManager();
 		Transaction tx =pm.currentTransaction();
 		
-		Collection c = null;
+		Collection<?> c = null;
 		
 		try {
 			tx.begin();
@@ -116,28 +111,29 @@ public class PMF {
 	}
 	
 	
-	public static Collection getObjects(PersistenceManager pm, Class objClass) {
+	public static Collection<?> getObjects(PersistenceManager pm, Class<?> objClass) {
 		
-		Extent e = pm.getExtent(objClass);
+		Extent<?> e = pm.getExtent(objClass);
 		
 		Query q = pm.newQuery(e);
 		
-		return (Collection)q.execute();
+		return (Collection<?>)q.execute();
 		
 	}
 	
 	
 	
-	public static boolean persistObject(Object o) {
+	public static boolean persistObject(Object... objs) {
 		
 		PersistenceManager pm = getPersistenceManager();
 		Transaction tx = pm.currentTransaction();
 		
 		try {
 			tx.begin();
-
-			pm.makePersistent(o);
 			
+			for(Object o:objs) {
+				pm.makePersistent(o);
+			}
 			tx.commit();
 		}
 		catch (Exception e) {
@@ -156,6 +152,65 @@ public class PMF {
 			pm.close();
 		}
 			
-		return false;
+		return true;
+	}
+	
+	public static boolean deleteObjectById(Class<?> clazz, String key, String id) {
+		PersistenceManager pm = getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		
+		Object o = null;
+		
+		try {
+			tx.begin();
+			
+			o = PMF.getObject(pm, clazz, key, id);
+			
+			pm.deletePersistent(o);
+			
+			tx.commit();
+		}
+		finally {
+			if(tx.isActive()) {
+				tx.rollback();
+			}
+			pm.close();
+		}
+		
+		if(o == null) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean deleteObjects(Class<?>[] clazz, String[] key, String[] id) {
+		PersistenceManager pm = getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		
+		Object o = null;
+		
+		try {
+			tx.begin();
+			
+			for(int i = 0; i < clazz.length; i++) {
+				o = PMF.getObject(pm, clazz[i], key[i], id[i]);
+				pm.deletePersistent(o);
+			}
+			
+			tx.commit();
+		}
+		finally {
+			if(tx.isActive()) {
+				tx.rollback();
+			}
+			pm.close();
+		}
+		
+		if(o == null) {
+			return false;
+		}
+		
+		return true;
 	}
 }

@@ -23,7 +23,8 @@ public class Dump {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(args[0])));
 		
 		
-		Collection<User> users = PMF.getDetachedObjects(User.class);
+		@SuppressWarnings("unchecked")
+		Collection<User> users = (Collection<User>) PMF.getDetachedObjects(User.class);
 		
 		
 		for(User user:users) {

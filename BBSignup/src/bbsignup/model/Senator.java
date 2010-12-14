@@ -1,66 +1,145 @@
 package bbsignup.model;
 
-import java.io.Serializable;
-
-import javax.jdo.annotations.*;
+import javax.jdo.annotations.PersistenceCapable;
 
 @PersistenceCapable
-public class Senator implements Serializable {
+public class Senator {
+	String name;
+	String url;
+	String openLegName;
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	boolean democrat;
+	boolean republican;
+	boolean conservative;
+	boolean workingFamilies; //WF
+	boolean independentParty; //I
+	boolean independenceParty; //IP
+	boolean independent; //ind
 
-
-	@Persistent
-	@PrimaryKey
-	@Column(name="name")
-	private String name;
-	
-	
-	@Persistent
-	@Column(name="url")
-	private String url;
-	
-	@Persistent
-	@Column(name="party")
-	private String party;
-	
-	
-	
-	
-	
 	public Senator() {
-		
+		democrat = false;
+		republican = false;
+		conservative = false;
+		workingFamilies = false;
+		independentParty = false;
+		independenceParty = false;
+		independent = false;
 	}
-	
-	public Senator(String name, String url, String party) {
-		this.name = name;
-		this.url = url;
-		this.party = party;
-		
-	}
-	
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public String getUrl() {
 		return url;
 	}
-	public String getParty() {
-		return party;
+
+	public String getOpenLegName() {
+		return openLegName;
 	}
-	
+
+	public boolean isDemocrat() {
+		return democrat;
+	}
+
+	public boolean isRepublican() {
+		return republican;
+	}
+
+	public boolean isConservative() {
+		return conservative;
+	}
+
+	public boolean isWorkingFamilies() {
+		return workingFamilies;
+	}
+
+	public boolean isIndependentParty() {
+		return independentParty;
+	}
+
+	public boolean isIndependenceParty() {
+		return independenceParty;
+	}
+
+	public boolean isIndependent() {
+		return independent;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public void setParty(String party) {
-		this.party = party;
+
+	public void setOpenLegName(String openLegName) {
+		this.openLegName = openLegName;
 	}
+
+	public void setDemocrat(boolean democrat) {
+		this.democrat = democrat;
+	}
+
+	public void setRepublican(boolean republican) {
+		this.republican = republican;
+	}
+
+	public void setConservative(boolean conservative) {
+		this.conservative = conservative;
+	}
+
+	public void setWorkingFamilies(boolean workingFamilies) {
+		this.workingFamilies = workingFamilies;
+	}
+
+	public void setIndependentParty(boolean independentParty) {
+		this.independentParty = independentParty;
+	}
+
+	public void setIndependenceParty(boolean independanceParty) {
+		this.independenceParty = independanceParty;
+	}
+
+	public void setIndependent(boolean independent) {
+		this.independent = independent;
+	}
+
+	public String getParty() {
+		
+		String ret = "";
+		if(democrat) {
+			ret = "d";
+		}
+		else if(republican) {
+			ret = "r";
+		}
+		if(independentParty) {
+			ret = getPartyHelper(ret,"i");
+		}
+		if(independenceParty) {
+			ret = getPartyHelper(ret,"ip");
+		}
+		if(independent) {
+			ret = getPartyHelper(ret,"ind");
+		}
+		if(conservative) {
+			ret = getPartyHelper(ret,"c");
+		}
+		if(workingFamilies) {
+			ret = getPartyHelper(ret,"wf");
+		}
+		
+		return ret;
+	}
+	
+	public String getPartyHelper(String parties, String party) {
+		if(parties.equals("")) {
+			return party;
+		}
+		return parties + " - " + party;
+	}
+	
 	
 }

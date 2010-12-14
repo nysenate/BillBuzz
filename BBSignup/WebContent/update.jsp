@@ -13,21 +13,23 @@
 <center>
 <br/>
 <%
+	Controller c = new Controller();
 	String uemail = (String)request.getParameter("uemail");
 	String key = (String)request.getParameter("key");
 	
 	if(uemail != null && key != null) {
 		
 		User u = null;
+		UserAuth ua = null;
 		
-		if((u = new Controller().getUser(uemail)) != null) {
-			session.setAttribute("error", "update");
+		if((u = c.getUser(uemail)) != null && (ua = c.getUserAuth(uemail)) != null &&
+				ua.isHashCorrect(key)) {
+			session.setAttribute("update", "update");
 			session.setAttribute("fn",u.getFirstName());
 			session.setAttribute("ln",u.getLastName());
-			session.setAttribute("e1",u.getEmail());
-			session.setAttribute("e2",u.getEmail());
+			session.setAttribute("e",u.getEmail());
 			session.setAttribute("subs", u.getSubscriptions());
-			session.setAttribute("updateemail",uemail);
+			session.setAttribute("oldemail", uemail);
 			%>
 				<jsp:forward page="index.jsp" />
 			<%
@@ -69,7 +71,7 @@
 			<table>
 				<tr>
 					<td colspan = 2>
-						NOTE: Your old settings will be active until you confirm the changes via email.<br/>
+						NOTE: You will receive an email that will allow you to update your settings.<br/>
 					</td>
 				</tr>
 				<tr>

@@ -4,8 +4,6 @@ body {
   line-height: 1.4em; /* 15px */
   color: #333;
   background-color: #fff;
-  background-image:url('img/nyss_bg.png');
-  background-repeat: repeat-x;
   margin:16px;
   margin-top:1px;
 }
@@ -40,4 +38,8 @@ body {
 h2 {
 	position:relative;
 	left:-355px;top:5px;
+}
+
+A:visited {
+	color: blue;
 }
