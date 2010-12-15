@@ -25,6 +25,10 @@ public class Controller {
 	
 	public String WEBLINK = "http://billbuzz.nysenate.gov/";
 	
+	public static void main(String[] args) {
+		
+	}
+	
 	public Controller() {
 	}
 	

@@ -163,7 +163,7 @@
 					}
 				}
 		%>
-		<div class="senator"><input type="checkbox"
+		<div class="senator"><input class="sen_" type="checkbox"
 			name="<%=s.getOpenLegName()%>"
 			<%=((tog == true) ? "checked=\"yes\"" : "")%>></input></div>
 		<%
@@ -204,4 +204,4 @@
 
 </div>
 </center>
-<%@ include file="nfooter.jsp"%>
+<%@ include file="footer.jsp"%>

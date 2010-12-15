@@ -30,8 +30,10 @@ import java.util.*;
 public class Disqus {	
 	private static String _website = Resource.get("website");
 	private static String _api = Resource.get("api");
-	private static String _dateDivide = "[\\-T:]";
 	private static String _key = Resource.get("key");	
+	
+	private static String _dateDivide = "[\\-T:]";
+	
 	public Disqus() {
 	}
 	

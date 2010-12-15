@@ -7,7 +7,6 @@ import java.util.List;
 public class Senator {	
 	private String name;
 	private String email;
-	private String party;
 	private List<ThreadDescription> threads;
 	public Senator() { };
 	public Senator(String name, String email, List<ThreadDescription> threads) {
@@ -28,31 +27,19 @@ public class Senator {
 	public Senator(gov.nysenate.billbuzz.persist.Senator ps) {
 		name = ps.getName();
 		email = "";
-		party = ps.getParty();
 		this.threads = new ArrayList<ThreadDescription>();
 	}
 	
 	public void setName(String name) {
 		this.name = name;
-	}	
-	public void setEmail(String email) {
-		this.email = email;
-	}	
-	public void setParty(String party) {
-		this.party = party;
-	}
+	}		
 	public void setThreads(List<ThreadDescription> threads) {
 		this.threads = threads;
 	}
 	public String getName() {
 		return name;
 	}
-	public String getEmail() {
-		return email;
-	}
-	public String getParty() {
-		return party;
-	}
+
 	public List<ThreadDescription> getThreads() {
 		return threads;
 	}

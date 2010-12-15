@@ -70,4 +70,4 @@
 %>
 </div>
 </center>
-<%@ include file="nfooter.jsp"%>
+<%@ include file="footer.jsp"%>

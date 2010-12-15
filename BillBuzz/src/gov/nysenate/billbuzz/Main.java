@@ -18,7 +18,7 @@ public class Main {
 		else {
 			System.out.println("Invalid paramters, correct usage is: BillBuzz or BillBuzz -m \"YYYY-MM-DD\"");
 		}
-//		new BillBuzz("2010-07-01T00:00");	
+//		new BillBuzz("2010-12-01T00:00");	
 	}
 }
 

@@ -25,7 +25,21 @@ public class NYSenateServices {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		index();
+		
+		if(args.length == 0) {
+			System.out.println("please indicate either 'index' or 'truncate'");
+		}
+		else {
+			if(args[0].equals("index")) {
+				index();
+			}
+			else  if(args[0].equals("truncate")) {
+				PMF.deleteObjects(Senator.class);
+			}
+			else {
+				System.out.println("please indicate either 'index' or 'truncate'");
+			}
+		}
 	}
 	
 	public static List<Senator> getSenators() throws Exception {		

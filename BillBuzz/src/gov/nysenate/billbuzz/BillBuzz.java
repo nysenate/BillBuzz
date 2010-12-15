@@ -22,10 +22,15 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.log4j.Logger;
+
 import gov.nysenate.billbuzz.persist.Controller;
 import gov.nysenate.billbuzz.persist.User;
 
 public class BillBuzz {
+	
+	private static Logger logger = Logger.getLogger(BillBuzz.class);	
+	
 	private static String _billRegExp = "[BJRbjr][\\d]*[a-zA-Z]*";
 	private static final String SMTP_HOST_NAME = Resource.get("hostname");
 
@@ -33,8 +38,9 @@ public class BillBuzz {
 	
 	private static final String SMTP_ACCOUNT_USER = Resource.get("user");
 	private static final String SMTP_ACCOUNT_PASS = Resource.get("pass");
+
 			
-	Map<String,String> _sep;
+	Map<String,gov.nysenate.billbuzz.persist.Senator> _sep;
 	
 	
 	/**
@@ -50,7 +56,7 @@ public class BillBuzz {
 		runBillBuzz(setDateForRead());
 	}
 	public void runBillBuzz(String date) throws Exception {
-		
+		logger.info("running billbuzz for date:" + date.toString());
 		_sep = senatorMap();
 		
 		List<Senator> senators = getSenatorUpdates(date);
@@ -67,6 +73,8 @@ public class BillBuzz {
 		List<User> users = Controller.getUsers();
 				
 		for(User u:users) {
+			logger.info("compiling message for user:" + u.getEmail());
+			
 			String name = u.getFirstName();
 			String email = u.getEmail();			
 			
@@ -81,22 +89,6 @@ public class BillBuzz {
 				}
 			}
 			else {
-				if (subs.contains("dem")) {
-					for(Senator s:col) {
-						if(s.getParty().equals("d")) {
-							senators.add(s);
-						}					
-					}
-					subs.remove("dem");
-				}
-				else if (subs.contains("rep")) {
-					for(Senator s:col) {
-						if(s.getParty().equals("r")) {
-							senators.add(s);
-						}
-					}
-					subs.remove("rep");
-				}
 				for(String s:subs) {
 					Senator temp = null;
 					if((temp = m.get(s)) != null) {
@@ -121,7 +113,7 @@ public class BillBuzz {
 		
 		for(Senator s:senators) {
 			
-			m.put(s.getName(), s);
+			m.put(s.getName().toUpperCase(), s);
 			
 		}		
 		
@@ -131,22 +123,23 @@ public class BillBuzz {
 	
 	
 	
-	
-	public Map<String,String> senatorMap() throws Exception {
-		Map<String,String> m = new HashMap<String,String>();
+	/**
+	 * creates a map of senators from database
+	 */
+	public Map<String,gov.nysenate.billbuzz.persist.Senator> senatorMap() throws Exception {
+		logger.info("creating senator map");
+		Map<String,gov.nysenate.billbuzz.persist.Senator> m = new HashMap<String,gov.nysenate.billbuzz.persist.Senator>();
 		
 		List<gov.nysenate.billbuzz.persist.Senator> lst = Controller.getSenators();
 		
 		
 		for(gov.nysenate.billbuzz.persist.Senator sen:lst) {
-		String n = sen.getName();
-			String e = sen.getName();
-				
-			String p = sen.getParty();
 			
-			m.put(n, e + ":" + p);			
+			String n = sen.getOpenLegName().toUpperCase();
+							
+			m.put(n, sen);			
 		}
-		
+				
 		return m;
 		
 	}
@@ -234,6 +227,7 @@ public class BillBuzz {
 	 * @throws Exception if it can't connect to the network
 	 */
 	public List<Senator> getSenatorUpdates(String date) throws Exception{
+		logger.info("getting list of updated threads");
 		
 		ThreadMod tm = new ThreadMod();		
 		List<ThreadDescription> td = tm.getApprovedThreads(date);
@@ -241,26 +235,29 @@ public class BillBuzz {
 		List<Senator> sen = new ArrayList<Senator>();
 		
 		for(ThreadDescription thread : td) {
-			
 			BillInfo bill = thread.getBill();
 			
 			//if it's the correct bill format
 			if(!bill.getSenateId().matches(_billRegExp)) { 
+				logger.info("reading updates for billno: " + bill.getBillId() + " and threadid: " + thread.getID());
 			
-				List<String> toWho = getToWho(thread);				
-			
+				List<String> toWho = getToWho(thread);
+				
 				thread.setURL(correctURL(bill.getSenateId()));				
 			
 				//add thread for everyone associated with it
-				for(String email : toWho) {
+				for(String oLName : toWho) {
 					
 					if(sen.isEmpty()) {
-						Senator s = new Senator(bill.getSponsor().toUpperCase(), email);						
-						s.setParty(getParty(s.getName()));
+						Senator s = new Senator(oLName);						
 						s.addThread(thread);
 						
 						if(_sep.get(s.getName()) != null) {
+							logger.info("creating senator: " + s.getName() +", adding thread: " + thread.getID());
 							sen.add(s);
+						}
+						else {
+							logger.info("senator " + s.getName() + " does not exist in _sep map");
 						}
 						
 					} else {
@@ -272,37 +269,35 @@ public class BillBuzz {
 						while (senItr.hasNext()) {
 							Senator curSen = senItr.next();
 							//if the senator already exists
-							if (curSen.getName().compareTo(bill.getSponsor()) == 0) {
+							if (curSen.getName().compareTo(oLName) == 0) {
+								logger.info("adding threadid: " + thread.getID() + " to senator: " + curSen.getName());
 								curSen.addThread(thread);
 								break;
 							}
 							//if the senator wasn't found in the list this adds the new senators info
 							if (!senItr.hasNext()) {
-								s = new Senator(bill.getSponsor().toUpperCase(), email);
-								s.setParty(getParty(s.getName()));
-								s.addThread(thread);							
+								s = new Senator(oLName);
+								s.addThread(thread);		
 							}
 						}
 						//if a new senator is being added
-						if (s != null) {
-							if(_sep.get(s.getName()) != null) {
-								sen.add(s);
-							}							
+
+						if(s != null && _sep.get(s.getName()) != null) {
+							logger.info("creating senator: " + s.getName() + ", adding thread: " + thread.getID());
+							sen.add(s);
+						}
+						else {
+							logger.info("skipping billno: " + bill.getBillId() + ", senator: "
+									+ oLName + ", threadid: " + thread.getID());
 						}
 					}				
 				}
 			}
+			else {
+				logger.info("skipping billno: " + bill.getBillId());
+			}
 		}
 		return sen;
-	}
-	
-	
-	public String getParty(String name) {
-		String s;
-		if((s = _sep.get(name)) != null) {
-			return s.split(":")[1];
-		}
-		return "";		
 	}
 	
 	/**
@@ -311,22 +306,25 @@ public class BillBuzz {
 	 * @returns a List<String> of senators' email address' who are associated with the Thread
 	 */
 	public List<String> getToWho(ThreadDescription td) {
+		logger.info("getting senators for threadid: " + td.getID());
 		List<String> ret = new ArrayList<String>();
 		BillInfo b = td.getBill();
-		String email = getParty(b.getSponsor());
+		//String oLName = .getOpenLegName();//getParty(b.getSponsor());
 		//if the given senator has a listed email address
-		if(email != null) {
-			ret.add(email);
+		if(_sep.get(b.getSponsor()) != null) {
+			logger.info("adding senator " + _sep.get(b.getSponsor()).getOpenLegName().toUpperCase() + " to thread");
+			ret.add(_sep.get(b.getSponsor()).getOpenLegName().toUpperCase());
 		}
 		//if there is a same as thread
 		if(td.getSameAsThread() != null) {
 			List<String> cosp = td.getSameAsThread().getBill().getCosponsors();
 			//read through people associated with assembly thread
 			for(String s:cosp) {
-				email = getParty(s);
 				//if there is a valid email and it isn't in the list
-				if(email != null && !ret.contains(email)) {
-					ret.add(email);
+				gov.nysenate.billbuzz.persist.Senator perSen = _sep.get(s);
+				if(perSen != null && !ret.contains(perSen.getOpenLegName().toUpperCase())) {
+					logger.info("adding senator " + perSen.getOpenLegName().toUpperCase() + "to thread (from sameas)");
+					ret.add(perSen.getOpenLegName().toUpperCase());
 				}
 			}
 		}

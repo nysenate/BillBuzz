@@ -5,10 +5,10 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>NYSS BillBuzz</title>
-		<link rel="stylesheet" type="text/css" href="style.css" />
-		<link rel="stylesheet" type="text/css" href="nys.css" />
+		<link rel="stylesheet" type="text/css" href="/BBSignup/css/style.css" />
+		<link rel="stylesheet" type="text/css" href="/BBSignup/css/nys.css" />
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-		<script type="text/javascript" src="js.js"></script>		
+		<script type="text/javascript" src="/BBSignup/js/js.js"></script>		
 	</head>
 	<body>
 		<div id="page">
