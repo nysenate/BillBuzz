@@ -9,6 +9,7 @@ import javax.jdo.annotations.PrimaryKey;
 import org.jasypt.util.text.BasicTextEncryptor;
 
 import bbsignup.src.Controller;
+import bbsignup.src.PMF;
 
 @PersistenceCapable
 public class UserAuth {
@@ -17,13 +18,14 @@ public class UserAuth {
 	String email;
 	String hash;
 	
+	
+	
 	public static void main(String[] args) throws IOException {	
 		String str = "";
 		Controller c = new Controller();
 		UserAuth ua = c.getUserAuth("williams@nysenate.gov");
 		
-		System.out.println(ua.getHash());
-		System.out.println(ua.isHashCorrect(str));
+		PMF.persistObject(ua);
 	}
 	
 	public UserAuth() {

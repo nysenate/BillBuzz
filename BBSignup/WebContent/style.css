@@ -1,14 +1,6 @@
-body {
-  font-family: helvetica, arial;
-  font-size: 89.5%;	 /* 10px */
-  line-height: 1.4em; /* 15px */
-  color: #333;
-  background-color: #fff;
-  margin:16px;
-  margin-top:1px;
-}
 
 .bad {
+	color:black;
 	border:1px solid #FF3300;
 	margin:1em auto;
 	border-collapse:collapse;
@@ -18,6 +10,7 @@ body {
 .foot {
 	border-collapse:collapse;
 	font-size:85%;
+	align:center;
 }
 
 .good {
@@ -26,7 +19,7 @@ body {
 	background-color: #BFFFFE;
 }
 
-.main {
+.bb_main {
 	border-collapse:collapse;
 	border:1px solid #B2A100;
 	background-color: #FEF9BF;
@@ -35,11 +28,8 @@ body {
 	left:15%;
 }
 
-h2 {
-	position:relative;
-	left:-355px;top:5px;
-}
-
 A:visited {
 	color: blue;
 }
+
+

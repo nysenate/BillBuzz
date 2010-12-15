@@ -1,18 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"
-    import="java.util.*,bbsignup.src.*,bbsignup.model.*,javax.jdo.*"
-    %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<link rel="stylesheet" type="text/css" media="screen" href="style.css"/> 
-
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>BillBuzz!  Authentication</title>
-</head>
-<body>
+<%@ page language="java" import="java.util.*,bbsignup.src.*,bbsignup.model.*,javax.jdo.*"%>
+<jsp:include page="header.jsp" />
+<div id="main">
 <center>
-<br/>
 
 <%
 	String email = request.getParameter("email");
@@ -60,7 +49,6 @@
 	}
 
 %>
-<%@ include file="footer.jsp" %>
 </center>
-</body>
-</html>
+</div>
+<%@ include file="nfooter.jsp"%>

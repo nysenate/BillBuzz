@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +25,7 @@ public class MainServlet extends HttpServlet {
 	
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
-		
-		
-		// will store selected subscriptions */
+		// will store selected subscriptions
 		List<String> subs = new ArrayList<String>();
 		
 		HttpSession session = request.getSession();

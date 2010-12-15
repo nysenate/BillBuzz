@@ -1,6 +1,5 @@
 package bbsignup.src;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -25,10 +24,8 @@ public class Controller {
 	private static final String SMTP_ACCOUNT_PASS = Resource.get("pass");
 	
 	public String WEBLINK = "http://billbuzz.nysenate.gov/";
-
 	
-	
-	public Controller() throws IOException {
+	public Controller() {
 	}
 	
 	@SuppressWarnings("unchecked")

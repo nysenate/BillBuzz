@@ -1,114 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"
-	import="servlets.SenatorContext,java.util.*,bbsignup.src.*,bbsignup.model.Senator,javax.jdo.*"%>
+<%@ page contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1" language="java" import="servlets.SenatorContext,java.util.*,bbsignup.src.*,bbsignup.model.Senator"%>
+	<jsp:include page="header.jsp" />
 <%
-	
 	List<Senator> list = (List<Senator>)SenatorContext.getSenators(this.getServletContext());;
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<link rel="stylesheet" type="text/css" media="screen" href="style.css" />
-<script type="text/javascript"
-	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
-<script type="text/javascript">
-
-function addError(message, msg) {
-	if(message == "") {
-		return msg;
-	}
-	else {
-		return message += "<br>" + msg;
-	}
-}
-	$(document).ready(
-		function() {
-			/*reset = function() {
-				$('.cb_').each(function() {
-					doCheck(this, $(this).attr('party'));
-				});
-			};*/
-
-			doCheck = function(curSelector, party) {
-				if (!$('#cb_all').is(':checked')) {
-					$('.senator').each(function(index) {
-						var parties = $($('.party').get(index)).html();
-
-						var check = $(this).children("INPUT[type='checkbox']");
-
-						var re = new RegExp('(\\(|\\- )' + party
-								+ '(\\)| \\-)');
-						if (parties.match(re)) {
-							$(check).attr('checked',
-									$(curSelector).is(':checked'));
-						}
-					});
-				}
-			};
-
-			clearAll = function() {
-				$("INPUT[type='checkbox']").attr('checked', false);
-			};
-
-			$('#cb_all').change(
-					function() {
-						$("INPUT[type='checkbox']").attr('checked',
-							$('#cb_all').is(':checked'));
-					});
-
-			$('.cb_').change(function() {
-				doCheck(this, $(this).attr('party'));
-				//reset();
-			});
-
-			$('#process').click(function(event) {
-				
-				
-				message = "";
-				e1 = document.forms.senators.email1.value;
-				e2 = document.forms.senators.email2.value;
-				fn = document.forms.senators.firstname.value;
-				ln = document.forms.senators.lastname.value;
-				
-				if(!fn){
-					message = addError(message, "Enter your first name");
-				}
-				if(!ln) {
-					message = addError(message, "Enter your last name");
-				}
-				if(e1 == null || e2 == null || e1 != e2) {
-					message = addError(message, "Your email addresses must match!");
-				}
-				else {
-					if(!e1.match(/.*?@.*?\..*?/)) {
-						message = addError(message, "Enter a valid email address");
-					}
-				}
-				
-				if(message != "") {
-					$("#error").html(message);
-					$("#error").css({'display' : 'inherit'});
-					$('html,body').animate({
-						scrollTop:$("#error").offset().top}, 500);
-					return false;
-				}
-				else {
-					return true;
-
-				}
-				
-			});
-
-		});
-
-</script>
-
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Sign up for BillBuzz!</title>
-</head>
-<body>
-
 <center>
+<div id="main">
 <%
 	String update = (String) session.getAttribute("update");
 	String fn = (String) session.getAttribute("fn");
@@ -135,6 +32,7 @@ function addError(message, msg) {
 		session.setAttribute("ln", null);
 		session.setAttribute("e", null);
 		session.setAttribute("update", null);
+		session.setAttribute("subs", null);
 	}
 	if(subs != null && subs.size() == 0) {
 		%>
@@ -155,11 +53,9 @@ function addError(message, msg) {
 
 <form id="inputForm" name="senators" method="post"
 	action="subscribe">
-
-
 <h2>What is BillBuzz?</h2>
 
-<div class="main">
+<div class="bb_main">
 <table>
 	<tr>
 		<td>
@@ -181,9 +77,9 @@ function addError(message, msg) {
 </div>
 	<div id ="error" class="bad" style="font-size: 85%; width: 40%;display:none;"></div>
 
-<h2 style="left: -385px">Sign Up</h2>
+<h2>Sign Up</h2>
 <p></p>
-<div class="main"><br>
+<div class="bb_main"><br>
 <table>
 	<tr>
 		<td>First name</td>
@@ -306,6 +202,6 @@ function addError(message, msg) {
 </div>
 </form>
 
-<%@ include file="footer.jsp"%></center>
-</body>
-</html>
+</div>
+</center>
+<%@ include file="nfooter.jsp"%>
