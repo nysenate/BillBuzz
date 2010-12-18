@@ -11,7 +11,13 @@
 	String fn = (String) session.getAttribute("fn");
 	String ln = (String) session.getAttribute("ln");
 	String e1 = (String) session.getAttribute("e");
+	String otherData = (String) session.getAttribute("otherData");
 	List<String> subs = (List<String>) session.getAttribute("subs");
+	
+	if(otherData == null) {
+		otherData ="";
+	}
+	
 	if (update != null) {
 
 		if (update.equals("update")) {
@@ -20,6 +26,9 @@
 <table>
 	<tr>
 		<td>Changes will be saved when you click Submit.</td>
+	</tr>
+	<tr>
+		<td align=center><a href="">Click here to cancel your update</a></td>
 	</tr>
 </table>
 </div>
@@ -108,27 +117,20 @@
 	<tr>
 		<td><input id="cb_all" name="cb_all" type="checkbox"></input></td>
 		<td>All</td>
-
 		<td><input class="cb_" party="D" type="checkbox"></input></td>
-		<td>Democrat</td>
-
+		<td>Democratic</td>
 		<td><input class="cb_" party="R" type="checkbox"></input></td>
 		<td>Republican</td>
-
+	</tr>
+	<tr>
+		<td><input class="cb_" party="IP" type="checkbox"></input></td>
+		<td>Independence</td>
 		<td><input class="cb_" party="C" type="checkbox"></input></td>
 		<td>Conservative</td>
-	</tr>
-	<td><input class="cb_" party="WF" type="checkbox"></input></td>
-	<td>Working Family</td>
+		<td><input class="cb_" party="WF" type="checkbox"></input></td>
+		<td>Working Families</td>
+		
 
-	<td><input class="cb_" party="IND" type="checkbox"></input></td>
-	<td>Independent</td>
-
-	<td><input class="cb_" party="IP" type="checkbox"></input></td>
-	<td>Independence Party</td>
-
-	<td><input class="cb_" party="I" type="checkbox"></input></td>
-	<td>Independent Party</td>
 	</tr>
 </table>
 <br />
@@ -172,7 +174,7 @@
 		</td>
 
 		<td><a target="_blank" href="<%=s.getUrl()%>"><%=s.getName()%></a>
-		<div class="party" style="font-size: 75%;">(<%=s.getParty().toUpperCase()%>)</div>
+		<div class="party" style="font-size: 75%;" pl="(<%=s.getParty().toUpperCase()%>)"></div>
 		</td>
 
 		<%
@@ -183,6 +185,18 @@
 
 	<%%>
 	<tr></tr>
+	<tr>
+		<td colspan=8>
+			<p>Would you like to receive updates for data where the sponsor can't be determined?
+				<select name="otherData">
+					<option <%=otherData.equals("yes")?"SELECTED":"" %>>Yes</option>
+					<option <%=otherData.equals("no")?"SELECTED":"" %>>No</option>
+				</select>
+			</p>
+		</td>
+		<td></td>
+		<td></td>
+	</tr>
 	<tr></tr>
 	<tr>
 		<td></td>

@@ -41,25 +41,20 @@
 			<form name="unsub" method="post" action="">
 				<table>
 					<tr>
-						<td colspan=2>
-							NOTE: This will remove your BillBuzz subscription.  After you submit your<br/>
-							 email address you will receive an email confirming this with a clickable link.
+						<td colspan = 2 align=center>
+							Please enter your email address:
 						</td>
 					</tr>
 					<tr>
-						<td>
-							Email 
-						</td>
-						<td>
+						<td colspan = 2 align=center>
 							<input type="text" name="uemail"></input>
+							<input type="submit" name="unsubscribe" value="Unsubscribe"></input>
 						</td>
 					</tr>
 					<tr>
-						<td>
-							
-						</td>
-						<td>
-							<input type="submit" name="unsubscribe" value="Unsubscribe"></input>
+						<td colspan=2>
+							NOTE: This will remove your BillBuzz subscription.  You will receive an email<br/>
+							 email address you will receive an email confirming this with a clickable link.
 						</td>
 					</tr>
 				</table>

@@ -21,7 +21,8 @@ $(document).ready(function() {
 		}
 		
 		$('.senator').each(function(index) {
-			var parties = $($('.party').get(index)).html();
+			//var parties = $($('.party').get(index)).html();
+			var parties = $($('.party').get(index)).attr('pl');
 
 			var check = $(this).children("INPUT[type='checkbox']");
 

@@ -1,5 +1,7 @@
 package gov.nysenate.billbuzz;
 
+import gov.nysenate.billbuzz.persist.PMF;
+
 
 public class Main {
 	private static String _dateInputRegExp = "[\\d]{4}+\\-[\\d]{2}+\\-[\\d]{2}+T[\\d]{2}+\\:[\\d]{2}+";
@@ -15,10 +17,15 @@ public class Main {
 				System.out.println("Invalid paramters for -m flag, correct format is: BillBuzz -m \"YYYY-MM-DD\"");
 			}
 		}
+		else if(args[0].compareTo("-d") == 0) {
+			if(args[1].matches(_dateInputRegExp)) {
+				PMF.setLastUse(args[1]);
+			}
+		}
 		else {
 			System.out.println("Invalid paramters, correct usage is: BillBuzz or BillBuzz -m \"YYYY-MM-DD\"");
 		}
-//		new BillBuzz("2010-12-01T00:00");	
+		//new BillBuzz("2010-12-01T00:00");	
 	}
 }
 

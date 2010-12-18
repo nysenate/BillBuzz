@@ -30,8 +30,8 @@ import gov.nysenate.billbuzz.persist.User;
 public class BillBuzz {
 	
 	private static Logger logger = Logger.getLogger(BillBuzz.class);	
-	
 	private static String _billRegExp = "[BJRbjr][\\d]*[a-zA-Z]*";
+	
 	private static final String SMTP_HOST_NAME = Resource.get("hostname");
 
 	private static final String SMTP_PORT = Resource.get("port");
@@ -42,6 +42,8 @@ public class BillBuzz {
 			
 	Map<String,gov.nysenate.billbuzz.persist.Senator> _sep;
 	
+	//bills without a senator sponsor
+	List<ThreadDescription> _otherThreads;
 	
 	/**
 	 * Builds the Senator list then iterates through each senator sending out emails as it goes along
@@ -57,6 +59,7 @@ public class BillBuzz {
 	}
 	public void runBillBuzz(String date) throws Exception {
 		logger.info("running billbuzz for date:" + date.toString());
+		_otherThreads = new ArrayList<ThreadDescription>();
 		_sep = senatorMap();
 		
 		List<Senator> senators = getSenatorUpdates(date);
@@ -72,7 +75,7 @@ public class BillBuzz {
 		
 		List<User> users = Controller.getUsers();
 				
-		for(User u:users) {
+		for(User u:users) {			
 			logger.info("compiling message for user:" + u.getEmail());
 			
 			String name = u.getFirstName();
@@ -83,10 +86,8 @@ public class BillBuzz {
 			List<Senator> senators = new ArrayList<Senator>();
 			
 			Collection<Senator> col = m.values();
-			if(subs.contains("all")) {				
-				for(Senator s:col) {
-					senators.add(s);
-				}
+			if(subs.contains("all")) {
+				senators.addAll(col);
 			}
 			else {
 				for(String s:subs) {
@@ -99,8 +100,8 @@ public class BillBuzz {
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d 'at' HH:mm");
 			
-			if(!senators.isEmpty()) {
-				sendMail(email,"BillBuzz for " + sdf.format(new Date()),generateHTMLSubscriptionMessage(senators,name),
+			if(!senators.isEmpty() || (u.getOtherData() && !_otherThreads.isEmpty())) {
+				sendMail(email,"BillBuzz for " + sdf.format(new Date()),generateHTMLSubscriptionMessage(senators,name,u.getOtherData()),
 						"billbuzz@nysenate.gov","Open Legislation");
 			}
 		}	
@@ -242,6 +243,10 @@ public class BillBuzz {
 				logger.info("reading updates for billno: " + bill.getBillId() + " and threadid: " + thread.getID());
 			
 				List<String> toWho = getToWho(thread);
+				
+				if(toWho.isEmpty()) {
+					_otherThreads.add(thread);
+				}
 				
 				thread.setURL(correctURL(bill.getSenateId()));				
 			
@@ -406,7 +411,7 @@ public class BillBuzz {
 	
 	
 	
-	public String generateHTMLSubscriptionMessage(List<Senator> senators, String name) {
+	public String generateHTMLSubscriptionMessage(List<Senator> senators, String name, boolean otherThreadsTog) {
 		
 		String sUrl = "http://open.nysenate.gov/legislation/sponsor/";
 		
@@ -442,8 +447,29 @@ public class BillBuzz {
 			}		
 		}
 		
+		if(otherThreadsTog) {
+			message += "<h3><b>Other Legislation</b></h3>";
+			for(ThreadDescription td:_otherThreads) {
+				BillInfo b = td.getBill();
+				message = message.concat("<b>Comments on: <a href=\""
+						+ td.getURL()
+						+ "\">"
+						+ b.getSenateId()
+						+ ": "
+						+ (((b.getTitle().length() > 100)
+								? b.getTitle().substring(0,80) + "..." : b.getTitle()))
+						+ "</a></b><br/><br/>");
+				//add text describing comments
+				message = message.concat(getCommentText(td));
+				//if there is a sameAs thread associated with the thread print that as well
+				if(td.getSameAsThread() != null) {
+					message = message.concat(getCommentText(td.getSameAsThread()));
+				}
+				message += "<br/>";
+			}
+		}
 		
-		
+		message +="<br/>Please visit the <a href=\"http://billbuzz.nysenate.gov\">BillBuzz homepage</a> to modify or delete your subscription.<br/>";
 		
 		return message;		
 	}

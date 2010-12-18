@@ -1,7 +1,6 @@
 package bbsignup.src;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.jdo.Extent;
 import javax.jdo.JDOHelper;

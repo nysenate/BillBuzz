@@ -13,7 +13,7 @@
 		if(c.authenticateUser(email,key) == true) {
 			%>
 				<div class="good" style="width:500px;">
-					Success!  Thanks for signing up, you'll start receiving BillBuzz updates within the next 24 hours.
+					Success!  Thanks for signing up.  You'll start receiving BillBuzz updates within the next 24 hours.
 					<br/><br/>
 					Redirecting to nysenate.gov in 10 seconds...
 					<meta http-equiv="Refresh" content="10; URL=http://www.nysenate.gov">

@@ -22,6 +22,7 @@
 			session.setAttribute("e",u.getEmail());
 			session.setAttribute("subs", u.getSubscriptions());
 			session.setAttribute("oldemail", uemail);
+			session.setAttribute("otherData",u.getOtherData()?"yes":"no");
 			%>
 				<jsp:forward page="index.jsp" />
 			<%
@@ -62,24 +63,20 @@
 		<form name="update" method="post" action="">
 			<table>
 				<tr>
+					<td colspan = 2 align=center>
+						Please enter your email address:
+					</td>
+				</tr>
+				<tr>
+					
+					<td colspan=2 align=center>
+						<input type="text" name="uemail"></input>
+						<input type="submit" name="updatesubmit" value="Update"></input>
+					</td>
+				</tr>
+				<tr>
 					<td colspan = 2>
 						NOTE: You will receive an email that will allow you to update your settings.<br/>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Email 
-					</td>
-					<td>
-						<input type="text" name="uemail"></input>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						
-					</td>
-					<td>
-						<input type="submit" name="updatesubmit" value="Update"></input>
 					</td>
 				</tr>
 			</table>	
