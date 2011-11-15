@@ -158,14 +158,12 @@ public class NYSenateServices {
 	public static HashMap<String,String> getOpenLegSenators() throws IOException {
 		HashMap<String,String> ret = new HashMap<String,String>();
 		
-		URL url = new URL("http://open.nysenate.gov/legislation/senators/");
+		URL url = new URL("http://open.nysenate.gov/legislation/senators");
 		BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-		
-		Pattern lineP = Pattern.compile("<div class=\"views-field-field-senators-district-nid\">");
+
 		Pattern districtP = Pattern.compile("District (\\d+)");
-		Pattern nameP = Pattern.compile("/legislation/sponsor/([\\w\\s]+)");
+		Pattern nameP = Pattern.compile("/sponsor/(.+?)\\?filter");
 		
-		Matcher lineM = null;
 		Matcher districtM = null;
 		Matcher nameM = null;
 		
@@ -174,22 +172,14 @@ public class NYSenateServices {
 		while((in = br.readLine()) != null) {
 			String d = null, n = null;
 			
-			lineM = lineP.matcher(in);
+			districtM = districtP.matcher(in);
 			
-			if(lineM.find()) {
+			if(districtM.find()) {
+				d = districtM.group(1);
 				
 				in = br.readLine();
-				
-				districtM = districtP.matcher(in);
+
 				nameM = nameP.matcher(in);
-				
-				if(districtM.find()) {
-					d = districtM.group(1);
-					
-					if(districtM.group(1).equals("6")) {
-						n = "hannon";
-					}
-				}
 				
 				if(nameM.find()) {
 					n = nameM.group(1);

@@ -28,8 +28,7 @@ public class Controller {
 	private static final String SMTP_ACCOUNT_USER = Resource.get("user");
 	private static final String SMTP_ACCOUNT_PASS = Resource.get("pass");
 	
-	public String WEBLINK = "http://billbuzz.nysenate.gov:8080/BBSignup";
-//	public String WEBLINK = "http://67.202.32.219:8080/BBSignup/";
+	public String WEBLINK = "http://billbuzz.nysenate.gov/";
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -129,7 +128,7 @@ public class Controller {
 	public boolean deleteUser(String email, String key) {
 		UserAuth ua = getUserAuth(email);
 		
-		if(ua.isHashCorrect(key)) {	
+		if(ua != null && ua.getHash() != null && ua.isHashCorrect(key)) {	
 			PMF.deleteObjects(new Class[] {User.class,UserAuth.class}, 
 					new String[] {"email","email"}, 
 					new String[] {email,email});

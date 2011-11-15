@@ -24,7 +24,7 @@
 			session.setAttribute("oldemail", uemail);
 			session.setAttribute("otherData",u.getOtherData()?"yes":"no");
 			%>
-				<jsp:forward page="index.jsp" />
+				<jsp:forward page="/" />
 			<%
 		}
 		else {

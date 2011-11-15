@@ -32,4 +32,15 @@ A:visited {
 	color: blue;
 }
 
+.notice
+{
+	background-color:#ffffcc;
+	color:#555;
+	padding:3px;
+	font-size:80%;
+	border:1px solid #aaaaaa;
+	text-align:center;
+	
+}
+
 

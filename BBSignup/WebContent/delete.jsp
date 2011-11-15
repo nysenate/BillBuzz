@@ -19,6 +19,15 @@
 				</div>	
 			<%
 		}
+		else {
+			%>
+			<div class="bad" style="width:500px;">
+				There was an error authenticating your request.
+				<br/><br/>
+				Please <a href="mailto:billbuzz@nysenate.gov">contact us</a> if you are having trouble.
+			</div>
+		<%
+		}
 		
 		
 	}

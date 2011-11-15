@@ -28,7 +28,7 @@
 		<td>Changes will be saved when you click Submit.</td>
 	</tr>
 	<tr>
-		<td align=center><a href="">Click here to cancel your update</a></td>
+		<td align=center><a href="cancel.jsp">Click here to cancel your update</a></td>
 	</tr>
 </table>
 </div>
@@ -134,6 +134,7 @@
 	</tr>
 </table>
 <br />
+<div style="position:relative;right:-7px;">
 <table cellpadding=3>
 	<%%>
 	<tr>
@@ -197,22 +198,12 @@
 		<td></td>
 		<td></td>
 	</tr>
-	<tr></tr>
-	<tr>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td><input type="button" name="clear" value="Clear Selection"
-			onClick="clearAll()"></input></td>
-		<td></td>
-		<td><input type="submit" id="process" name="submit"></input></td>
-	</tr>
-
 </table>
+
+<div style="position:right;right:250px;"><input type="button" name="clear" value="Clear Selection"
+			onClick="clearAll()"></input>
+		<input type="submit" id="process" name="submit" value="Sign up"></input></td><div>
+</div>
 </div>
 </form>
 
