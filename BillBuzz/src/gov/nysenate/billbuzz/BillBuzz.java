@@ -30,15 +30,14 @@ import gov.nysenate.billbuzz.persist.User;
 public class BillBuzz {
 	
 	private static Logger logger = Logger.getLogger(BillBuzz.class);	
-	private static String _billRegExp = "[BJRbjr][\\d]*[a-zA-Z]*";
-	
-	private static final String SMTP_HOST_NAME = Resource.get("hostname");
+	private static String _billRegExp = "[BJRbjr][\\d]*[a-zA-Z]*\\-\\d{4}";
+	private static final String SMTP_HOST_NAME = "webmail.senate.state.ny.us";
 
-	private static final String SMTP_PORT = Resource.get("port");
+	private static final String SMTP_PORT = "587";
 	
 	private static final String SMTP_ACCOUNT_USER = Resource.get("user");
 	private static final String SMTP_ACCOUNT_PASS = Resource.get("pass");
-
+ 
 			
 	Map<String,gov.nysenate.billbuzz.persist.Senator> _sep;
 	
@@ -98,7 +97,7 @@ public class BillBuzz {
 				}
 			}
 			
-			SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d 'at' HH:mm");
+			SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d");
 			
 			if(!senators.isEmpty() || (u.getOtherData() && !_otherThreads.isEmpty())) {
 				sendMail(email,"BillBuzz for " + sdf.format(new Date()),generateHTMLSubscriptionMessage(senators,name,u.getOtherData()),
@@ -447,7 +446,7 @@ public class BillBuzz {
 			}		
 		}
 		
-		if(otherThreadsTog) {
+		if(otherThreadsTog && _otherThreads != null && !_otherThreads.isEmpty()) {
 			message += "<h3><b>Other Legislation</b></h3>";
 			for(ThreadDescription td:_otherThreads) {
 				BillInfo b = td.getBill();

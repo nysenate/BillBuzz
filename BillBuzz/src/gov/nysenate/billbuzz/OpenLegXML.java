@@ -14,7 +14,7 @@ import org.xml.sax.helpers.*;
 public class OpenLegXML
 {
 	//base url for xml interface
-	private static String _openLegURL = "http://open.nysenate.gov/legislation/api/1.0/XML/bill/";
+	private static String _openLegURL = "http://open.nysenate.gov/legislation/api/1.0/xml/bill/";
 	
 	public OpenLegXML() {
 		
@@ -25,7 +25,12 @@ public class OpenLegXML
 	 * @returns the billid from the url
 	 */
 	public static String getBillFromURL(String url) {
-		return url.split("/bill/")[1];
+		try {
+			return url.split("/bill/")[1];
+		}
+		catch (Exception e) {
+			return "";
+		}
 	}
 	
 	

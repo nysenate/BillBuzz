@@ -107,6 +107,17 @@ public class ThreadMod {
 					_uC.add(c);
 				}
 			}
+			
+			String bill = OpenLegXML.getBillFromURL(td.getURL());
+			if(bill.equals(""))
+				continue;
+			else {
+				if(bill.indexOf("-") == -1) {
+					td.setURL(td.getURL() + "-2009");
+				}
+				
+			}
+			
 			//if a new thread has been created then there are accepted comments
 			if(newtd != null) {
 				newtd.setComments(newclst);
