@@ -31,10 +31,6 @@ public class User implements Serializable {
 	@Column(name="auth")
 	private String auth;
 	
-	@Persistent
-	@Column(name="other_data")
-	private boolean otherData;
-	
 	
 	@Persistent(defaultFetchGroup="true")
 	@Column(name="subs")
@@ -44,13 +40,12 @@ public class User implements Serializable {
 		subscriptions = new ArrayList<String>();
 	}
 	
-	public User(String firstName, String lastName, String email, String auth, boolean otherData) {
+	public User(String firstName, String lastName, String email, String auth) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.auth = auth;
 		subscriptions = new ArrayList<String>();
-		this.otherData = otherData;
 	}
 	
 	
@@ -69,9 +64,6 @@ public class User implements Serializable {
 	public List<String> getSubscriptions() {
 		return subscriptions;
 	}
-	public boolean getOtherData() {
-		return otherData;
-	}
 	
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -87,9 +79,6 @@ public class User implements Serializable {
 	}
 	public void setSubscriptions(List<String> subscriptions) {
 		this.subscriptions = subscriptions;
-	}
-	public void setOtherData(boolean otherData) {
-		this.otherData = otherData;
 	}
 	
 	public void addSubscription(String s) {

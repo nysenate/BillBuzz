@@ -1,4 +1,3 @@
-
 package bbsignup.model;
 
 import javax.jdo.annotations.PersistenceCapable;
@@ -13,16 +12,18 @@ public class Senator {
 	boolean republican;
 	boolean conservative;
 	boolean workingFamilies; //WF
-	//boolean independentParty; //I
+	boolean independentParty; //I
 	boolean independenceParty; //IP
-	//boolean independent; //ind
+	boolean independent; //ind
 
 	public Senator() {
 		democrat = false;
 		republican = false;
 		conservative = false;
 		workingFamilies = false;
+		independentParty = false;
 		independenceParty = false;
+		independent = false;
 	}
 
 	public String getName() {
@@ -53,8 +54,16 @@ public class Senator {
 		return workingFamilies;
 	}
 
+	public boolean isIndependentParty() {
+		return independentParty;
+	}
+
 	public boolean isIndependenceParty() {
 		return independenceParty;
+	}
+
+	public boolean isIndependent() {
+		return independent;
 	}
 
 	public void setName(String name) {
@@ -85,8 +94,16 @@ public class Senator {
 		this.workingFamilies = workingFamilies;
 	}
 
+	public void setIndependentParty(boolean independentParty) {
+		this.independentParty = independentParty;
+	}
+
 	public void setIndependenceParty(boolean independanceParty) {
 		this.independenceParty = independanceParty;
+	}
+
+	public void setIndependent(boolean independent) {
+		this.independent = independent;
 	}
 
 	public String getParty() {
@@ -98,8 +115,14 @@ public class Senator {
 		else if(republican) {
 			ret = "r";
 		}
+		if(independentParty) {
+			ret = getPartyHelper(ret,"i");
+		}
 		if(independenceParty) {
 			ret = getPartyHelper(ret,"ip");
+		}
+		if(independent) {
+			ret = getPartyHelper(ret,"ind");
 		}
 		if(conservative) {
 			ret = getPartyHelper(ret,"c");

@@ -1,23 +1,120 @@
-<%@ page contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1" language="java" import="servlets.SenatorContext,java.util.*,bbsignup.src.*,bbsignup.model.Senator"%>
-	<jsp:include page="header.jsp" />
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"
+	import="servlets.SenatorContext,java.util.*,bbsignup.src.*,bbsignup.model.Senator,javax.jdo.*"%>
 <%
+	
 	List<Senator> list = (List<Senator>)SenatorContext.getSenators(this.getServletContext());;
 %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+<script type="text/javascript">
+
+function addError(message, msg) {
+	if(message == "") {
+		return msg;
+	}
+	else {
+		return message += "<br>" + msg;
+	}
+}
+	$(document).ready(
+		function() {
+			/*reset = function() {
+				$('.cb_').each(function() {
+					doCheck(this, $(this).attr('party'));
+				});
+			};*/
+
+			doCheck = function(curSelector, party) {
+				if (!$('#cb_all').is(':checked')) {
+					$('.senator').each(function(index) {
+						var parties = $($('.party').get(index)).html();
+
+						var check = $(this).children("INPUT[type='checkbox']");
+
+						var re = new RegExp('(\\(|\\- )' + party
+								+ '(\\)| \\-)');
+						if (parties.match(re)) {
+							$(check).attr('checked',
+									$(curSelector).is(':checked'));
+						}
+					});
+				}
+			};
+
+			clearAll = function() {
+				$("INPUT[type='checkbox']").attr('checked', false);
+			};
+
+			$('#cb_all').change(
+					function() {
+						$("INPUT[type='checkbox']").attr('checked',
+							$('#cb_all').is(':checked'));
+					});
+
+			$('.cb_').change(function() {
+				doCheck(this, $(this).attr('party'));
+				//reset();
+			});
+
+			$('#process').click(function(event) {
+				
+				
+				message = "";
+				e1 = document.forms.senators.email1.value;
+				e2 = document.forms.senators.email2.value;
+				fn = document.forms.senators.firstname.value;
+				ln = document.forms.senators.lastname.value;
+				
+				if(!fn){
+					message = addError(message, "Enter your first name");
+				}
+				if(!ln) {
+					message = addError(message, "Enter your last name");
+				}
+				if(e1 == null || e2 == null || e1 != e2) {
+					message = addError(message, "Your email addresses must match!");
+				}
+				else {
+					if(!e1.match(/.*?@.*?\..*?/)) {
+						message = addError(message, "Enter a valid email address");
+					}
+				}
+				
+				if(message != "") {
+					$("#error").html(message);
+					$("#error").css({'display' : 'inherit'});
+					$('html,body').animate({
+						scrollTop:$("#error").offset().top}, 500);
+					return false;
+				}
+				else {
+					return true;
+
+				}
+				
+			});
+
+		});
+
+</script>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Sign up for BillBuzz!</title>
+</head>
+<body>
+
 <center>
-<div id="main">
 <%
 	String update = (String) session.getAttribute("update");
 	String fn = (String) session.getAttribute("fn");
 	String ln = (String) session.getAttribute("ln");
 	String e1 = (String) session.getAttribute("e");
-	String otherData = (String) session.getAttribute("otherData");
 	List<String> subs = (List<String>) session.getAttribute("subs");
-	
-	if(otherData == null) {
-		otherData ="";
-	}
-	
 	if (update != null) {
 
 		if (update.equals("update")) {
@@ -26,9 +123,6 @@
 <table>
 	<tr>
 		<td>Changes will be saved when you click Submit.</td>
-	</tr>
-	<tr>
-		<td align=center><a href="cancel.jsp">Click here to cancel your update</a></td>
 	</tr>
 </table>
 </div>
@@ -41,7 +135,6 @@
 		session.setAttribute("ln", null);
 		session.setAttribute("e", null);
 		session.setAttribute("update", null);
-		session.setAttribute("subs", null);
 	}
 	if(subs != null && subs.size() == 0) {
 		%>
@@ -62,9 +155,11 @@
 
 <form id="inputForm" name="senators" method="post"
 	action="subscribe">
+
+
 <h2>What is BillBuzz?</h2>
 
-<div class="bb_main">
+<div class="main">
 <table>
 	<tr>
 		<td>
@@ -86,9 +181,9 @@
 </div>
 	<div id ="error" class="bad" style="font-size: 85%; width: 40%;display:none;"></div>
 
-<h2>Sign Up</h2>
+<h2 style="left: -385px">Sign Up</h2>
 <p></p>
-<div class="bb_main"><br>
+<div class="main"><br>
 <table>
 	<tr>
 		<td>First name</td>
@@ -117,24 +212,30 @@
 	<tr>
 		<td><input id="cb_all" name="cb_all" type="checkbox"></input></td>
 		<td>All</td>
+
 		<td><input class="cb_" party="D" type="checkbox"></input></td>
-		<td>Democratic</td>
+		<td>Democrat</td>
+
 		<td><input class="cb_" party="R" type="checkbox"></input></td>
 		<td>Republican</td>
-	</tr>
-	<tr>
-		<td><input class="cb_" party="IP" type="checkbox"></input></td>
-		<td>Independence</td>
+
 		<td><input class="cb_" party="C" type="checkbox"></input></td>
 		<td>Conservative</td>
-		<td><input class="cb_" party="WF" type="checkbox"></input></td>
-		<td>Working Families</td>
-		
+	</tr>
+	<td><input class="cb_" party="WF" type="checkbox"></input></td>
+	<td>Working Family</td>
 
+	<td><input class="cb_" party="IND" type="checkbox"></input></td>
+	<td>Independent</td>
+
+	<td><input class="cb_" party="IP" type="checkbox"></input></td>
+	<td>Independence Party</td>
+
+	<td><input class="cb_" party="I" type="checkbox"></input></td>
+	<td>Independent Party</td>
 	</tr>
 </table>
 <br />
-<div style="position:relative;right:-7px;">
 <table cellpadding=3>
 	<%%>
 	<tr>
@@ -166,7 +267,7 @@
 					}
 				}
 		%>
-		<div class="senator"><input class="sen_" type="checkbox"
+		<div class="senator"><input type="checkbox"
 			name="<%=s.getOpenLegName()%>"
 			<%=((tog == true) ? "checked=\"yes\"" : "")%>></input></div>
 		<%
@@ -175,7 +276,7 @@
 		</td>
 
 		<td><a target="_blank" href="<%=s.getUrl()%>"><%=s.getName()%></a>
-		<div class="party" style="font-size: 75%;" pl="(<%=s.getParty().toUpperCase()%>)"></div>
+		<div class="party" style="font-size: 75%;">(<%=s.getParty().toUpperCase()%>)</div>
 		</td>
 
 		<%
@@ -186,27 +287,25 @@
 
 	<%%>
 	<tr></tr>
+	<tr></tr>
 	<tr>
-		<td colspan=8>
-			<p>Would you like to receive updates for data where the sponsor can't be determined?
-				<select name="otherData">
-					<option <%=otherData.equals("yes")?"SELECTED":"" %>>Yes</option>
-					<option <%=otherData.equals("no")?"SELECTED":"" %>>No</option>
-				</select>
-			</p>
-		</td>
 		<td></td>
 		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td><input type="button" name="clear" value="Clear Selection"
+			onClick="clearAll()"></input></td>
+		<td></td>
+		<td><input type="submit" id="process" name="submit"></input></td>
 	</tr>
-</table>
 
-<div style="position:right;right:250px;"><input type="button" name="clear" value="Clear Selection"
-			onClick="clearAll()"></input>
-		<input type="submit" id="process" name="submit" value="Sign up"></input></td><div>
-</div>
+</table>
 </div>
 </form>
 
-</div>
-</center>
-<%@ include file="footer.jsp"%>
+<%@ include file="footer.jsp"%></center>
+</body>
+</html>

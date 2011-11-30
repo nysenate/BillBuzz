@@ -213,27 +213,4 @@ public class PMF {
 		
 		return true;
 	}
-	
-	public static void deleteObjects(Class<?> clazz) {
-		PersistenceManager pm = getPersistenceManager();
-		Transaction tx = pm.currentTransaction();
-				
-		try {
-			tx.begin();
-			
-			Collection<?> objs = getObjects(pm, clazz);
-			
-			for(Object o:objs) {
-				pm.deletePersistent(o);
-			}			
-			
-			tx.commit();
-		}
-		finally {
-			if(tx.isActive()) {
-				tx.rollback();
-			}
-			pm.close();
-		}
-	}
 }

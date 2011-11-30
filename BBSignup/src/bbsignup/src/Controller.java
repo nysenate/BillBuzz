@@ -1,13 +1,9 @@
 package bbsignup.src;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -29,66 +25,10 @@ public class Controller {
 	private static final String SMTP_ACCOUNT_PASS = Resource.get("pass");
 	
 	public String WEBLINK = "http://billbuzz.nysenate.gov/";
+
 	
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String in = "";
-		
-		System.out.print("> ");
-		while(!(in = br.readLine()).equals("exit")) {
-			
-			if(in.startsWith("add user")) {
-				Pattern p = Pattern.compile("add user (.+?) (.+?) (.+?) (true|false)$");
-				Matcher m = p.matcher(in);
-				if(m.find()) {
-					User u = new User(m.group(1), m.group(2), m.group(3),
-							"y",m.group(4).equals("true")?true:false);
-					u.addSubscription("all");
-					PMF.persistObject(u);
-					System.out.println("User " + m.group(3) + " added succesfully");
-				}
-				else {
-					System.out.println("proper format is: add user <nfame> <lfame> <email>" +
-							"<otherdata(true or false)>");
-				}
-			}
-			else if(in.startsWith("delete user")) {
-				Pattern p = Pattern.compile("delete user (.+)$");
-				Matcher m = p.matcher(in);
-				if(m.find()) {
-					PMF.deleteObjectById(User.class, "email", m.group(1));
-					System.out.println("User " + m.group(1) + " deleted");
-				}
-				else {
-					System.out.println("proper format is: add user <nfame> <lfame> <email>");
-				}
-			}
-			else if(in.startsWith("set other")) {
-				PersistenceManager pm = PMF.getPersistenceManager();
-				Transaction tx = pm.currentTransaction();
-				
-				try {
-					tx.begin();
-					
-					List<User> users = (List<User>)PMF.getObjects(pm, User.class);
-					for(User user:users) {
-						user.setOtherData(true);
-					}
-					
-					tx.commit();
-				}
-				finally {
-					if(tx.isActive()){
-						tx.rollback();
-					}
-					pm.close();
-				}
-			}
-			System.out.print("> ");
-		}
-	}
 	
-	public Controller() {
+	public Controller() throws IOException {
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -128,7 +68,7 @@ public class Controller {
 	public boolean deleteUser(String email, String key) {
 		UserAuth ua = getUserAuth(email);
 		
-		if(ua != null && ua.getHash() != null && ua.isHashCorrect(key)) {	
+		if(ua.isHashCorrect(key)) {	
 			PMF.deleteObjects(new Class[] {User.class,UserAuth.class}, 
 					new String[] {"email","email"}, 
 					new String[] {email,email});
@@ -148,7 +88,7 @@ public class Controller {
 	
 	
 	public void newUserEmail(String email, String hash) {
-		String message = "Hello!<br/><br/>Thanks for signing up for BillBuzz.  To finalize your subscription please click the following link:";
+		String message = "Hello!<br/><br/>Thanks for signing up for BillBuzz, to finalize your subscription please click the following link:";
 		
 		message += "<br/><br/>" + WEBLINK + "authenticate.jsp?email=" + email + "&key=" + hash;
 		

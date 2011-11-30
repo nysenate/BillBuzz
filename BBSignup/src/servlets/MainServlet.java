@@ -24,7 +24,9 @@ public class MainServlet extends HttpServlet {
 	
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
-		// will store selected subscriptions
+		
+		
+		// will store selected subscriptions */
 		List<String> subs = new ArrayList<String>();
 		
 		HttpSession session = request.getSession();
@@ -33,7 +35,6 @@ public class MainServlet extends HttpServlet {
 		String fname = null;
 		String lname = null;
 		String email = null;
-		String otherData = null;
 		
 		// if update exists in the session then the user already xists */
 		String update = (String)session.getAttribute("update");
@@ -41,8 +42,7 @@ public class MainServlet extends HttpServlet {
 		if(o != null) {
 			fname = (String)request.getParameter("firstname");
 			lname = (String)request.getParameter("lastname");
-			email = (String)request.getParameter("email1");
-			otherData = (String)request.getParameter("otherData");
+			email = (String)request.getParameter("email1");			
 			
 			/* this is a session variable stored from index.jsp, verifies
 			 * that the user is following proper workflow */
@@ -82,7 +82,7 @@ public class MainServlet extends HttpServlet {
 			
 			Controller c = new Controller();
 			String message = null;
-			User u = new User(fname, lname, email, "n", (otherData.equals("yes") ? true:false));
+			User u = new User(fname, lname, email, "n");
 			u.setSubscriptions(subs);
 			
 			if(update == null) {
