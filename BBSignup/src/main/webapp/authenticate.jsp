@@ -1,18 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"
-    import="java.util.*,bbsignup.src.*,bbsignup.model.*,javax.jdo.*"
-    %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<link rel="stylesheet" type="text/css" media="screen" href="style.css"/> 
-
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>BillBuzz!  Authentication</title>
-</head>
-<body>
+<%@ page language="java" import="java.util.*,bbsignup.src.*,bbsignup.model.*,javax.jdo.*"%>
+<jsp:include page="header.jsp" />
+<div id="main">
 <center>
-<br/>
 
 <%
 	String email = request.getParameter("email");
@@ -24,7 +13,7 @@
 		if(c.authenticateUser(email,key) == true) {
 			%>
 				<div class="good" style="width:500px;">
-					Success!  Thanks for signing up, you'll start receiving BillBuzz updates within the next 24 hours.
+					Success!  Thanks for signing up.  You'll start receiving BillBuzz updates within the next 24 hours.
 					<br/><br/>
 					Redirecting to nysenate.gov in 10 seconds...
 					<meta http-equiv="Refresh" content="10; URL=http://www.nysenate.gov">
@@ -54,13 +43,12 @@
 	else {
 		
 		%>
-			<jsp:forward page="index.jsp" />
+			<jsp:forward page="/" />
 		<%
 		
 	}
 
 %>
-<%@ include file="footer.jsp" %>
 </center>
-</body>
-</html>
+</div>
+<%@ include file="footer.jsp"%>

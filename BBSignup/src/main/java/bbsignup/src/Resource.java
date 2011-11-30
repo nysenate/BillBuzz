@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
+
 /**
  * @author Jared Williams
  *	This class is the property loader and accessor.  It allows the properties file
@@ -13,20 +15,27 @@ import java.util.Properties;
  */
 public class Resource {
 	
-	private static String resource = "app.properties";
+	private static String servletResource = "/WEB-INF/app.properties";
+//	private static String classResource = "src/main/webapp" + servletResource;
+	private static String classResource = "app.properties";
 	private static InputStream INPUT;
 	private static Properties properties;
+	private static ServletContext CONTEXT;
 	
 	/*
 	 * If current context is servlet grab resource stream and load props, otherwise
 	 * use typical file reader
-	 * 
 	 */
 	private static Properties load() {
 		try{
 			if(properties == null) {
 				properties = new Properties();
-				init();
+				if(CONTEXT == null) {
+					init();
+				}
+				else {
+					INPUT = CONTEXT.getResourceAsStream(servletResource);
+				}
 				properties.load(INPUT);
 			}
 		}
@@ -38,7 +47,14 @@ public class Resource {
 	}
 	
 	public static void init() throws FileNotFoundException {
-		INPUT = new FileInputStream(new File(resource));
+		INPUT = new FileInputStream(new File(classResource));
+	}
+	
+	/*
+	 * Would be called from the servlet, saves Servlet 
+	 */
+	public static void init(ServletContext sc) {
+		CONTEXT = sc;
 	}
 	
 	public static String get(String key) {

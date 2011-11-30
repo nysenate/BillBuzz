@@ -1,0 +1,20 @@
+		</div>
+		<center><div class="foot">
+			<table cellpadding=5>
+				<tr>
+					<td>
+						<a href="index.jsp">BillBuzz Home</a>
+							
+					</td>
+					<td align="center">					
+					</td>
+					<td align = "right">
+						<a href="http://www.nysenate.gov">NYSenate.gov</a>
+					</td>
+				</tr>
+			</table>
+		</div></center>
+	</body>
+</html>
+
+

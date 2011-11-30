@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import bbsignup.model.OldSenator;
 import bbsignup.model.Senator;
 import bbsignup.src.PMF;
 
@@ -17,15 +18,76 @@ import bbsignup.src.PMF;
 public class NYSenateServices {
 	
 	public static void index() throws Exception {		
-		List<Senator> senators = getSenators();
+		List<Senator> newSenList = getSenators();
+		List<Senator> prevSenList = (List<Senator>) PMF.getDetachedObjects(Senator.class);
+		List<OldSenator> oldSenList = (List<OldSenator>) PMF.getDetachedObjects(OldSenator.class);
 		
-		for(Senator s:senators) {
+		HashMap<String,Senator> newSenMap = getSenatorMap(newSenList);
+		HashMap<String,Senator> prevSenMap = getSenatorMap(prevSenList);
+		HashMap<String,OldSenator> oldSenMap = getOldSenatorMap(oldSenList);
+		
+		for(String name:prevSenMap.keySet()) {
+			if(newSenMap.get(name) != null) {
+				prevSenList.remove(prevSenMap.get(name));
+			}
+			else
+			{
+				if(oldSenMap.get(name) != null) {
+					prevSenList.remove(prevSenMap.get(name));
+				}
+			}
+		}
+		
+		for(Senator senator:prevSenList) {
+			oldSenList.add(new OldSenator(senator));
+		}
+		
+		PMF.deleteObjects(OldSenator.class);
+		PMF.deleteObjects(Senator.class);
+		
+		for(Senator s:newSenList) {
 			PMF.persistObject(s);
 		}
+		for(OldSenator os:oldSenList) {
+			PMF.persistObject(os);
+		}
+				
+		
+	}
+	
+	public static HashMap<String,Senator> getSenatorMap(List<Senator> list) {
+		HashMap<String,Senator> map = new HashMap<String,Senator>();
+		for(Senator senator:list) {
+			map.put(senator.getOpenLegName(), senator);
+		}
+		return map;
+	}
+	
+	public static HashMap<String,OldSenator> getOldSenatorMap(List<OldSenator> list) {
+		HashMap<String,OldSenator> map = new HashMap<String,OldSenator>();
+		for(OldSenator senator:list) {
+			map.put(senator.getOpenLegName(), senator);
+		}
+		return map;
 	}
 	
 	public static void main(String[] args) throws Exception {
 		index();
+		
+		/*if(args.length == 0) {
+			System.out.println("please indicate either 'index' or 'truncate'");
+		}
+		else {
+			if(args[0].equals("index")) {
+				index();
+			}
+			else  if(args[0].equals("truncate")) {
+				PMF.deleteObjects(Senator.class);
+			}
+			else {
+				System.out.println("please indicate either 'index' or 'truncate'");
+			}
+		}*/
 	}
 	
 	public static List<Senator> getSenators() throws Exception {		
@@ -71,14 +133,8 @@ public class NYSenateServices {
 				else if(party.matches("R")) {
 					senator.setRepublican(true);
 				}
-				else if(party.matches("I")) {
-					senator.setIndependentParty(true);
-				}
 				else if(party.matches("IP")) {
 					senator.setIndependenceParty(true);
-				}
-				else if(party.matches("Ind")) {
-					senator.setIndependent(true);
 				}
 				else if(party.matches("WF")) {
 					senator.setWorkingFamilies(true);
@@ -102,14 +158,12 @@ public class NYSenateServices {
 	public static HashMap<String,String> getOpenLegSenators() throws IOException {
 		HashMap<String,String> ret = new HashMap<String,String>();
 		
-		URL url = new URL("http://open.nysenate.gov/legislation/senators/");
+		URL url = new URL("http://open.nysenate.gov/legislation/senators");
 		BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-		
-		Pattern lineP = Pattern.compile("<div class=\"views-field-field-senators-district-nid\">");
+
 		Pattern districtP = Pattern.compile("District (\\d+)");
-		Pattern nameP = Pattern.compile("/legislation/sponsor/(\\w+)");
+		Pattern nameP = Pattern.compile("/sponsor/(.+?)\\?filter");
 		
-		Matcher lineM = null;
 		Matcher districtM = null;
 		Matcher nameM = null;
 		
@@ -118,22 +172,14 @@ public class NYSenateServices {
 		while((in = br.readLine()) != null) {
 			String d = null, n = null;
 			
-			lineM = lineP.matcher(in);
+			districtM = districtP.matcher(in);
 			
-			if(lineM.find()) {
+			if(districtM.find()) {
+				d = districtM.group(1);
 				
 				in = br.readLine();
-				
-				districtM = districtP.matcher(in);
+
 				nameM = nameP.matcher(in);
-				
-				if(districtM.find()) {
-					d = districtM.group(1);
-					
-					if(districtM.group(1).equals("6")) {
-						n = "hannon";
-					}
-				}
 				
 				if(nameM.find()) {
 					n = nameM.group(1);

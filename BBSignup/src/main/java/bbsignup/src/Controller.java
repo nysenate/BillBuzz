@@ -1,9 +1,13 @@
 package bbsignup.src;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -17,18 +21,68 @@ import javax.mail.internet.MimeMessage;
 import bbsignup.model.*;
 
 public class Controller {
-	private static final String SMTP_HOST_NAME = Resource.get("hostname");
-
-	private static final String SMTP_PORT = Resource.get("port");
-	
-	private static final String SMTP_ACCOUNT_USER = Resource.get("user");
-	private static final String SMTP_ACCOUNT_PASS = Resource.get("pass");
 	
 	public String WEBLINK = "http://billbuzz.nysenate.gov/";
-
 	
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String in = "";
+		
+		System.out.print("> ");
+		while(!(in = br.readLine()).equals("exit")) {
+			
+			if(in.startsWith("add user")) {
+				Pattern p = Pattern.compile("add user (.+?) (.+?) (.+?) (true|false)$");
+				Matcher m = p.matcher(in);
+				if(m.find()) {
+					User u = new User(m.group(1), m.group(2), m.group(3),
+							"y",m.group(4).equals("true")?true:false);
+					u.addSubscription("all");
+					PMF.persistObject(u);
+					System.out.println("User " + m.group(3) + " added succesfully");
+				}
+				else {
+					System.out.println("proper format is: add user <nfame> <lfame> <email>" +
+							"<otherdata(true or false)>");
+				}
+			}
+			else if(in.startsWith("delete user")) {
+				Pattern p = Pattern.compile("delete user (.+)$");
+				Matcher m = p.matcher(in);
+				if(m.find()) {
+					PMF.deleteObjectById(User.class, "email", m.group(1));
+					System.out.println("User " + m.group(1) + " deleted");
+				}
+				else {
+					System.out.println("proper format is: add user <nfame> <lfame> <email>");
+				}
+			}
+			else if(in.startsWith("set other")) {
+				PersistenceManager pm = PMF.getPersistenceManager();
+				Transaction tx = pm.currentTransaction();
+				
+				try {
+					tx.begin();
+					
+					List<User> users = (List<User>)PMF.getObjects(pm, User.class);
+					for(User user:users) {
+						user.setOtherData(true);
+					}
+					
+					tx.commit();
+				}
+				finally {
+					if(tx.isActive()){
+						tx.rollback();
+					}
+					pm.close();
+				}
+			}
+			System.out.print("> ");
+		}
+	}
 	
-	public Controller() throws IOException {
+	public Controller() {
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -68,7 +122,7 @@ public class Controller {
 	public boolean deleteUser(String email, String key) {
 		UserAuth ua = getUserAuth(email);
 		
-		if(ua.isHashCorrect(key)) {	
+		if(ua != null && ua.getHash() != null && ua.isHashCorrect(key)) {	
 			PMF.deleteObjects(new Class[] {User.class,UserAuth.class}, 
 					new String[] {"email","email"}, 
 					new String[] {email,email});
@@ -88,7 +142,7 @@ public class Controller {
 	
 	
 	public void newUserEmail(String email, String hash) {
-		String message = "Hello!<br/><br/>Thanks for signing up for BillBuzz, to finalize your subscription please click the following link:";
+		String message = "Hello!<br/><br/>Thanks for signing up for BillBuzz.  To finalize your subscription please click the following link:";
 		
 		message += "<br/><br/>" + WEBLINK + "authenticate.jsp?email=" + email + "&key=" + hash;
 		
@@ -167,18 +221,18 @@ public class Controller {
 
 	public void sendMail(String to, String subject, String message, String from, String fromDisplay) throws Exception {
 		Properties props = new Properties();
-		props.put("mail.smtp.host", SMTP_HOST_NAME);
+		props.put("mail.smtp.host", Resource.get("hostname"));
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.debug", "true");
-		props.put("mail.smtp.port", SMTP_PORT);
+		props.put("mail.smtp.port", Resource.get("port"));
 		props.put("mail.smtp.starttls.enable","false");
-		props.put("mail.smtp.socketFactory.port", SMTP_PORT);
+		props.put("mail.smtp.socketFactory.port", Resource.get("port"));
 		props.put("mail.smtp.socketFactory.fallback", "false");
 		props.put("mail.smtp.ssl.enable","false");
 
 		Session session = Session.getDefaultInstance(props,	new javax.mail.Authenticator() {
 										protected PasswordAuthentication getPasswordAuthentication() {
-											return new PasswordAuthentication(SMTP_ACCOUNT_USER, SMTP_ACCOUNT_PASS);}});
+											return new PasswordAuthentication(Resource.get("user"), Resource.get("pass"));}});
 		session.setDebug(false);
 		Message msg = new MimeMessage(session);
 		InternetAddress addressFrom = new InternetAddress(from);

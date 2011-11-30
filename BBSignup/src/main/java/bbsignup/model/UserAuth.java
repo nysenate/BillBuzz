@@ -1,11 +1,8 @@
 package bbsignup.model;
 
-import java.io.IOException;
 import java.util.Date;
-
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.PrimaryKey;
-
 import org.jasypt.util.text.BasicTextEncryptor;
 
 import bbsignup.src.Controller;
@@ -17,13 +14,8 @@ public class UserAuth {
 	String email;
 	String hash;
 	
-	public static void main(String[] args) throws IOException {	
-		String str = "";
-		Controller c = new Controller();
-		UserAuth ua = c.getUserAuth("williams@nysenate.gov");
-		
-		System.out.println(ua.getHash());
-		System.out.println(ua.isHashCorrect(str));
+	public static void main(String[] args) {
+		System.out.println(new Controller().getUser("williams@nysenate.gov").getOtherData());
 	}
 	
 	public UserAuth() {
