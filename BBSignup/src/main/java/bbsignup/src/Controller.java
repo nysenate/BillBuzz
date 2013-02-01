@@ -18,19 +18,23 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import bbsignup.model.*;
+import bbsignup.model.Senator;
+import bbsignup.model.User;
+import bbsignup.model.UserAuth;
+import bbsignup.src.PMF;
+import bbsignup.src.Resource;
 
 public class Controller {
-	
+
 	public String WEBLINK = "http://billbuzz.nysenate.gov/";
-	
+
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String in = "";
-		
+
 		System.out.print("> ");
 		while(!(in = br.readLine()).equals("exit")) {
-			
+
 			if(in.startsWith("add user")) {
 				Pattern p = Pattern.compile("add user (.+?) (.+?) (.+?) (true|false)$");
 				Matcher m = p.matcher(in);
@@ -60,15 +64,15 @@ public class Controller {
 			else if(in.startsWith("set other")) {
 				PersistenceManager pm = PMF.getPersistenceManager();
 				Transaction tx = pm.currentTransaction();
-				
+
 				try {
 					tx.begin();
-					
+
 					List<User> users = (List<User>)PMF.getObjects(pm, User.class);
 					for(User user:users) {
 						user.setOtherData(true);
 					}
-					
+
 					tx.commit();
 				}
 				finally {
@@ -81,32 +85,32 @@ public class Controller {
 			System.out.print("> ");
 		}
 	}
-	
+
 	public Controller() {
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Senator> getSenators() {
 		return (List<Senator>) PMF.getDetachedObjects(Senator.class);
-		
+
 	}
-	
+
 	public String tryDelete(String email) {
-		
+
 		User u = (User) PMF.getDetachedObject(User.class, "email", email);
-		
+
 		if(u != null) {
 			UserAuth ua = this.getUserAuth(email);
 			if(ua == null) {
 				ua = new UserAuth(email);
 			}
-			
+
 			String message = "Hello!<br/><br/>To remove yourself from BillBuzz please click the following link:";
-			
+
 			message += "<br/><br/>" + WEBLINK + "delete.jsp?email=" + email + "&key=" + ua.getHash();
-			
+
 			message += "<br/><br/>If you have any questions please contact us at <a href=\"mailto:billbuzz@nysenate.gov\">billbuzz@nysenate.gov</a> or reply to this email.";
-			
+
 			try {
 				sendMail(email,"Finalize your BillBuzz cancellation", message, "billbuzz@nysenate.gov", "BillBuzz");
 				PMF.persistObject(ua);
@@ -114,66 +118,66 @@ public class Controller {
 				e.printStackTrace();
 			}
 			return null;
-			
+
 		}
 		return "errno4";
 	}
-	
+
 	public boolean deleteUser(String email, String key) {
 		UserAuth ua = getUserAuth(email);
-		
-		if(ua != null && ua.getHash() != null && ua.isHashCorrect(key)) {	
-			PMF.deleteObjects(new Class[] {User.class,UserAuth.class}, 
-					new String[] {"email","email"}, 
+
+		if(ua != null && ua.getHash() != null && ua.isHashCorrect(key)) {
+			PMF.deleteObjects(new Class[] {User.class,UserAuth.class},
+					new String[] {"email","email"},
 					new String[] {email,email});
 
-			return true;	
+			return true;
 		}
 		return false;
 	}
-	
+
 	public User getUser(String email) {
 		return (User) PMF.getDetachedObject(User.class, "email", email);
 	}
-	
+
 	public UserAuth getUserAuth(String email) {
 		return (UserAuth) PMF.getDetachedObject(UserAuth.class, "email", email);
 	}
-	
-	
+
+
 	public void newUserEmail(String email, String hash) {
 		String message = "Hello!<br/><br/>Thanks for signing up for BillBuzz.  To finalize your subscription please click the following link:";
-		
+
 		message += "<br/><br/>" + WEBLINK + "authenticate.jsp?email=" + email + "&key=" + hash;
-		
+
 		message += "<br/><br/>If you have any questions please contact us at <a href=\"mailto:billbuzz@nysenate.gov\">billbuzz@nysenate.gov</a> or reply to this email.";
-		
+
 		try {
 			sendMail(email,"Finalize your BillBuzz subscription", message, "billbuzz@nysenate.gov", "BillBuzz");
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 	}
-	
+
 	public String updateEmail(String email) {
-		
+
 		User u = getUser(email);
-		
+
 		if(u == null) {
 			return "errno5";
 		}
-		
+
 		UserAuth ua = getUserAuth(email);
 		if(ua == null) {
-			ua = new UserAuth(email);	
+			ua = new UserAuth(email);
 		}
-		
+
 		String message = "Hello!<br/><br/>It looks like you're trying to update your subscription, to do so please click the link below and follow the instructions:";
-		
+
 		message += "<br/><br/>" + WEBLINK + "update.jsp?uemail=" + email + "&key=" + ua.getHash();
-		
+
 		message += "<br/><br/>If you have any questions please contact us at <a href=\"mailto:billbuzz@nysenate.gov\">billbuzz@nysenate.gov</a> or reply to this email.";
-		
+
 		try {
 			sendMail(email,"Update your BillBuzz subscription", message, "billbuzz@nysenate.gov", "BillBuzz");
 			PMF.deleteObjectById(UserAuth.class, "email", email);
@@ -183,22 +187,22 @@ public class Controller {
 		}
 		return null;
 	}
-	
+
 	public boolean authenticateUser(String email, String key){
 		UserAuth ua = getUserAuth(email);
-				
+
 		if(ua != null && ua.isHashCorrect(key)) {
-			
+
 			PersistenceManager pm = PMF.getPersistenceManager();
 			Transaction tx = pm.currentTransaction();
-			
+
 			User u = null;
-			
+
 			try {
 				tx.begin();
 				u = (User)PMF.getObject(pm, User.class, "email", email);
-				
-				if(u != null) {					
+
+				if(u != null) {
 					u.setAuth("y");
 				}
 				tx.commit();
@@ -208,13 +212,13 @@ public class Controller {
 					tx.rollback();
 				}
 				pm.close();
-				
+
 				PMF.deleteObjectById(UserAuth.class, "email", email);
 			}
-			
+
 			if(u != null) {
 				return true;
-			}			
+			}
 		}
 		return false;
 	}
@@ -238,25 +242,25 @@ public class Controller {
 		InternetAddress addressFrom = new InternetAddress(from);
 		addressFrom.setPersonal(fromDisplay);
 		msg.setFrom(addressFrom);
-	
-		
+
+
 		StringTokenizer st = new StringTokenizer (to,",");
-		
+
 		InternetAddress[] rcps = new InternetAddress[st.countTokens()];
 		int idx = 0;
-		
+
 		while (st.hasMoreTokens())
 		{
 			InternetAddress addressTo = new InternetAddress(st.nextToken());
 			rcps[idx++] = addressTo;
-			
+
 		}
-		
+
 		msg.setRecipients(Message.RecipientType.TO,rcps);
-		
+
 		msg.setSubject(subject);
 		msg.setContent(message, "text/html");
 		Transport.send(msg);
-	}	
-	
+	}
+
 }
