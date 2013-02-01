@@ -3,3 +3,8 @@
 *.properties
 *.log
 target
+
+
+.settings
+.classpath
+.project
