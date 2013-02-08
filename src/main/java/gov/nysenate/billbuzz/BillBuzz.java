@@ -502,9 +502,7 @@ public class BillBuzz {
 		BillInfo b = td.getBill();
 		for(Comment c:td.getComments()) {
 			ret = ret.concat(
-					"<b>On " + c.getCreatedAt() + ": "
-					+ (/*(c.getEmail().compareTo("") == 0)*/(1==1)
-							? c.getUsername() :c.getUsername() + " (<a href=\"mailto:" + c.getEmail() + "\">" + c.getEmail()+ ")</a>")
+					"<b>On " + c.getCreatedAt() + ": " + c.getUsername()
 					+ " said:</b><br/><pre>"
 					+ breakUp(c.getMessage(), 80)
 					+  "</pre><hr/>");

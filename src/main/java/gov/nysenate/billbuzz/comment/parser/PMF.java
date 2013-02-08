@@ -54,7 +54,7 @@ public class PMF {
 			q.declareParameters("java.util.Date nd1, java.util.Date nd2");
 			q.setOrdering("last ascending");
 
-			c = (Collection)q.execute(nd1, nd2);
+			c = (Collection<DisqusThread>)q.execute(nd1, nd2);
 
 			c = pm.detachCopyAll(c);
 
@@ -127,19 +127,19 @@ public class PMF {
 	}
 
 
-	public static Collection getObjects(PersistenceManager pm, Class objClass) {
+	public static Collection<?> getObjects(PersistenceManager pm, Class<?> objClass) {
 
 		Query q = pm.newQuery(objClass);
 
-		return (Collection)q.execute();
+		return (Collection<?>)q.execute();
 
 	}
 
-	public static Collection getDetachedObjects(Class objClass) {
+	public static Collection<?> getDetachedObjects(Class<?> objClass) {
 		PersistenceManager pm = getPersistenceManager();
 		Transaction tx = pm.currentTransaction();
 
-		Collection c = null;
+		Collection<?> c = null;
 
 		try {
 			tx.begin();
@@ -160,13 +160,13 @@ public class PMF {
 		return c;
 	}
 
-	public static Object getObject(PersistenceManager pm, Class objClass, String key, String val) {
+	public static Object getObject(PersistenceManager pm, Class<?> objClass, String key, String val) {
 
-		Collection c = null;
+		Collection<?> c = null;
 
 		Query q = pm.newQuery(objClass, key + " ==\"" + val + "\"");
 
-		c = (Collection)q.execute();
+		c = (Collection<?>)q.execute();
 
 		if(!c.isEmpty()) {
 			return c.iterator().next();
@@ -176,7 +176,7 @@ public class PMF {
 
 	}
 
-	public static Object getDetachedObject(Class objClass, String key, String val) {
+	public static Object getDetachedObject(Class<?> objClass, String key, String val) {
 
 		PersistenceManager pm = getPersistenceManager();
 		Transaction tx = pm.currentTransaction();

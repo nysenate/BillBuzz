@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 public class DisqusAnalytics {
@@ -59,7 +58,6 @@ public class DisqusAnalytics {
 		String[] years = {"2009", "2010"};
 		String[] months = {"01","02","03","04","05","06","07","08","09","10","11","12"};
 		String[] days =   {"31", "28", "31", "30", "31", "30", "31", "31", "30", "31", "30", "31"};
-		Date d = new Date();
 
 		for(int i = 0; i < years.length; i++) {
 
@@ -98,10 +96,10 @@ public class DisqusAnalytics {
 
 
 					String rawPresentDate = years[i] + "-" + months[j] + "-" + k;
-					Date compiledPresentDate = ObjectHelper.searchDate(rawPresentDate);
+					// Date compiledPresentDate = ObjectHelper.searchDate(rawPresentDate);
 
 					String rawNextDate = nextYear + "-" + nextMonth + "-" + nextDay;
-					Date compiledNextDate = ObjectHelper.searchDate(rawNextDate);
+					// Date compiledNextDate = ObjectHelper.searchDate(rawNextDate);
 
 
 

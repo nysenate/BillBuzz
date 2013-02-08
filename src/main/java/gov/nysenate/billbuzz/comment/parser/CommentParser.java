@@ -24,7 +24,7 @@ public class CommentParser {
 
 	public void doParsing(File f) {
 
-
+	    /*
 		Articles disqus = null;
 
 		try {
@@ -33,6 +33,7 @@ public class CommentParser {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		*/
 
 //		HashMap<Integer,List<Post>> map = new HashMap<Integer,List<Post>>();
 
