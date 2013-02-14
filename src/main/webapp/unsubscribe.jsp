@@ -1,5 +1,5 @@
 <%@ page language="java" 
-    import="java.util.*,gov.nysenate.billbuzz.src.*,gov.nysenate.billbuzz.model.*,javax.jdo.*"
+    import="java.util.*,gov.nysenate.billbuzz.Controller,gov.nysenate.billbuzz.model.*,javax.jdo.*"
     %>
 <jsp:include page="header.jsp" />
 <div id="main">

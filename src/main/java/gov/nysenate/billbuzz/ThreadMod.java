@@ -5,36 +5,38 @@ import gov.nysenate.billbuzz.model.Comment;
 import gov.nysenate.billbuzz.model.DisqusObject;
 import gov.nysenate.billbuzz.model.ForumDescription;
 import gov.nysenate.billbuzz.model.ThreadDescription;
-import gov.nysenate.billbuzz.persist.Controller;
+import gov.nysenate.billbuzz.service.Disqus;
+import gov.nysenate.billbuzz.service.OpenLegislation;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 /**
  * @author jaredwilliams
- * 
+ *
  * ThreadMod handles all threads read from Disqus, it decides what is valid and what isn't (based on if a post has been moderated,
  * if it is from the senate, assembly, etc...
  *
  */
 public class ThreadMod {
-	private List<ThreadDescription> _uT; //list to hold unmoderated comments
-	private List<Comment> _uC; //list to hold unmoderated comments
-	private Disqus _d;
-	
+	private List<ThreadDescription> unmoderatedThreads; //list to hold unmoderated comments
+	private final List<Comment> unmoderatedComments; //list to hold unmoderated comments
+	private final Disqus _d;
+
 	/*
 	 * initializes _uC and _uT which are globals used to keep track of unmoderated comments
 	 * _d is the Disqus object used to make calls to the Disqus API
-	 * 
+	 *
 	 */
 	public ThreadMod() {
-		_uC = new ArrayList<Comment>();
-		_uT = new ArrayList<ThreadDescription>();
+		unmoderatedComments = new ArrayList<Comment>();
+		unmoderatedThreads = new ArrayList<ThreadDescription>();
 		_d = new Disqus();
 	}
 	/**
@@ -55,7 +57,7 @@ public class ThreadMod {
 		//return a combined list of new threads and those that were previously unmoderated
 		return combineThreadLists(newTLst, unmodTLst);
 	}
-	
+
 	/**
 	 * This function combines two lists of ThreadDescription.  The reason it is necessary is if a thread were in the list for the new run
 	 * and if a thread from a previously unmoderated post was added in as well they would show up as two seperate comments.  This combines
@@ -79,7 +81,7 @@ public class ThreadMod {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * This function seperates threads/comments ready to be posted and those
 	 * that still must be moderated
@@ -89,13 +91,13 @@ public class ThreadMod {
 	private List<ThreadDescription> getValidThreads(List<ThreadDescription> tdlst) {
 		List<ThreadDescription> retTd = new ArrayList<ThreadDescription>();
 		for(ThreadDescription td : tdlst) {
-			_uC.clear(); //clear unmoderated comments
+			unmoderatedComments.clear(); //clear unmoderated comments
 			ThreadDescription newtd = null;
 			List<Comment> clst = td.getComments();
 			List<Comment> newclst = new ArrayList<Comment>();
 			for(Comment c : clst) {
 				if(validComment(c)) {
-					if(newtd == null) { 
+					if(newtd == null) {
 						//if thihs is the first comment being added generate thread
 						newtd = tdFromString(c.getThreadInfo());
 					}
@@ -104,46 +106,39 @@ public class ThreadMod {
 				}
 				else {
 					//if the post is unmoderated at it to unmoderated comments
-					_uC.add(c);
+					unmoderatedComments.add(c);
 				}
 			}
-			
-			String bill = OpenLegXML.getBillFromURL(td.getURL());
-			if(bill.equals(""))
-				continue;
-			else {
-				if(bill.indexOf("-") == -1) {
-					td.setURL(td.getURL() + "-2009");
-				}
-				
-			}
-			
-			//if a new thread has been created then there are accepted comments
-			if(newtd != null) {
-				newtd.setComments(newclst);
-				newtd.setBill(new OpenLegXML().getBillByURL(td.getURL()));
-				retTd = addThread(retTd, newtd);
-			}
-			//if _uC is not empty unmoderated comments have been found, a thread is generated and added to _uT
-			if(!_uC.isEmpty()) {
-				ThreadDescription temp = tdFromString(_uC.get(0).getThreadInfo());
-				temp.setBill(new OpenLegXML().getBillByURL(td.getURL()));
-				temp.getComments().addAll(_uC);
-				_uT = addThread(_uT, temp);				
+
+			String bill = OpenLegislation.getBillFromURL(td.getURL());
+			if(bill != null) {
+    			//if a new thread has been created then there are accepted comments
+    			if(newtd != null) {
+    				newtd.setComments(newclst);
+    				newtd.setBill(OpenLegislation.getBillInfo(bill));
+    				retTd = addThread(retTd, newtd);
+    			}
+    			//if _uC is not empty unmoderated comments have been found, a thread is generated and added to _uT
+    			if(!unmoderatedComments.isEmpty()) {
+    				ThreadDescription temp = tdFromString(unmoderatedComments.get(0).getThreadInfo());
+    				temp.setBill(OpenLegislation.getBillInfo(bill));
+    				temp.getComments().addAll(unmoderatedComments);
+    				unmoderatedThreads = addThread(unmoderatedThreads, temp);
+    			}
 			}
 		}
 		return retTd;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * This function uses Disqus to build the overall thread->comments structure
 	 * @param date is the date that determines what posts should be indexed
 	 * @returns List<ForumDescription> of all of the forums associated with a Disqus account
 	 * @throws Exception
-	 */	
+	 */
 	private List<ThreadDescription> buildUpdateInformation(String date) {
 		System.out.println("Reading from Disqus... (connection errors will be reported)");
 		List<ThreadDescription> ret = new ArrayList<ThreadDescription>(); //empty forum list to be returned
@@ -156,13 +151,13 @@ public class ThreadMod {
 				ThreadDescription td = threadItr.next();
 				td.setComments(_d.getThreadPosts(td.getID(), date));
 				if(td.getComments().size() > 0) { //if there are approved comments in the thread
-					ret.add(td);	
+					ret.add(td);
 				}
 			}
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * This function iteratively moves though lst.  If it finds an instance of td it combines the comments
 	 * for each Thread so there isn't any overlapping, otherwise it simply adds the Thread to the list
@@ -173,7 +168,7 @@ public class ThreadMod {
 	private List<ThreadDescription> addThread(List<ThreadDescription> lst, ThreadDescription td) {
 		int tIndex = hasSameAsThread(lst,td);
 		//if the bill be added already has an assembly or senate equivalent
-		if(tIndex != -1) { 
+		if(tIndex != -1) {
 			ThreadDescription temp = lst.get(tIndex);
 			String temps = temp.getBill().getBillId();
 			if(temps.startsWith("A")) { //if temp is the assembly bill
@@ -183,17 +178,17 @@ public class ThreadMod {
 			else { //if temp is a senate bill
 				temp.setSameAsThread(td);
 				lst.set(tIndex, temp);
-			}			
+			}
 			return lst;
 		}
-		
+
 		//if the thread doesn't exist simply add it
 		tIndex = containsDisqusObject(lst, td);
 		if(tIndex == -1) { //if there isn't an occurance of the thread
 			lst.add(td);
 			return lst;
 		}
-		
+
 		//if there is an occurance
 		ThreadDescription temp = lst.get(tIndex);
 		List<Comment> tempComList = temp.getComments();
@@ -207,13 +202,13 @@ public class ThreadMod {
 			}
 			else { //if the comment already existed
 				//comment already exists
-			}				
+			}
 		}
 		temp.setComments(newList); //add comments to the nthread
 		lst.set(tIndex, temp); //replace thread in list
-		return lst;			
+		return lst;
 	}
-	
+
 	/**
 	 * checks to see if lst contains a thread that is the sameas equivalent of td
 	 * @param lst is a list of ThreadDescription
@@ -228,11 +223,11 @@ public class ThreadMod {
 			String s2 = lstB.getBillId();
 			if(!s1.equals("") && s1.equals(s2)) {
 				return lst.indexOf(lstTd);
-			}			
+			}
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * This function opens the file containing the previously unmoderated posts, reads through it
 	 * and detects if posts labeled unmoderated from a previous run of BillBuzz have had their state changed.
@@ -241,38 +236,38 @@ public class ThreadMod {
 	 * @throws Exception
 	 */
 	private List<ThreadDescription> readUnmoderatedThreads() {
-		
+
 		List<String> unmoderated = Controller.getUnmoderated();
-		
+
 		List<ThreadDescription> lst = new ArrayList<ThreadDescription>();
 		try {
 			for(String in:unmoderated) {
-				
+
 				ThreadDescription tempThread = null;
-				
+
 				List<Comment> comList = new ArrayList<Comment>(); //this will store comments that are now approved
-				
+
 				String[] vals = in.split(","); //[0] is id, [1]-[n] are post ids
-				
+
 				List<Comment> com = _d.getThreadPosts(vals[0], "@"); //get comments from associated thread
-				
-				for(Comment c: com) {			
+
+				for(Comment c: com) {
 					//iterates through comments for given thread
-					for(int i = 1; i < vals.length; i++) { 
+					for(int i = 1; i < vals.length; i++) {
 						//if the given comment id matches a comment in the thread
-						if(vals[i].equals(c.getID())) { 
+						if(vals[i].equals(c.getID())) {
 							//if the thread is null initialize it
-							if(tempThread == null) { 								
+							if(tempThread == null) {
 								tempThread = tdFromString(c.getThreadInfo());
 							}
 							//add comment to thread
-							comList.add(c); 
+							comList.add(c);
 						}
-					}			
+					}
 				}
-				
+
 				tempThread.setComments(comList);
-				
+
 				lst.add(tempThread);
 			}
 		}
@@ -281,21 +276,21 @@ public class ThreadMod {
 		}
 		return lst;
 	}
-	
-	
-	
+
+
+
 	/**Compiles list from _uC and _uT of currently unmoderated comments in to the following form:
 	 * 		  	<threadid 1>,<commentid 1>,<commentid 2>,...,<commentid n>
 	 * 			...
 	 * 			<threadid m>,<commentid 1>,<commentid 2>,...,<commentid n>
-	 * @throws IOException 
+	 * @throws IOException
 	 * @returns CSV list of unmoderated information
 	 */
 	private void saveUnmoderatedThreads() {
-		
+
 		List<String> unmoderated = new ArrayList<String>();
-		
-		for(ThreadDescription td : _uT) { //iterate threads with unmoderated posts
+
+		for(ThreadDescription td : unmoderatedThreads) { //iterate threads with unmoderated posts
 			String thread = td.getID(); //add thread id to string
 			for(Comment c : td.getComments()) { //iterate posts in a thread
 				thread += "," + c.getID(); //add post ids
@@ -309,10 +304,10 @@ public class ThreadMod {
 				unmoderated.add(sameas);
 			}
 		}
-		
+
 		Controller.saveUnmoderated(unmoderated);
 	}
-	
+
 	/**
 	 * @param lst is a list of DisqusObject objects
 	 * @param d is a DisqusObject
@@ -326,21 +321,21 @@ public class ThreadMod {
 			if(t.getID().equals(dObj.getID())) {
 				return lst.indexOf(t);
 			}
-		}		
+		}
 		return -1;
 	}
-	
+
 	/**
 	 * @param s is a string with the JSON information from Disqus for a thread
 	 * @returns a ThreadDescription object from the JSON information
 	 */
 	private ThreadDescription tdFromString(String s) {
 		JsonParser parser = new JsonParser();
-		JsonElement je = (JsonElement)parser.parse(s);
+		JsonElement je = parser.parse(s);
 		Gson gson = new Gson();
 		return gson.fromJson(je, ThreadDescription.class);
 	}
-	
+
 	/**
 	 * @param c is the comment to be validated
 	 * @returns true if valid, false otherwise

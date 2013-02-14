@@ -4,7 +4,7 @@ package gov.nysenate.billbuzz.model;
 
 import java.util.ArrayList;
 import java.util.List;
-public class BBSenator {	
+public class BBSenator {
 	private String name;
 	private String email;
 	private List<ThreadDescription> threads;
@@ -24,15 +24,15 @@ public class BBSenator {
 		this.email = "";
 		this.threads = new ArrayList<ThreadDescription>();
 	}
-	public BBSenator(gov.nysenate.billbuzz.persist.Senator ps) {
+	public BBSenator(gov.nysenate.billbuzz.model.persist.Senator ps) {
 		name = ps.getName();
 		email = "";
 		this.threads = new ArrayList<ThreadDescription>();
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
-	}		
+	}
 	public void setThreads(List<ThreadDescription> threads) {
 		this.threads = threads;
 	}

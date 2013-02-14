@@ -1,5 +1,4 @@
-<%@ page language="java"  import="java.util.*,gov.nysenate.billbuzz.src.*,gov.nysenate.billbuzz.model.*,javax.jdo.*"
-    %>
+<%@ page language="java" %>
 <jsp:include page="header.jsp" />
 <div id="main">
 <center>

@@ -4,8 +4,8 @@ import gov.nysenate.billbuzz.model.BBSenator;
 import gov.nysenate.billbuzz.model.BillInfo;
 import gov.nysenate.billbuzz.model.Comment;
 import gov.nysenate.billbuzz.model.ThreadDescription;
-import gov.nysenate.billbuzz.persist.Controller;
-import gov.nysenate.billbuzz.persist.User;
+import gov.nysenate.billbuzz.model.persist.User;
+import gov.nysenate.billbuzz.util.Config;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,11 +35,11 @@ public class BillBuzz {
 
 	private static final String SMTP_PORT = "587";
 
-	private static final String SMTP_ACCOUNT_USER = Resource.get("user");
-	private static final String SMTP_ACCOUNT_PASS = Resource.get("pass");
+	private static final String SMTP_ACCOUNT_USER = Config.getValue("user");
+	private static final String SMTP_ACCOUNT_PASS = Config.getValue("pass");
 
 
-	Map<String,gov.nysenate.billbuzz.persist.Senator> _sep;
+	Map<String,gov.nysenate.billbuzz.model.persist.Senator> _sep;
 
 	//bills without a senator sponsor
 	List<ThreadDescription> _otherThreads;
@@ -123,14 +123,14 @@ public class BillBuzz {
 	/**
 	 * creates a map of senators from database
 	 */
-	public Map<String,gov.nysenate.billbuzz.persist.Senator> senatorMap() throws Exception {
+	public Map<String,gov.nysenate.billbuzz.model.persist.Senator> senatorMap() throws Exception {
 		logger.info("creating senator map");
-		Map<String,gov.nysenate.billbuzz.persist.Senator> m = new HashMap<String,gov.nysenate.billbuzz.persist.Senator>();
+		Map<String,gov.nysenate.billbuzz.model.persist.Senator> m = new HashMap<String,gov.nysenate.billbuzz.model.persist.Senator>();
 
-		List<gov.nysenate.billbuzz.persist.Senator> lst = Controller.getSenators();
+		List<gov.nysenate.billbuzz.model.persist.Senator> lst = Controller.getSenators();
 
 
-		for(gov.nysenate.billbuzz.persist.Senator sen:lst) {
+		for(gov.nysenate.billbuzz.model.persist.Senator sen:lst) {
 
 			String n = sen.getOpenLegName().toUpperCase();
 
@@ -315,7 +315,7 @@ public class BillBuzz {
 			//read through people associated with assembly thread
 			for(String s:cosp) {
 				//if there is a valid email and it isn't in the list
-				gov.nysenate.billbuzz.persist.Senator perSen = _sep.get(s);
+				gov.nysenate.billbuzz.model.persist.Senator perSen = _sep.get(s);
 				if(perSen != null && !ret.contains(perSen.getOpenLegName().toUpperCase())) {
 					logger.info("adding senator " + perSen.getOpenLegName().toUpperCase() + "to thread (from sameas)");
 					ret.add(perSen.getOpenLegName().toUpperCase());

@@ -104,5 +104,20 @@
 		<artifactId>nysenate-java-client</artifactId>
                 <version>1.0</version>
         </dependency>
+        <dependency>
+        	<groupId>commons-configuration</groupId>
+        	<artifactId>commons-configuration</artifactId>
+        	<version>1.9</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.httpcomponents</groupId>
+        	<artifactId>fluent-hc</artifactId>
+        	<version>4.2.3</version>
+        </dependency>
+        <dependency>
+        	<groupId>commons-lang</groupId>
+        	<artifactId>commons-lang</artifactId>
+        	<version>2.6</version>
+        </dependency>
     </dependencies>
 </project>

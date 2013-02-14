@@ -1,9 +1,7 @@
 <%@ page contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1" language="java" import="gov.nysenate.billbuzz.servlets.SenatorContext,java.util.*,gov.nysenate.billbuzz.src.*,gov.nysenate.billbuzz.model.Senator"%>
+	pageEncoding="ISO-8859-1" language="java" import="java.util.*,gov.nysenate.billbuzz.Controller,gov.nysenate.billbuzz.model.persist.Senator"%>
 	<jsp:include page="header.jsp" />
-<%
-    List<Senator> list = (List<Senator>)SenatorContext.getSenators(this.getServletContext());;
-%>
+
 <center>
 <div id="main">
 <%
@@ -13,6 +11,7 @@
 	String e1 = (String) session.getAttribute("e");
 	String otherData = (String) session.getAttribute("otherData");
 	List<String> subs = (List<String>) session.getAttribute("subs");
+	List<Senator> list = (List<Senator>)request.getAttribute("senators");
 	
 	if(otherData == null) {
 		otherData ="";
@@ -89,23 +88,19 @@
 <table>
 	<tr>
 		<td>First name</td>
-		<td><input type="text" name="firstname"
-			value="<%=((fn == null) ? "" : fn)%>"></input></td>
+		<td><input type="text" name="firstname" value="<%=((fn == null) ? "" : fn)%>"></input></td>
 	</tr>
 	<tr>
 		<td>Last name</td>
-		<td><input type="text" name="lastname"
-			value="<%=((ln == null) ? "" : ln)%>"></input></td>
+		<td><input type="text" name="lastname" value="<%=((ln == null) ? "" : ln)%>"></input></td>
 	</tr>
 	<tr>
 		<td>Email</td>
-		<td><input type="text" name="email1"
-			value="<%=((e1 == null) ? "" : e1)%>"></input></td>
+		<td><input type="text" name="email1" value="<%=((e1 == null) ? "" : e1)%>"></input></td>
 	</tr>
 	<tr>
 		<td>Confirm email</td>
-		<td><input type="text" name="email2"
-			value="<%=((e1 == null) ? "" : e1)%>"></input></td>
+		<td><input type="text" name="email2" value="<%=((e1 == null) ? "" : e1)%>"></input></td>
 	</tr>
 </table>
 
@@ -126,58 +121,33 @@
 		<td>Conservative</td>
 		<td><input class="cb_" party="WF" type="checkbox"></input></td>
 		<td>Working Families</td>
-		
-
 	</tr>
 </table>
-<br />
+<br/>
 <div style="position:relative;right:-7px;">
 <table cellpadding=3>
-	<%%>
-	<tr>
-
-		<%
+	<tr><% if (list != null) {
 		    int i = 0;
-					boolean tog = false;
-					for (Senator s : list) {
-						if (i % 4 == 0 && i != 0) {
-		%>
-	</tr>
-	<tr>
-		<%
+			for (Senator s : list) {
+			    if (i % 4 == 0 && i != 0) {
+		            %></tr><tr><%
+	            }
+		        %><td><%
+		        boolean tog = false;
+			    if(subs != null && (subs.contains("all") || subs.contains(s.getOpenLegName()))) {
+			        tog = true;
+			    }
+				%>  <div class="senator"><input class="sen_" type="checkbox" name="<%=s.getOpenLegName()%>"
+				        <%=((tog == true) ? "checked=\"yes\"" : "")%>></input>
+				    </div>
+		        </td>
+		        <td>
+		            <a target="_blank" href="<%=s.getUrl()%>"><%=s.getName()%></a>
+		            <div class="party" style="font-size: 75%;" pl="(<%=s.getParty().toUpperCase()%>)"></div>
+		        </td><%
+			    i++;
 			}
-		%>
-
-		<td>
-		<%
-			if (subs != null) {
-					if (subs.contains("all"))
-						tog = true;
-					else {
-						if(subs.contains(s.getOpenLegName())) {
-							tog = true;
-						}
-						else {
-							tog = false;
-						}
-					}
-				}
-		%>
-		<div class="senator"><input class="sen_" type="checkbox"
-			name="<%=s.getOpenLegName()%>"
-			<%=((tog == true) ? "checked=\"yes\"" : "")%>></input></div>
-		<%
-			tog = false;
-		%>
-		</td>
-
-		<td><a target="_blank" href="<%=s.getUrl()%>"><%=s.getName()%></a>
-		<div class="party" style="font-size: 75%;" pl="(<%=s.getParty().toUpperCase()%>)"></div>
-		</td>
-
-		<%
-			i++;
-			}
+	    }
 		%>
 	</tr>
 
@@ -197,9 +167,11 @@
 	</tr>
 </table>
 
-<div style="position:right;right:250px;"><input type="button" name="clear" value="Clear Selection"
-			onClick="clearAll()"></input>
-		<input type="submit" id="process" name="submit" value="Sign up"></input></td><div>
+	<div style="position:right;right:250px;">
+	    <input type="button" name="clear" value="Clear Selection" onClick="clearAll()"></input>
+		<input type="submit" id="process" name="submit" value="Sign up"></input>
+	</td>
+	<div>
 </div>
 </div>
 </form>

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="gov.nysenate.billbuzz.src.Resource"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -34,6 +33,5 @@
 				Please give us your feedback at  
 				<a href="http://www.nysenate.gov/contact">http://www.nysenate.gov/contact</a>.
 			</div>
-
 			
 			
