@@ -1,0 +1,132 @@
+html,body,div,ul,li {
+    margin: 0px;
+    padding: 0px;
+}
+
+html,body {
+    width: 100%;
+}
+
+body {
+    color: #012849;
+    font-family: helvetica, arial;
+    font-size: 89.5%;
+    background:url(http://www.nysenate.gov/sites/all/themes/nys/images/nyss_bg.png) top left repeat-x;
+}
+
+#page {
+    width: 877px;
+    margin: 0 auto;
+    background: #E2DED5;
+}
+
+#header {
+    background:
+        url(http://www.nysenate.gov/sites/all/themes/nys/images/header.png)
+        top left no-repeat;
+    padding: 16px 0px 0px 0px;
+    height: 77px;
+}
+
+#logo {
+    width: 250px;
+    height: 55px;
+    margin-top: 16px 0px 0px 5px;
+    border: 0px;
+}
+
+#error {
+    text-align: center;
+    color: red;
+}
+
+#main {
+    margin-top: 5px;
+    margin: 20px;
+    padding: 20px;
+    padding-top: 5px;
+    background: #ffffff
+        url(http://www.nysenate.gov/sites/all/themes/nys/images/nyss_block_footer_bg.png)
+        repeat-x bottom left;
+}
+
+h2 {
+    font-family: arial, serif;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.bad {
+	color:black;
+	border:1px solid #FF3300;
+	margin:1em auto;
+	border-collapse:collapse;
+	background-color: #FECCBF;
+}
+
+.foot {
+	border-collapse:collapse;
+	font-size:85%;
+	align:center;
+}
+
+.good {
+	border-collapse:collapse;
+	border:1px solid #009999;
+	background-color: #BFFFFE;
+}
+
+.bb_main {
+	border-collapse:collapse;
+	border:1px solid #B2A100;
+	background-color: #FEF9BF;
+	width:785px;
+	position:75px;
+	left:15%;
+	padding:5px;
+}
+
+A:visited {
+	color: blue;
+}
+
+.notice
+{
+	background-color:#ffffcc;
+	color:#555;
+	padding:3px;
+	font-size:80%;
+	border:1px solid #aaaaaa;
+	text-align:center;
+	
+}
+
+.nav-bar {
+	margin-top:15px;
+    font-size: 18px;
+    font-family: arial, serif;
+    text-transform: uppercase;
+    text-align: left;	
+}
+
+.nav-bar a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.nav-bar a:hover {
+	text-decoration: underline;
+}
+
+.nav-button-off {
+    font-style: italic;	
+}
+
+.nav-button-on {
+	font-weight:bolder;
+}
+
+.sub-header {
+    background: url("http://www.nysenate.gov/sites/all/themes/nys/images/nyss_menu_bg.png") repeat-x scroll left top rgba(0, 0, 0, 0);
+    height:30px;
+}
