@@ -4,10 +4,10 @@ import java.util.Date;
 
 public class BillBuzzConfirmation
 {
-    private Integer id;
+    private Long id;
     private String action;
     private String code;
-    private int userId;
+    private Long userId;
     private BillBuzzUser user;
     private Date createdAt;
     private Date expiresAt;
@@ -18,7 +18,7 @@ public class BillBuzzConfirmation
 
     }
 
-    public BillBuzzConfirmation(int userId, String action, String code, Date createdAt, Date expiresAt)
+    public BillBuzzConfirmation(Long userId, String action, String code, Date createdAt, Date expiresAt)
     {
         this.setUserId(userId);
         this.setAction(action);
@@ -47,12 +47,12 @@ public class BillBuzzConfirmation
         this.code = code;
     }
 
-    public int getUserId()
+    public Long getUserId()
     {
         return userId;
     }
 
-    public void setUserId(int userId)
+    public void setUserId(Long userId)
     {
         this.userId = userId;
     }
@@ -107,12 +107,12 @@ public class BillBuzzConfirmation
         this.action = action;
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return id;
     }
 
-    public void setId(Integer id)
+    public void setId(Long id)
     {
         this.id = id;
     }

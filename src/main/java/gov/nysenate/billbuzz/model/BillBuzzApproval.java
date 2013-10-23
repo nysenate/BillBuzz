@@ -5,7 +5,7 @@ import gov.nysenate.billbuzz.disqus.DisqusPost;
 public class BillBuzzApproval
 {
     private BillBuzzUpdate update;
-    private Integer updateId;
+    private Long updateId;
     private DisqusPost post;
     private String postId;
     private BillBuzzThread thread;
@@ -18,7 +18,7 @@ public class BillBuzzApproval
 
     }
 
-    public BillBuzzApproval(Integer updateId, String postId, String authorId, String threadId)
+    public BillBuzzApproval(Long updateId, String postId, String authorId, String threadId)
     {
         this.setUpdateId(updateId);
         this.setPostId(postId);
@@ -35,11 +35,11 @@ public class BillBuzzApproval
         this.update = update;
     }
 
-    public Integer getUpdateId()
+    public Long getUpdateId()
     {
         return updateId;
     }
-    public void setUpdateId(Integer updateId)
+    public void setUpdateId(Long updateId)
     {
         this.updateId = updateId;
     }

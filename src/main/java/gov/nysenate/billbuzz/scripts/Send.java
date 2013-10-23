@@ -95,7 +95,7 @@ public class Send extends BaseScript
         logger.info("Done.");
     }
 
-    private List<BillBuzzApproval> getApprovals(Integer updateId, QueryRunner runner) throws SQLException
+    private List<BillBuzzApproval> getApprovals(Long updateId, QueryRunner runner) throws SQLException
     {
         return runner.query(
             "SELECT billbuzz_approval.authorId, " +

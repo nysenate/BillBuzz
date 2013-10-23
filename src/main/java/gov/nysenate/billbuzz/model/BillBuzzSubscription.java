@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class BillBuzzSubscription
 {
-    private Integer id;
-    private Integer userId;
+    private Long id;
+    private Long userId;
     private String category;
     private String value;
     private Date createdAt;
@@ -15,7 +15,7 @@ public class BillBuzzSubscription
 
     }
 
-    public BillBuzzSubscription(Integer userId, String key, String value, Date createdAt)
+    public BillBuzzSubscription(Long userId, String key, String value, Date createdAt)
     {
         this.setUserId(userId);
         this.setCategory(key);
@@ -47,21 +47,21 @@ public class BillBuzzSubscription
     {
         this.category = category;
     }
-    public Integer getUserId()
+    public Long getUserId()
     {
         return userId;
     }
-    public void setUserId(Integer userId)
+    public void setUserId(Long userId)
     {
         this.userId = userId;
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return id;
     }
 
-    public void setId(Integer id)
+    public void setId(Long id)
     {
         this.id = id;
     }

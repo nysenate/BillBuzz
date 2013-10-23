@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class BillBuzzUpdate
 {
-    private Integer id = null;
+    private Long id = null;
     private Date createdAt = null;
     private Date sentAt = null;
 
@@ -13,11 +13,11 @@ public class BillBuzzUpdate
         this.setCreatedAt(createdAt);
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return id;
     }
-    public void setId(Integer id)
+    public void setId(Long id)
     {
         this.id = id;
     }

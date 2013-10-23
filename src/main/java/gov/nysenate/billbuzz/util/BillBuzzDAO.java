@@ -11,7 +11,6 @@ import gov.nysenate.billbuzz.model.BillBuzzThread;
 import gov.nysenate.billbuzz.model.BillBuzzUpdate;
 import gov.nysenate.billbuzz.model.BillBuzzUser;
 
-import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,11 +47,11 @@ public class BillBuzzDAO
         int count = runner.update("REPLACE INTO billbuzz_confirmation (id, code, action, userId, createdAt, expiresAt, usedAt) VALUES (?, ?, ?, ?, ?, ?, ?)", confirmation.getId(), confirmation.getCode(), confirmation.getAction(), confirmation.getUserId(), confirmation.getCreatedAt(), confirmation.getExpiresAt(), confirmation.getUsedAt());
         System.out.println(count+" rows updated");
         if (confirmation.getId() == null) {
-            confirmation.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<BigInteger>()).intValue());
+            confirmation.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
         }
     }
 
-    public BillBuzzConfirmation getOrCreateConfirmation(String action, Integer userId, boolean unused, Date createdAt) throws SQLException
+    public BillBuzzConfirmation getOrCreateConfirmation(String action, Long userId, boolean unused, Date createdAt) throws SQLException
     {
         String query = "SELECT * FROM billbuzz_confirmation WHERE userId=? AND action=?";
         if (unused) {
@@ -127,7 +126,7 @@ public class BillBuzzDAO
         }, action, code);
     }
 
-    public List<BillBuzzSubscription> loadSubscriptions(int userId) throws SQLException
+    public List<BillBuzzSubscription> loadSubscriptions(Long userId) throws SQLException
     {
         return runner.query("SELECT * FROM billbuzz_subscription WHERE userId = ?", new BeanListHandler<BillBuzzSubscription>(BillBuzzSubscription.class), userId);
     }
@@ -163,7 +162,7 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_update (id, createdAt, sentAt) VALUES (?, ?, ?)", update.getId(), update.getCreatedAt(), update.getSentAt());
         if ( update.getId() == null ) {
-            update.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<BigInteger>()).intValue());
+            update.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
         }
     }
 
@@ -185,7 +184,7 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_user (id, email, firstName, lastName, activated, createdAt, confirmedAt) VALUES (?, ?, ?, ?, ?, ?, ?)", user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isActivated(), user.getCreatedAt(), user.getConfirmedAt());
         if (user.getId() == null) {
-            user.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<BigInteger>()).intValue());
+            user.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
         }
     }
 
@@ -199,11 +198,11 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_subscription (id, userId, category, value, createdAt) VALUES (?, ?, ?, ?, ?)", subscription.getId(), subscription.getUserId(), subscription.getCategory(), subscription.getValue(), subscription.getCreatedAt());
         if (subscription.getId() == null) {
-            subscription.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<BigInteger>()).intValue());
+            subscription.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
         }
     }
 
-    public void replaceSubscriptions(List<BillBuzzSubscription> subscriptions, int userId) throws SQLException
+    public void replaceSubscriptions(List<BillBuzzSubscription> subscriptions, Long userId) throws SQLException
     {
         runner.update("DELETE FROM billbuzz_subscription WHERE userId = ?", userId);
         for (BillBuzzSubscription subscription : subscriptions) {
@@ -221,7 +220,7 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_senator (id, name, shortName, session) VALUES (?, ?, ?, ?)", senator.getId(), senator.getName(), senator.getShortName(), senator.getSession());
         if (senator.getId() == null) {
-            senator.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<BigInteger>()).intValue());
+            senator.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()).intValue());
         }
 
         for (BillBuzzParty party : senator.getParties()) {

@@ -117,20 +117,20 @@ public class FormProcessor
        String[] parties = request.getParameterValues("parties");
        List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
        if (all != null) {
-           BillBuzzSubscription subscription = new BillBuzzSubscription(0, "sponsor", "all", new Date());
+           BillBuzzSubscription subscription = new BillBuzzSubscription(0L, "sponsor", "all", new Date());
            subscriptions.add(subscription);
        }
        else {
            if (senators != null) {
                for (String sponsor : senators) {
-                   BillBuzzSubscription subscription = new BillBuzzSubscription(0, "sponsor", sponsor, new Date());
+                   BillBuzzSubscription subscription = new BillBuzzSubscription(0L, "sponsor", sponsor, new Date());
                    subscriptions.add(subscription);
                }
            }
 
            if (parties != null) {
                for (String party : parties) {
-                   BillBuzzSubscription subscription = new BillBuzzSubscription(0, "party", party, new Date());
+                   BillBuzzSubscription subscription = new BillBuzzSubscription(0L, "party", party, new Date());
                    subscriptions.add(subscription);
                }
            }
