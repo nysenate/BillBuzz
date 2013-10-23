@@ -1,1 +1,3 @@
+Click the link below to update your BillBuzz subscriptions.
+
 http://localhost:8080/BillBuzz/update/form?key=${confirmation.code}

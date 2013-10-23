@@ -1,1 +1,3 @@
+Thanks for signing up. Click the link below to confirm your subscription.
+
 http://localhost:8080/BillBuzz/signup/confirm?key=${confirmation.code}

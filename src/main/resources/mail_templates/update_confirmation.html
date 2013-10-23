@@ -1,0 +1,15 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+    <title>BillBuzz Update Link</title>
+</head>
+<body>
+#if( ${user.activated} )
+You already have an active BillBuzz account. Click the link below to update your subscription preferences.
+#else
+Your Billbuzz subscription is currently deactivated. Click the link below to reactivate it with new subscriptions.
+#end 
+<br/>
+http://localhost:8080/BillBuzz/update/form?key=${confirmation.code}
+</body>
+</html>
