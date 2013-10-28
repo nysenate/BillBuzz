@@ -94,6 +94,7 @@ public class SignupForm extends HttpServlet
 
                 VelocityContext context = new VelocityContext();
                 context.put("user", user);
+                context.put("request", request);
                 context.put("confirmation", confirmation);
                 Mailer.send("signup_confirmation", user, context);
 
@@ -107,6 +108,7 @@ public class SignupForm extends HttpServlet
                 // Send update email
                 VelocityContext context = new VelocityContext();
                 context.put("user", user);
+                context.put("request", request);
                 context.put("confirmation", confirmation);
                 Mailer.send("update_confirmation", user, context);
 

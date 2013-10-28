@@ -48,6 +48,7 @@ public class UpdateRequest extends HttpServlet
 
                 VelocityContext context = new VelocityContext();
                 context.put("user", user);
+                context.put("request", request);
                 context.put("confirmation", confirmation);
                 Mailer.send("update_request", user, context);
             }

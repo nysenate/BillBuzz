@@ -6,6 +6,6 @@
 <body>
 Thanks for signing up. Click the link below to confirm your subscription.
 <br/>
-http://localhost:8080/BillBuzz/signup/confirm?key=${confirmation.code}
+http://${request.serverName}:${request.serverPort}/${request.contextPath}/signup/confirm?key=${confirmation.code}
 </body>
 </html>
