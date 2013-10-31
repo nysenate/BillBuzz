@@ -10,6 +10,13 @@ public class DisqusMedia
     private String thumbnailURL;
     private String type;
     private DisqusMediaMetadata metadata;
+    private String description;
+    private String title;
+    private String url;
+    private String mediaType;
+    private String html;
+    private String resolvedUrl;
+    private String thumbnailUrl;
 
     public String getForum()
     {
@@ -79,5 +86,75 @@ public class DisqusMedia
     public void setMetadata(DisqusMediaMetadata metadata)
     {
         this.metadata = metadata;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
+
+    public String getUrl()
+    {
+        return url;
+    }
+
+    public void setUrl(String url)
+    {
+        this.url = url;
+    }
+
+    public String getMediaType()
+    {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType)
+    {
+        this.mediaType = mediaType;
+    }
+
+    public String getHtml()
+    {
+        return html;
+    }
+
+    public void setHtml(String html)
+    {
+        this.html = html;
+    }
+
+    public String getResolvedUrl()
+    {
+        return resolvedUrl;
+    }
+
+    public void setResolvedUrl(String resolvedUrl)
+    {
+        this.resolvedUrl = resolvedUrl;
+    }
+
+    public String getThumbnailUrl()
+    {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl)
+    {
+        this.thumbnailUrl = thumbnailUrl;
     }
 }
