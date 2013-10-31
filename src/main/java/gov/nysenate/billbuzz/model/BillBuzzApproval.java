@@ -2,7 +2,7 @@ package gov.nysenate.billbuzz.model;
 
 import gov.nysenate.billbuzz.disqus.DisqusPost;
 
-public class BillBuzzApproval implements Comparable
+public class BillBuzzApproval implements Comparable<BillBuzzApproval>
 {
     private BillBuzzUpdate update;
     private Long updateId;
@@ -99,8 +99,8 @@ public class BillBuzzApproval implements Comparable
     }
 
     @Override
-    public int compareTo(Object other)
+    public int compareTo(BillBuzzApproval other)
     {
-        return this.thread.getBillId().compareTo(((BillBuzzApproval)other).getThread().getBillId());
+        return this.thread.getBillId().compareTo(other.getThread().getBillId());
     }
 }

@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.codehaus.jackson.map.ObjectMapper;
 
-
+@SuppressWarnings("unchecked")
 public class Disqus
 {
     public static class ForumListResponse extends DisqusListResponse<DisqusForum> {}
@@ -138,7 +138,7 @@ public class Disqus
     public DisqusListResponse<? extends DisqusPrimaryObject> getNext(DisqusListResponse<? extends DisqusPrimaryObject> response) throws IOException
     {
         Class<? extends DisqusListResponse<?>> responseClass = (Class<? extends DisqusListResponse<?>>) response.getClass();
-        List<String> args = new ArrayList(Arrays.asList(response.getArgs()));
+        List<String> args = new ArrayList<String>(Arrays.asList(response.getArgs()));
         args.add("cursor="+response.getCursor().getNext());
         DisqusListResponse<? extends DisqusPrimaryObject> newResponse = getListResponse(response.getMethod(), responseClass, args.toArray(new String[]{}));
         // Make sure to re-use the old args that don't contain cursor

@@ -3,7 +3,7 @@ package gov.nysenate.billbuzz.model;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class BillBuzzThread implements Comparable
+public class BillBuzzThread implements Comparable<BillBuzzThread>
 {
     private String id;
     private String billId;
@@ -261,8 +261,8 @@ public class BillBuzzThread implements Comparable
     }
 
     @Override
-    public int compareTo(Object o)
+    public int compareTo(BillBuzzThread other)
     {
-        return this.getId().compareTo(((BillBuzzThread)o).getId());
+        return this.getId().compareTo(other.getId());
     }
 }
