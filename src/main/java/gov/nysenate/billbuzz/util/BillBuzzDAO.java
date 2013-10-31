@@ -11,6 +11,7 @@ import gov.nysenate.billbuzz.model.BillBuzzThread;
 import gov.nysenate.billbuzz.model.BillBuzzUpdate;
 import gov.nysenate.billbuzz.model.BillBuzzUser;
 
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class BillBuzzDAO
         int count = runner.update("REPLACE INTO billbuzz_confirmation (id, code, action, userId, createdAt, expiresAt, usedAt) VALUES (?, ?, ?, ?, ?, ?, ?)", confirmation.getId(), confirmation.getCode(), confirmation.getAction(), confirmation.getUserId(), confirmation.getCreatedAt(), confirmation.getExpiresAt(), confirmation.getUsedAt());
         System.out.println(count+" rows updated");
         if (confirmation.getId() == null) {
-            confirmation.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
+            confirmation.setId(this.lastInsertId(runner));
         }
     }
 
@@ -162,7 +163,7 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_update (id, createdAt, sentAt) VALUES (?, ?, ?)", update.getId(), update.getCreatedAt(), update.getSentAt());
         if ( update.getId() == null ) {
-            update.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
+            update.setId(this.lastInsertId(runner));
         }
     }
 
@@ -184,7 +185,7 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_user (id, email, firstName, lastName, activated, createdAt, confirmedAt) VALUES (?, ?, ?, ?, ?, ?, ?)", user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isActivated(), user.getCreatedAt(), user.getConfirmedAt());
         if (user.getId() == null) {
-            user.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
+            user.setId(this.lastInsertId(runner));
         }
     }
 
@@ -198,7 +199,7 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_subscription (id, userId, category, value, createdAt) VALUES (?, ?, ?, ?, ?)", subscription.getId(), subscription.getUserId(), subscription.getCategory(), subscription.getValue(), subscription.getCreatedAt());
         if (subscription.getId() == null) {
-            subscription.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()));
+            subscription.setId(this.lastInsertId(runner));
         }
     }
 
@@ -220,7 +221,7 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_senator (id, name, shortName, session) VALUES (?, ?, ?, ?)", senator.getId(), senator.getName(), senator.getShortName(), senator.getSession());
         if (senator.getId() == null) {
-            senator.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<Long>()).intValue());
+            senator.setId(this.lastInsertId(runner));
         }
 
         for (BillBuzzParty party : senator.getParties()) {
@@ -244,5 +245,10 @@ public class BillBuzzDAO
     {
         runner.update("REPLACE INTO billbuzz_post (id, forumId, threadId, authorId, parentId, juliaFlagged, isFlagged, isDeleted, isHighlighted, isEdited, isApproved, isSpam, rawMessage, message, points, likes, dislikes, userScore, numReports, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 post.getId(), post.getForumId(), post.getThreadId(), post.getAuthorId(), post.getParentId(), post.isJuliaFlagged(), post.getIsFlagged(), post.getIsDeleted(), post.getIsHighlighted(), post.getIsEdited(), post.getIsApproved(), post.getIsSpam(), post.getRawMessage(), post.getMessage(), post.getPoints(), post.getLikes(), post.getDislikes(), post.getUserScore(), post.getNumReports(), post.getCreatedAt(), post.getUpdatedAt());
+    }
+
+    public long lastInsertId(QueryRunner runner) throws SQLException
+    {
+        return runner.query("SELECT last_insert_id()", new ScalarHandler<BigInteger>()).longValue();
     }
 }

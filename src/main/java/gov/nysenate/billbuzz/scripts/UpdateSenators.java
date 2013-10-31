@@ -6,7 +6,6 @@ import gov.nysenate.billbuzz.util.Application;
 import gov.nysenate.billbuzz.util.BillBuzzDAO;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +14,6 @@ import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.log4j.Logger;
@@ -60,7 +58,7 @@ public class UpdateSenators extends BaseScript
             if (senator == null) {
                 senator = new BillBuzzSenator(name, shortName, session, parties);
                 runner.update("INSERT INTO billbuzz_senator (name, shortName, session) VALUES (?, ?, ?)", senator.getName(), senator.getShortName(), senator.getSession());
-                senator.setId(runner.query("SELECT last_insert_id()" , new ScalarHandler<BigInteger>()).intValue());
+                senator.setId(dao.lastInsertId(runner));
             }
 
             runner.update("DELETE FROM billbuzz_affiliation WHERE senatorId=?", senator.getId());
