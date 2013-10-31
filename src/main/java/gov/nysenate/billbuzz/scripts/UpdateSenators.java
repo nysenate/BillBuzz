@@ -53,6 +53,7 @@ public class UpdateSenators extends BaseScript
 
             String name = senatorNode.get("name").asText();
             String shortName = senatorNode.get("shortName").asText();
+            logger.info("Updating "+name+": "+shortName+"-"+session);
             QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
             BillBuzzSenator senator = runner.query("SELECT * FROM billbuzz_senator WHERE shortName=? and session=?", new BeanHandler<BillBuzzSenator>(BillBuzzSenator.class), shortName, session);
             if (senator == null) {
