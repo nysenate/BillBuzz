@@ -1,11 +1,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
-    <title>BillBuzz Unsubscribe Confirmation</title>
+    <title>Finalize your BillBuzz Cancellation</title>
 </head>
 <body>
-Please click the link below to confirm your unsubscription:
+Please click the link below to remove yourself from BillBuzz:
 <br/>
-http://${request.serverName}:${request.serverPort}/${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}
+<a href="http://${request.serverName}:${request.serverPort}/${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}">http://${request.serverName}:${request.serverPort}/${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}</a>
+<br/>
+If you have any questions please contact us at <a href="mailto:billbuzz@nysenate.gov">billbuzz@nysenate.gov</a> or reply to this email.
 </body>
 </html>
