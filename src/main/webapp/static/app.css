@@ -130,3 +130,18 @@ A:visited {
     background: url("http://www.nysenate.gov/sites/all/themes/nys/images/nyss_menu_bg.png") repeat-x scroll left top rgba(0, 0, 0, 0);
     height:30px;
 }
+
+.success {
+	background-color: #CCFFCC;
+	border-color: #225522;
+}
+
+.error {
+	background-color: #FFCCCC;
+	border-color: #552222;
+}
+
+.instruction {
+    background-color: #CCCCFF;
+    border-color: #555555;
+}

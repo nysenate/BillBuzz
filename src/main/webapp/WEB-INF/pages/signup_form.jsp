@@ -16,36 +16,34 @@ if (!subscriptions.containsKey("sponsor")) {
 if (!subscriptions.containsKey("party")) {
     subscriptions.put("party", new TreeSet<String>());
 }
-    
+
 BillBuzzUser user = (BillBuzzUser)request.getAttribute("user");
-
-
 %>
-<div class="bb_main">
-
 <% if (message.equals("instruction")) { %>
-<div>
+<div class="bb_main instruction">
 To sign up simply fill out the form below and select parties or individuals that you would like to receive updates for!
 </div>
 <% } else if (message.equals("missing_userinfo")) { 
     if (lastName == null || firstName == null || email == null) { %>
-		<div>
-		Email, first name, and last name are required when registering an account with BillBuzz.
-		</div><%
+        <div class="bb_main error">
+        Email, first name, and last name are required when registering an account with BillBuzz.
+        </div><%
     } else { %>
-        <div>
+        <div class="bb_main error">
         You must confirm your email address to continue with registration.
         </div><%
     }
 } else if (message.equals("missing_subscription")) { %>
-<div>
+<div class="bb_main error">
 At least one subscription is required to activate a BillBuzz account.
 </div>
 <% } else if (message.equals("success")) { %>
-<div>
+<div class="bb_main success">
 We've sent you a email with a link to confirm your subscription to the parties and senators checked below.
-</div> 
+</div>
 <% } %>
+<br/>
+<div class="bb_main">
 <form id="subscriptionForm" method="POST" action="<%=request.getContextPath()%>/signup/form">
 <br>
 	<table>

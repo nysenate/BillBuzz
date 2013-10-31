@@ -22,31 +22,31 @@ if (user != null) {
     }
 }
 %>
-<div class="bb_main">
-
 <% if (message.equals("instruction")) { %>
-<div>
+<div class="bb_main instruction">
 To sign up simply fill out the form below and select parties or individuals that you would like to receive updates for!
 </div>
 <% } else if (message.equals("missing_userinfo")) { 
     if (lastName == null || firstName == null || email == null) { %>
-        <div>
+        <div class="bb_main error">
         Email, first name, and last name are required when registering an account with BillBuzz.
         </div><%
     } else { %>
-        <div>
+        <div class="bb_main error">
         You must confirm your email address to continue with registration.
         </div><%
     }
 } else if (message.equals("missing_subscription")) { %>
-<div>
+<div class="bb_main error">
 At least one subscription is required to activate a BillBuzz account.
 </div>
 <% } else if (message.equals("success")) { %>
-<div>
+<div class="bb_main success">
 That's it, your subscription has been updated to reflect the preferences checked displayed below.
 </div> 
 <% } %>
+<br/>
+<div class="bb_main">
 <form id="subscriptionForm" method="POST" action="<%=request.getContextPath()%>/update/form">
 <input type="hidden" name="key" value="<%=(confirmation == null ? "" : confirmation.getCode())%>" />
 <br>
