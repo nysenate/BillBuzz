@@ -2,7 +2,7 @@ package gov.nysenate.billbuzz.model;
 
 import java.util.List;
 
-public class BillBuzzSenator
+public class BillBuzzSenator implements Comparable
 {
     private Long id;
     private String name;
@@ -70,6 +70,15 @@ public class BillBuzzSenator
     public void setId(Long id)
     {
         this.id = id;
+    }
+
+    @Override
+    public int compareTo(Object o)
+    {
+        BillBuzzSenator other = (BillBuzzSenator)o;
+        int cmpName = this.getShortName().compareTo(other.getShortName());
+        int cmpSession = this.getSession().compareTo(other.getSession());
+        return cmpName == 0 ? cmpSession : cmpName;
     }
 
 

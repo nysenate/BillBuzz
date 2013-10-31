@@ -3,7 +3,7 @@ package gov.nysenate.billbuzz.model;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class BillBuzzThread
+public class BillBuzzThread implements Comparable
 {
     private String id;
     private String billId;
@@ -258,5 +258,11 @@ public class BillBuzzThread
     public void setUpdatedAt(Date updatedAt)
     {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public int compareTo(Object o)
+    {
+        return this.getId().compareTo(((BillBuzzThread)o).getId());
     }
 }

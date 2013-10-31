@@ -1,5 +1,6 @@
 package gov.nysenate.billbuzz.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class BillBuzzUser
     private boolean activated;
     private Date createdAt;
     private Date confirmedAt;
-    private List<BillBuzzSubscription> subscriptions;
+    private List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
 
     public BillBuzzUser()
     {
@@ -106,5 +107,15 @@ public class BillBuzzUser
     public void setSubscriptions(List<BillBuzzSubscription> subscriptions)
     {
         this.subscriptions = subscriptions;
+    }
+
+    public boolean equals(Object other)
+    {
+        if (other instanceof BillBuzzUser) {
+            return id == ((BillBuzzUser)other).getId();
+        }
+        else {
+            return false;
+        }
     }
 }
