@@ -96,7 +96,7 @@ public class SignupForm extends HttpServlet
                 context.put("user", user);
                 context.put("request", request);
                 context.put("confirmation", confirmation);
-                Mailer.send("signup_confirmation", user, context);
+                Mailer.send("signup_confirmation", "BillBuzz Signup Confirmation", user, context);
 
                 message = "success";
             }
@@ -110,7 +110,7 @@ public class SignupForm extends HttpServlet
                 context.put("user", user);
                 context.put("request", request);
                 context.put("confirmation", confirmation);
-                Mailer.send("update_confirmation", user, context);
+                Mailer.send("update_confirmation", "BillBuzz Update Request", user, context);
 
                 message = "update_required";
             }

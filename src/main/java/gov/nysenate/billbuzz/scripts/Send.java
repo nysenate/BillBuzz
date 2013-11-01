@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class Send extends BaseScript
             context.put("user", user);
             context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
             context.put("userApprovals", userApprovals);
-            Mailer.send("billbuzz_digest", user, context);
+            Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(new Date()), user, context);
         }
     }
 

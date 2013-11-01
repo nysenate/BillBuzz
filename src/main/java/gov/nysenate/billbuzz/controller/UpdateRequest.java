@@ -50,7 +50,7 @@ public class UpdateRequest extends HttpServlet
                 context.put("user", user);
                 context.put("request", request);
                 context.put("confirmation", confirmation);
-                Mailer.send("update_request", user, context);
+                Mailer.send("update_request", "BillBuzz Subscription Update Request", user, context);
             }
 
             request.setAttribute("user", user);

@@ -17,7 +17,7 @@ import org.apache.velocity.app.Velocity;
 
 public class Mailer
 {
-    public static void send(String templateName, BillBuzzUser user, VelocityContext context) throws EmailException, MessagingException
+    public static void send(String templateName, String subject, BillBuzzUser user, VelocityContext context) throws EmailException, MessagingException
     {
         // Generate text message
         StringWriter textWriter = new StringWriter();
@@ -48,7 +48,7 @@ public class Mailer
         email.setHostName(config.getValue("mailer.hostname"));
         email.setSmtpPort(Integer.parseInt(config.getValue("mailer.port")));
         email.setAuthenticator(new DefaultAuthenticator(config.getValue("mailer.username"), config.getValue("mailer.password")));
-        email.setSubject("Test BillBuzz email");
+        email.setSubject(subject);
         email.addTo(user.getEmail(), user.getFirstName()+" "+user.getLastName());
         email.setFrom(config.getValue("mailer.from.address"), config.getValue("mailer.from.name"));
         email.setCharset("UTF-8");
