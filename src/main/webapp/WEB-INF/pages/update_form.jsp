@@ -71,7 +71,7 @@ That's it, your subscription has been updated to reflect the preferences checked
     <br/>
     <table>
         <tr>
-            <td><input type="checkbox" name="parties" value="ALL" <%=subscriptions.get("party").contains("ALL") ? "checked=\"yes\"" : ""%>></input></td>
+            <td><input type="checkbox" name="all" value="all" <%=subscriptions.get("all").contains("all") ? "checked=\"yes\"" : ""%>></input></td>
             <td>All</td>
             <td><input type="checkbox" name="parties" value="D" <%=subscriptions.get("party").contains("D") ? "checked=\"yes\"" : ""%>></input></td>
             <td>Democratic</td>
@@ -116,9 +116,9 @@ That's it, your subscription has been updated to reflect the preferences checked
             <tr>
                 <td colspan=8>
                     <p>Would you like to receive updates for bills without an individual sponsor?
-                    <select name="otherData">
-                        <option <%="".equals("yes")?"SELECTED":"" %>>Yes</option>
-                        <option <%="".equals("no")?"SELECTED":"" %>>No</option>
+                    <select name="other">
+                        <option <%=subscriptions.get("other").contains("other")?"SELECTED":"" %>>Yes</option>
+                        <option <%=!subscriptions.get("other").contains("other")?"SELECTED":"" %>>No</option>
                     </select>
                     <br/><i>This primarily refers to the budget bill and bills introduced collectively by the rules committee.</i>
                     </p>

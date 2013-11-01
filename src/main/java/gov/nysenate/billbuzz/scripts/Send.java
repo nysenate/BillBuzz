@@ -52,9 +52,11 @@ public class Send extends BaseScript
         List<BillBuzzSenator> senators = dao.getSenators(dao.getSession());
 
         // Senators need to be organized by party and name
+        Set<String> senatorShortNames = new TreeSet<String>();
         HashMap<String, BillBuzzSenator> senatorsByName = new HashMap<String, BillBuzzSenator>();
         HashMap<String, List<BillBuzzSenator>> senatorsByParty = new HashMap<String, List<BillBuzzSenator>>();
         for (BillBuzzSenator senator : senators) {
+            senatorShortNames.add(senator.getShortName());
             for (BillBuzzParty party : senator.getParties()) {
                 if (!senatorsByParty.containsKey(party.getId())) {
                     senatorsByParty.put(party.getId(), new ArrayList<BillBuzzSenator>());
@@ -68,6 +70,9 @@ public class Send extends BaseScript
         TreeMap<String, Set<BillBuzzApproval>> sponsorApprovals = new TreeMap<String, Set<BillBuzzApproval>>();
         for (BillBuzzApproval approval : approvals) {
             String sponsor = approval.getThread().getSponsor().toLowerCase();
+            if (!senatorShortNames.contains(sponsor)) {
+                sponsor = "billbuzz_other";
+            }
             if (!sponsorApprovals.containsKey(sponsor)) {
                 sponsorApprovals.put(sponsor, new TreeSet<BillBuzzApproval>());
             }
@@ -83,8 +88,18 @@ public class Send extends BaseScript
                 if (subscription.getCategory().equals("party")) {
                     userSubscriptions.addAll(senatorsByParty.get(subscription.getValue()));
                 }
-                else {
+                else if (subscription.getCategory().equals("all")) {
+                    userSubscriptions.addAll(senators);
+                }
+                else if (subscription.getCategory().equals("sponsor")) {
                     userSubscriptions.add(senatorsByName.get(subscription.getValue()));
+                }
+                else if (subscription.getCategory().equals("other")){
+                    // Handle other by creating a catch all senator
+                    userSubscriptions.add(new BillBuzzSenator("Other Sponsors", "billbuzz_other", 2013, new ArrayList<BillBuzzParty>()));
+                }
+                else {
+                    logger.error("bad subscription category: "+subscription.getCategory()+" ["+subscription.getValue()+"]");
                 }
             }
 
@@ -94,6 +109,7 @@ public class Send extends BaseScript
                 if (sponsorApprovals.containsKey(senator.getShortName())) {
                     Map<BillBuzzThread, Set<BillBuzzApproval>> senatorApprovals = new TreeMap<BillBuzzThread, Set<BillBuzzApproval>>();
                     for (BillBuzzApproval approval : sponsorApprovals.get(senator.getShortName())) {
+
                         // Shorten the thread title for the email
                         String title = approval.getThread().getTitle().replace("NY Senate Open Legislation - ", "");
                         if (title.length() > 100) {

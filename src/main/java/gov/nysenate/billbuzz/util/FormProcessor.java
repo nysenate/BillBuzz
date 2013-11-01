@@ -34,6 +34,8 @@ public class FormProcessor
         Map<String, TreeSet<String>> subscriptionMap = new HashMap<String, TreeSet<String>>();
         subscriptionMap.put("sponsor", new TreeSet<String>());
         subscriptionMap.put("party", new TreeSet<String>());
+        subscriptionMap.put("other", new TreeSet<String>());
+        subscriptionMap.put("all", new TreeSet<String>());
         for (BillBuzzSubscription subscription : subscriptions) {
             subscriptionMap.get(subscription.getCategory()).add(subscription.getValue());
         }
@@ -84,14 +86,24 @@ public class FormProcessor
        }
 
        String all = request.getParameter("all");
+       String other = request.getParameter("other");
        String[] senators = request.getParameterValues("senators");
        String[] parties = request.getParameterValues("parties");
        List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
-       if (all != null) {
-           BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "sponsor", "all", createdAt);
+
+       // Add subscription to other if they've requested it.
+       if (other != null && other.equals("yes")) {
+           BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "other", "other", createdAt);
+           subscriptions.add(subscription);
+       }
+
+       // Subscribe to all known sponsors if marked
+       if (all != null && other.equals("all")) {
+           BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "all", "all", createdAt);
            subscriptions.add(subscription);
        }
        else {
+           // Otherwise subscribe to all marked senators
            if (senators != null) {
                for (String sponsor : senators) {
                    BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "sponsor", sponsor, createdAt);
@@ -99,6 +111,7 @@ public class FormProcessor
                }
            }
 
+           // And all marked parties
            if (parties != null) {
                for (String party : parties) {
                    BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "party", party, createdAt);
