@@ -1,0 +1,21 @@
+Greetings, $user.firstName. Here's the latest buzz on your subscribed legislation:
+
+
+#foreach( $senator in $userApprovals.keySet() )
+#set($senatorApprovals = $userApprovals.get($senator))
+Legislation for $senator.name
+========================================
+#foreach( $thread in $senatorApprovals.keySet() )
+#set($threadApprovals = $senatorApprovals.get($thread))
+
+Comments on: $thread.title
+----------------------------------------
+#foreach( $approval in $threadApprovals )
+On $dateFormat.format($approval.post.createdAt): $approval.author.username said:
+
+$approval.post.message
+
+#end    
+#end
+#end
+Please visit the http://billbuzz.nysenate.gov/ to modify or delete your subscription.

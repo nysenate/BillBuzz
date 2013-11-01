@@ -3,16 +3,21 @@ package gov.nysenate.billbuzz.scripts;
 import gov.nysenate.billbuzz.disqus.DisqusPost;
 import gov.nysenate.billbuzz.model.BillBuzzApproval;
 import gov.nysenate.billbuzz.model.BillBuzzAuthor;
+import gov.nysenate.billbuzz.model.BillBuzzParty;
+import gov.nysenate.billbuzz.model.BillBuzzSenator;
+import gov.nysenate.billbuzz.model.BillBuzzSubscription;
 import gov.nysenate.billbuzz.model.BillBuzzThread;
-import gov.nysenate.billbuzz.model.BillBuzzUpdate;
+import gov.nysenate.billbuzz.model.BillBuzzUser;
 import gov.nysenate.billbuzz.util.Application;
+import gov.nysenate.billbuzz.util.BillBuzzDAO;
+import gov.nysenate.billbuzz.util.Mailer;
 import gov.nysenate.billbuzz.util.PrefixedBeanProcessor;
 
-import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,12 +28,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.mail.HtmlEmail;
 import org.apache.log4j.Logger;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 
 public class Send extends BaseScript
 {
@@ -43,59 +44,128 @@ public class Send extends BaseScript
 
     public void execute(CommandLine opts) throws Exception
     {
-        List<BillBuzzApproval> approvals = new ArrayList<BillBuzzApproval>();
+        BillBuzzDAO dao = new BillBuzzDAO();
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
-        for (BillBuzzUpdate update : runner.query("SELECT * FROM billbuzz_update WHERE sentAt IS NULL", new BeanListHandler<BillBuzzUpdate>(BillBuzzUpdate.class))) {
-            logger.info("Processing update #"+update.getId()+" created at: "+update.getCreatedAt());
-            approvals.addAll(getApprovals(update.getId(), runner));
+
+        List<BillBuzzApproval> approvals = getApprovals(runner);
+        List<BillBuzzSenator> senators = dao.getSenators(dao.getSession());
+
+        // Senators need to be organized by party and name
+        HashMap<String, BillBuzzSenator> senatorsByName = new HashMap<String, BillBuzzSenator>();
+        HashMap<String, List<BillBuzzSenator>> senatorsByParty = new HashMap<String, List<BillBuzzSenator>>();
+        for (BillBuzzSenator senator : senators) {
+            for (BillBuzzParty party : senator.getParties()) {
+                if (!senatorsByParty.containsKey(party.getId())) {
+                    senatorsByParty.put(party.getId(), new ArrayList<BillBuzzSenator>());
+                }
+                senatorsByParty.get(party.getId()).add(senator);
+            }
+            senatorsByName.put(senator.getShortName(), senator);
         }
 
-        Map<String, Map<String, Set<BillBuzzApproval>>> approvalsBySponsor = new TreeMap<String, Map<String, Set<BillBuzzApproval>>>();
+        // Organize approvals by sponsor
+        TreeMap<String, Set<BillBuzzApproval>> sponsorApprovals = new TreeMap<String, Set<BillBuzzApproval>>();
         for (BillBuzzApproval approval : approvals) {
-            String sponsor = approval.getThread().getSponsor();
-            String billId = approval.getThread().getBillId();
-            if (!approvalsBySponsor.containsKey(sponsor)) {
-                Map<String, Set<BillBuzzApproval>> approvalsByBill = new TreeMap<String, Set<BillBuzzApproval>>();
-                approvalsBySponsor.put(sponsor, approvalsByBill);
+            String sponsor = approval.getThread().getSponsor().toLowerCase();
+            if (!sponsorApprovals.containsKey(sponsor)) {
+                sponsorApprovals.put(sponsor, new TreeSet<BillBuzzApproval>());
             }
-            if (!approvalsBySponsor.get(sponsor).containsKey(billId)){
-                TreeSet<BillBuzzApproval> set = new TreeSet<BillBuzzApproval>(new Comparator<BillBuzzApproval>(){
-                    public int compare(BillBuzzApproval a, BillBuzzApproval b) {
-                        return a.getPost().getCreatedAt().compareTo(b.getPost().getCreatedAt());
-                    }
-                });
-
-                set.add(approval);
-                approvalsBySponsor.get(sponsor).put(billId, set);
-            }
-            approvalsBySponsor.get(sponsor).get(billId).add(approval);
+            sponsorApprovals.get(sponsor).add(approval);
         }
 
-        Velocity.init();
-        VelocityContext context = new VelocityContext();
-        context.put("approvalsBySponsor", approvalsBySponsor);
-        Template template = Velocity.getTemplate("src/main/resources/templates/billbuzz/update.html", "UTF-8");
 
-        StringWriter out = new StringWriter();
-        template.merge(context, out);
-        System.out.println(out);
+        for (BillBuzzUser user : getUsers(runner)) {
 
-        // Send the email message
-        HtmlEmail email = new HtmlEmail();
-        email.setHostName("smtp.sendgrid.net");
-        email.setSmtpPort(587);
-        email.setAuthentication("intern.mail@nysenate.gov", "springIntern2012");
-        email.addTo("kim@nysenate.gov", "Graylin Kim");
-        email.setFrom("billbuzz@nysenate.gov", "BillBuzz");
-        email.setSubject("Test HTML email");
-        email.setHtmlMsg(out.toString());
-        email.setTextMsg("Your email client does not support HTML messages");
-        email.send();
+            // For every user, get a list of subscribed sponsors.
+            Set<BillBuzzSenator> userSubscriptions = new TreeSet<BillBuzzSenator>();
+            for (BillBuzzSubscription subscription : user.getSubscriptions()) {
+                if (subscription.getCategory().equals("party")) {
+                    userSubscriptions.addAll(senatorsByParty.get(subscription.getValue()));
+                }
+                else {
+                    userSubscriptions.add(senatorsByName.get(subscription.getValue()));
+                }
+            }
 
-        logger.info("Done.");
+            // Get a list of approved comments on bills sponsored by these people.
+            Map<BillBuzzSenator, Map<BillBuzzThread, Set<BillBuzzApproval>>> userApprovals = new TreeMap<BillBuzzSenator, Map<BillBuzzThread, Set<BillBuzzApproval>>>();
+            for (BillBuzzSenator senator : userSubscriptions) {
+                if (sponsorApprovals.containsKey(senator.getShortName())) {
+                    Map<BillBuzzThread, Set<BillBuzzApproval>> senatorApprovals = new TreeMap<BillBuzzThread, Set<BillBuzzApproval>>();
+                    for (BillBuzzApproval approval : sponsorApprovals.get(senator.getShortName())) {
+                        // Shorten the thread title for the email
+                        String title = approval.getThread().getTitle().replace("NY Senate Open Legislation - ", "");
+                        if (title.length() > 100) {
+                            title = title.subSequence(0, 100)+"...";
+                        }
+                        approval.getThread().setTitle(title);
+
+                        Set<BillBuzzApproval> threadApprovals = senatorApprovals.get(approval.getThread());
+                        if (threadApprovals == null) {
+                            threadApprovals = new TreeSet<BillBuzzApproval>();
+                            senatorApprovals.put(approval.getThread(), threadApprovals);
+                        }
+                        threadApprovals.add(approval);
+                    }
+                    userApprovals.put(senator, senatorApprovals);
+                }
+            }
+
+            // Send out a mailing to that user.
+            logger.info("Sending update to "+user.getEmail());
+            VelocityContext context = new VelocityContext();
+            context.put("user", user);
+            context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
+            context.put("userApprovals", userApprovals);
+            Mailer.send("billbuzz_digest", user, context);
+        }
     }
 
-    private List<BillBuzzApproval> getApprovals(Long updateId, QueryRunner runner) throws SQLException
+    private List<BillBuzzUser> getUsers(QueryRunner runner) throws SQLException
+    {
+        return runner.query(
+                "SELECT billbuzz_user.id as userId," +
+                "       billbuzz_user.email as userEmail," +
+                "       billbuzz_user.firstName as userFirstName," +
+                "       billbuzz_user.lastName as userLastName," +
+                "       billbuzz_user.activated as userActivated," +
+                "       billbuzz_user.confirmedAt as userConfirmedAt," +
+                "       billbuzz_user.createdAt as userCreatedAt," +
+                "       billbuzz_subscription.id as subscriptionId," +
+                "       billbuzz_subscription.userId as subscriptionUserId," +
+                "       billbuzz_subscription.category as subscriptionCategory," +
+                "       billbuzz_subscription.value as subscriptionValue," +
+                "       billbuzz_subscription.createdAt as subscriptionCreatedAt " +
+                "FROM billbuzz_user, billbuzz_subscription " +
+                "WHERE billbuzz_user.id = billbuzz_subscription.userId" +
+                "  AND billbuzz_user.activated = 1 " +
+                "ORDER BY userId",
+                new ResultSetHandler<List<BillBuzzUser>>() {
+                    public List<BillBuzzUser> handle(ResultSet rs) throws SQLException
+                    {
+                        BillBuzzUser currentUser = null;
+                        List<BillBuzzUser> users = new ArrayList<BillBuzzUser>();
+                        PrefixedBeanProcessor beanProcessor = new PrefixedBeanProcessor();
+                        while(rs.next()) {
+                            BillBuzzUser user = beanProcessor.toBean(rs, BillBuzzUser.class, "user");
+                            if (currentUser == null) {
+                                currentUser = user;
+                            }
+                            else if (!currentUser.equals(user)) {
+                                users.add(currentUser);
+                                currentUser = user;
+                            }
+                            BillBuzzSubscription subscription = beanProcessor.toBean(rs, BillBuzzSubscription.class, "subscription");
+                            currentUser.getSubscriptions().add(subscription);
+                        }
+                        users.add(currentUser);
+                        return users;
+                    }
+                }
+        );
+    }
+
+    private List<BillBuzzApproval> getApprovals(QueryRunner runner) throws SQLException
     {
         return runner.query(
             "SELECT billbuzz_approval.authorId, " +
@@ -155,8 +225,9 @@ public class Send extends BaseScript
             "       billbuzz_thread.userScore as threadUserScore, " +
             "       billbuzz_thread.createdAt as threadCreatedAt, " +
             "       billbuzz_thread.updatedAt as threadUpdatedAt " +
-            "FROM billbuzz_approval, billbuzz_thread, billbuzz_author, billbuzz_post " +
-            "WHERE billbuzz_approval.updateId=?" +
+            "FROM billbuzz_approval, billbuzz_thread, billbuzz_author, billbuzz_post, billbuzz_update " +
+            "WHERE billbuzz_approval.updateId=billbuzz_update.id" +
+            "  AND billbuzz_update.sentAt IS NULL" +
             "  AND billbuzz_approval.threadId=billbuzz_thread.id" +
             "  AND billbuzz_approval.authorId=billbuzz_author.id" +
             "  AND billbuzz_approval.postId=billbuzz_post.id",
@@ -174,8 +245,7 @@ public class Send extends BaseScript
                     }
                     return approvals;
                 }
-            },
-            updateId
+            }
         );
     }
 }

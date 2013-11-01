@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+    <title>Billbuzz Update</title>
+</head>
+<body>
+Greetings, $user.firstName. Here's the latest buzz on your subscribed legislation:
+<br/>
+<table>
+#foreach( $senator in $userApprovals.keySet() )
+    #set($senatorApprovals = $userApprovals.get($senator))
+    <tr>
+        <td style="font-size:20px; font-style:bolder;"><a href="http://open.nysenate.gov/legislation/sponsor/$senator.shortName">Legislation for $senator.name</a></td>
+    </tr>
+    #foreach( $thread in $senatorApprovals.keySet() )
+        #set($threadApprovals = $senatorApprovals.get($thread))
+        <tr>
+            <td style="padding-left:10px; font-size:16px; font-style:bold;">
+                Comments on: <a href="$thread.link">$thread.title</a>
+                <hr/>
+            </td>
+        </tr>
+        #foreach( $approval in $threadApprovals )
+            <tr>
+                <td style="padding-left:20px; font-size:14px;">
+                On $dateFormat.format($approval.post.createdAt): <b>$approval.author.username</b> said:<br/>
+                <span style="font-family:monospace">
+                    $approval.post.message
+                </span>
+                <hr/>
+                </td>
+            </tr>
+        #end
+        <tr>
+            <td style="padding-left:10px">
+                <a href="http://open.nysenate.gov/legislation/bill/${thread.billId}#comments">View and respond to all comments for S3747-2011</a>
+                <hr />
+            </td>
+        </tr>
+        
+    #end
+#end
+</table>
+<br/>
+Please visit the <a href="http://billbuzz.nysenate.gov/">BillBuzz homepage</a> to modify or delete your subscription.
+</body>
+</html>
