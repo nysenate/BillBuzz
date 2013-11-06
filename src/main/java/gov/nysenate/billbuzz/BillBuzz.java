@@ -1,9 +1,11 @@
 package gov.nysenate.billbuzz;
 
 import gov.nysenate.billbuzz.model.BBSenator;
-import gov.nysenate.billbuzz.model.BillInfo;
 import gov.nysenate.billbuzz.model.Comment;
 import gov.nysenate.billbuzz.model.ThreadDescription;
+import gov.nysenate.billbuzz.model.openleg.BillInfo;
+import gov.nysenate.billbuzz.model.openleg.Cosponsor;
+import gov.nysenate.billbuzz.model.persist.Senator;
 import gov.nysenate.billbuzz.model.persist.User;
 import gov.nysenate.billbuzz.util.Config;
 
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -28,9 +31,9 @@ import javax.mail.internet.MimeMessage;
 import org.apache.log4j.Logger;
 
 public class BillBuzz {
-
 	private static Logger logger = Logger.getLogger(BillBuzz.class);
-	private static String _billRegExp = "[BJRbjr][\\d]*[a-zA-Z]*\\-\\d{4}";
+
+	private static Pattern _billRegExp = Pattern.compile("[BJRbjr][\\d]*[a-zA-Z]*\\-\\d{4}");
 	private static final String SMTP_HOST_NAME = "webmail.senate.state.ny.us";
 
 	private static final String SMTP_PORT = "587";
@@ -39,7 +42,7 @@ public class BillBuzz {
 	private static final String SMTP_ACCOUNT_PASS = Config.getValue("pass");
 
 
-	Map<String,gov.nysenate.billbuzz.model.persist.Senator> _sep;
+	Map<String,Senator> senatorMap;
 
 	//bills without a senator sponsor
 	List<ThreadDescription> _otherThreads;
@@ -50,20 +53,31 @@ public class BillBuzz {
 	 * @throws Exception
 	 * @throws Exception if a file cannot be opened or there is a network issue
 	 */
-	public BillBuzz(String date) throws Exception{
+	public BillBuzz(String date) throws Exception
+	{
 		runBillBuzz(date);
 	}
-	public BillBuzz() throws Exception{
+
+	public BillBuzz() throws Exception
+	{
 		runBillBuzz(Controller.getLastUse());
 	}
 
-	public void runBillBuzz(String date) throws Exception {
+	public void runBillBuzz(String date) throws Exception
+	{
 		logger.info("running billbuzz for date:" + date.toString());
 		_otherThreads = new ArrayList<ThreadDescription>();
-		_sep = senatorMap();
 
-		List<BBSenator> senators = getSenatorUpdates(date);
-		Map<String,BBSenator> m = mapping(senators);
+		senatorMap = new HashMap<String,Senator>();
+	    for (Senator sen : Controller.getSenators()) {
+	        senatorMap.put(sen.getOpenLegName().toUpperCase(), sen);
+	    }
+
+		Map<String,BBSenator> m = new HashMap<String,BBSenator>();
+        for(BBSenator s :getSenatorUpdates(date)) {
+            m.put(s.getName().toUpperCase(), s);
+        }
+
 		sendToSubscribers(m);
 	}
 
@@ -103,44 +117,6 @@ public class BillBuzz {
 		}
 	}
 
-
-	public Map<String,BBSenator> mapping(List<BBSenator> senators) {
-
-		Map<String,BBSenator> m = new HashMap<String,BBSenator>();
-
-		for(BBSenator s:senators) {
-
-			m.put(s.getName().toUpperCase(), s);
-
-		}
-
-		return m;
-	}
-
-
-
-
-	/**
-	 * creates a map of senators from database
-	 */
-	public Map<String,gov.nysenate.billbuzz.model.persist.Senator> senatorMap() throws Exception {
-		logger.info("creating senator map");
-		Map<String,gov.nysenate.billbuzz.model.persist.Senator> m = new HashMap<String,gov.nysenate.billbuzz.model.persist.Senator>();
-
-		List<gov.nysenate.billbuzz.model.persist.Senator> lst = Controller.getSenators();
-
-
-		for(gov.nysenate.billbuzz.model.persist.Senator sen:lst) {
-
-			String n = sen.getOpenLegName().toUpperCase();
-
-			m.put(n, sen);
-		}
-
-		return m;
-
-	}
-
 	/**
 	 * This is used to format the date correctly for both the Disqus API and lastuse document
 	 * If a number is less than 10 it appends a '0' before it.  i.e. '8' will become '08'
@@ -166,15 +142,19 @@ public class BillBuzz {
 		props.put("mail.smtp.port", SMTP_PORT);
 		props.put("mail.smtp.starttls.enable","false");
 		props.put("mail.smtp.socketFactory.port", SMTP_PORT);
-		//props.put("mail.smtp.socketFactory.class", SSL_FACTORY);
 		props.put("mail.smtp.socketFactory.fallback", "false");
-	//	props.put("mail.smtps.ssl.protocols","TLSv1");
 		props.put("mail.smtp.ssl.enable","false");
-	//	props.put("mail.smtp.ssl.protocols","TLSv1");
 
-		Session session = Session.getDefaultInstance(props,	new javax.mail.Authenticator() {
-										protected PasswordAuthentication getPasswordAuthentication() {
-											return new PasswordAuthentication(SMTP_ACCOUNT_USER, SMTP_ACCOUNT_PASS);}});
+		Session session = Session.getDefaultInstance(
+		        props,	new javax.mail.Authenticator()
+		        {
+					protected PasswordAuthentication getPasswordAuthentication()
+					{
+						return new PasswordAuthentication(SMTP_ACCOUNT_USER, SMTP_ACCOUNT_PASS);
+					}
+		        }
+        );
+
 		session.setDebug(false);
 		Message msg = new MimeMessage(session);
 		InternetAddress addressFrom = new InternetAddress(from);
@@ -216,19 +196,16 @@ public class BillBuzz {
 	 * @returns a list of Senator objects with their associated threads and information
 	 * @throws Exception if it can't connect to the network
 	 */
-	public List<BBSenator> getSenatorUpdates(String date) throws Exception{
+	public List<BBSenator> getSenatorUpdates(String date) throws Exception
+	{
 		logger.info("getting list of updated threads");
-
-		ThreadMod tm = new ThreadMod();
-		List<ThreadDescription> td = tm.getApprovedThreads(date);
-
 		List<BBSenator> sen = new ArrayList<BBSenator>();
-
-		for(ThreadDescription thread : td) {
+		for(ThreadDescription thread : new ThreadMod().getApprovedThreads(date)) {
 			BillInfo bill = thread.getBill();
-
+			System.out.println(bill.getBillId());
+			if (true) { continue; }
 			//if it's the correct bill format
-			if(!bill.getSenateId().matches(_billRegExp)) {
+			if(true) {//!bill.getSenateId().matches(_billRegExp)) {
 				logger.info("reading updates for billno: " + bill.getBillId() + " and threadid: " + thread.getID());
 
 				List<String> toWho = getToWho(thread);
@@ -246,7 +223,7 @@ public class BillBuzz {
 						BBSenator s = new BBSenator(oLName);
 						s.addThread(thread);
 
-						if(_sep.get(s.getName()) != null) {
+						if(senatorMap.get(s.getName()) != null) {
 							logger.info("creating senator: " + s.getName() +", adding thread: " + thread.getID());
 							sen.add(s);
 						}
@@ -276,7 +253,7 @@ public class BillBuzz {
 						}
 						//if a new senator is being added
 
-						if(s != null && _sep.get(s.getName()) != null) {
+						if(s != null && senatorMap.get(s.getName()) != null) {
 							logger.info("creating senator: " + s.getName() + ", adding thread: " + thread.getID());
 							sen.add(s);
 						}
@@ -299,23 +276,24 @@ public class BillBuzz {
 	 * @param td is a ThreadDescription
 	 * @returns a List<String> of senators' email address' who are associated with the Thread
 	 */
-	public List<String> getToWho(ThreadDescription td) {
+	public List<String> getToWho(ThreadDescription td)
+	{
 		logger.info("getting senators for threadid: " + td.getID());
 		List<String> ret = new ArrayList<String>();
 		BillInfo b = td.getBill();
 		//String oLName = .getOpenLegName();//getParty(b.getSponsor());
 		//if the given senator has a listed email address
-		if(_sep.get(b.getSponsor()) != null) {
-			logger.info("adding senator " + _sep.get(b.getSponsor()).getOpenLegName().toUpperCase() + " to thread");
-			ret.add(_sep.get(b.getSponsor()).getOpenLegName().toUpperCase());
+		if(senatorMap.get(b.getSponsor()) != null) {
+			logger.info("adding senator " + senatorMap.get(b.getSponsor()).getOpenLegName().toUpperCase() + " to thread");
+			ret.add(senatorMap.get(b.getSponsor()).getOpenLegName().toUpperCase());
 		}
 		//if there is a same as thread
 		if(td.getSameAsThread() != null) {
-			List<String> cosp = td.getSameAsThread().getBill().getCosponsors();
+			List<Cosponsor> cosp = td.getSameAsThread().getBill().getCosponsors();
 			//read through people associated with assembly thread
-			for(String s:cosp) {
+			for(Cosponsor s:cosp) {
 				//if there is a valid email and it isn't in the list
-				gov.nysenate.billbuzz.model.persist.Senator perSen = _sep.get(s);
+				gov.nysenate.billbuzz.model.persist.Senator perSen = senatorMap.get(s.getCosponsor());
 				if(perSen != null && !ret.contains(perSen.getOpenLegName().toUpperCase())) {
 					logger.info("adding senator " + perSen.getOpenLegName().toUpperCase() + "to thread (from sameas)");
 					ret.add(perSen.getOpenLegName().toUpperCase());
@@ -515,39 +493,27 @@ public class BillBuzz {
 		return ret;
 	}
 
-	public String breakUp(String string, int size) {
-
+	public String breakUp(String string, int size)
+	{
 		String[] strings = string.split("\n");
 
-
 		String ret = "";
-
 		for(int count = 0; count < strings.length; count++) {
-
 			if(strings[count].length() > size) {
-
 				StringBuilder sb = new StringBuilder(strings[count]);
-
 				int i = 0;
-
 				while((i = sb.indexOf(" ", i+size)) != -1) {
 
 					sb.insert(i+1, "\n");
 				}
-
 				strings[count] = sb.toString();
 			}
-
 		}
 
 		for(String s:strings) {
 			ret += s + "\n";
 		}
-
-
-
 		return ret;
-
 	}
 }
 

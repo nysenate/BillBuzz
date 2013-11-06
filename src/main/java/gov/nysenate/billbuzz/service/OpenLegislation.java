@@ -1,11 +1,10 @@
 package gov.nysenate.billbuzz.service;
 
-import gov.nysenate.billbuzz.model.BillInfo;
+import gov.nysenate.billbuzz.model.openleg.BillInfo;
 import gov.nysenate.billbuzz.model.persist.Senator;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,12 +12,8 @@ import java.util.regex.Pattern;
 import org.apache.http.client.fluent.Request;
 import org.apache.log4j.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OpenLegislation
 {
@@ -34,6 +29,9 @@ public class OpenLegislation
 	 */
 
 	public static void main(String[] args) {
+	    System.out.println(billPattern.matcher("http://open.nysenate.gov/legislation/bill/S7801-2011").find());
+	    System.exit(0);
+
 	    System.out.println("Starting");
 	    List<Senator> senators = OpenLegislation.getSenators(2013);
 	    for (Senator senator : senators) {
@@ -48,18 +46,19 @@ public class OpenLegislation
 	    try {
     	    String url = String.format("http://open.nysenate.gov/legislation/senators/%d.json",  year);
     	    String results = Request.Get(url).execute().returnContent().asString();
-            JsonElement senatorsJSON = new JsonParser().parse(results);
-
+            JsonNode senatorsJSON = new ObjectMapper().readTree(results);
             List<Senator> senators = new ArrayList<Senator>();
-            for (JsonElement senatorElement : senatorsJSON.getAsJsonArray()) {
+            for (int i=0; i<senatorsJSON.size(); i++) {
                 Senator senator = new Senator();
-                JsonObject senatorJSON = senatorElement.getAsJsonObject();
-                senator.setOpenLegName(senatorJSON.get("shortName").getAsString());
-                senator.setUrl(senatorJSON.get("url").getAsString());
-                senator.setName(senatorJSON.get("name").getAsString());
-                for (JsonElement partyElement : senatorJSON.get("partyAffiliations").getAsJsonArray()) {
-                    if (!senator.setParty(partyElement.getAsString())) {
-                        logger.warn("Invalid party "+partyElement.getAsString()+" for "+senator.getName());
+                JsonNode senatorJSON = senatorsJSON.get(i);
+                senator.setOpenLegName(senatorJSON.get("shortName").asText());
+                senator.setUrl(senatorJSON.get("url").asText());
+                senator.setName(senatorJSON.get("name").asText());
+                JsonNode affiliationsJSON = senatorJSON.get("partyAffiliations");
+                for (int j=0; j<affiliationsJSON.size(); j++) {
+                    JsonNode affiliationJSON = affiliationsJSON.get(j);
+                    if (!senator.setParty(affiliationJSON.asText())) {
+                        logger.warn("Invalid party "+affiliationJSON.asText()+" for "+senator.getName());
                     }
                 }
                 senators.add(senator);
@@ -76,14 +75,15 @@ public class OpenLegislation
 	public static BillInfo getBillInfo(String bill) {
        try {
             String results = Request.Get(openLegURL + bill).execute().returnContent().asString();
-            JsonArray billArray = (JsonArray)new JsonParser().parse(results);
-            Iterator<JsonElement> itr = billArray.iterator();
-            Gson gson = new Gson();
-            if(itr.hasNext()) {
-                return gson.fromJson(itr.next(), BillInfo.class);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode resultsJSON = mapper.readTree(results);
+            if (resultsJSON.size() != 0) {
+                JsonNode billJSON = resultsJSON.get(0);
+                return mapper.treeToValue(billJSON, BillInfo.class);
             }
         }
         catch (IOException e) {
+            e.printStackTrace();
             logger.error("Unable to get bill info for "+bill, e);
         }
        return null;

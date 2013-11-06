@@ -1,27 +1,28 @@
 package gov.nysenate.billbuzz.model;
 
+import gov.nysenate.billbuzz.disqus.models.BaseObject;
 
-public class Comment extends DisqusObject {
+import java.util.Date;
+
+
+
+public class Comment extends BaseObject {
 
 //	private String ip_address;
 //	private String is_anonymous;
 	private String status;
 	private String has_been_moderated;
 	private String message;
-	private String created_at;
+	private Date created_at;
 	private String username;
 	private String display_name;
 	private String email;
-	private String id;
 	private String threadInfo;
-	
-	public Comment() {
-		super.id = id;
-	}
+
 	public String getMessage() {
 		return message;
 	}
-	public String getCreatedAt() {
+	public Date getCreatedAt() {
 		return created_at;
 	}
 	public String getUsername() {
@@ -52,9 +53,6 @@ public class Comment extends DisqusObject {
 		this.email = email;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
 	public void setThreadInfo(String threadInfo) {
 		this.threadInfo = threadInfo;
 	}

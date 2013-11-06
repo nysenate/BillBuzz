@@ -1,21 +1,21 @@
 package gov.nysenate.billbuzz;
 
-import gov.nysenate.billbuzz.model.BillInfo;
+import gov.nysenate.billbuzz.disqus.Disqus;
+import gov.nysenate.billbuzz.disqus.models.BaseObject;
+import gov.nysenate.billbuzz.disqus.models.Forum;
 import gov.nysenate.billbuzz.model.Comment;
-import gov.nysenate.billbuzz.model.DisqusObject;
-import gov.nysenate.billbuzz.model.ForumDescription;
 import gov.nysenate.billbuzz.model.ThreadDescription;
-import gov.nysenate.billbuzz.service.Disqus;
+import gov.nysenate.billbuzz.model.openleg.BillInfo;
 import gov.nysenate.billbuzz.service.OpenLegislation;
+import gov.nysenate.billbuzz.util.Config;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 /**
  * @author jaredwilliams
@@ -24,26 +24,25 @@ import com.google.gson.JsonParser;
  * if it is from the senate, assembly, etc...
  *
  */
-public class ThreadMod {
+public class ThreadMod
+{
 	private List<ThreadDescription> unmoderatedThreads; //list to hold unmoderated comments
 	private final List<Comment> unmoderatedComments; //list to hold unmoderated comments
-	private final Disqus _d;
+	private final Disqus disqus;
 
-	/*
-	 * initializes _uC and _uT which are globals used to keep track of unmoderated comments
-	 * _d is the Disqus object used to make calls to the Disqus API
-	 *
-	 */
-	public ThreadMod() {
+	public ThreadMod()
+	{
 		unmoderatedComments = new ArrayList<Comment>();
 		unmoderatedThreads = new ArrayList<ThreadDescription>();
-		_d = new Disqus();
+		disqus = new Disqus(Config.getValue("disqus.public_key"), Config.getValue("disqus.secret_key"), Config.getValue("disqus.access_token"));
 	}
+
 	/**
 	 * @param date is the date range of threads that should be read from Disqus in format YYYY-MM-DD:TXX:XX
 	 * @returns a list of threads with their comments that are approved to be seen
 	 */
-	public List<ThreadDescription> getApprovedThreads(String date) {
+	public List<ThreadDescription> getApprovedThreads(String date) throws IOException
+	{
 		//get threads based on date
 		List<ThreadDescription> newTLst = buildUpdateInformation(date);
 		//determine which threads are approved
@@ -139,21 +138,19 @@ public class ThreadMod {
 	 * @returns List<ForumDescription> of all of the forums associated with a Disqus account
 	 * @throws Exception
 	 */
-	private List<ThreadDescription> buildUpdateInformation(String date) {
+	private List<ThreadDescription> buildUpdateInformation(String date) throws IOException {
 		System.out.println("Reading from Disqus... (connection errors will be reported)");
 		List<ThreadDescription> ret = new ArrayList<ThreadDescription>(); //empty forum list to be returned
-		List<ForumDescription> forums = _d.forumList();
-		Iterator<ForumDescription> forumItr = forums.iterator();
-		while(forumItr.hasNext()) { //iterate forums
-			List<ThreadDescription> threads = _d.getUpdatedThreads(forumItr.next().getID(), date);
-			Iterator<ThreadDescription> threadItr = threads.iterator();
-			while(threadItr.hasNext()) { //iterate threads
-				ThreadDescription td = threadItr.next();
-				td.setComments(_d.getThreadPosts(td.getID(), date));
-				if(td.getComments().size() > 0) { //if there are approved comments in the thread
-					ret.add(td);
-				}
-			}
+		List<Forum> forums = disqus.userListForumsAll();
+		for(Forum forum : forums) {
+		    List<ThreadDescription> threads = disqus.getUpdatedThreads(forum.getID(), date);
+		    for (ThreadDescription thread : threads) {
+		        List<Comment> comments = disqus.getThreadPosts(thread.getID(), date);
+		        if(comments.size() > 0) { //if there are approved comments in the thread
+		            thread.setComments(comments);
+		            ret.add(thread);
+		        }
+		    }
 		}
 		return ret;
 	}
@@ -249,7 +246,7 @@ public class ThreadMod {
 
 				String[] vals = in.split(","); //[0] is id, [1]-[n] are post ids
 
-				List<Comment> com = _d.getThreadPosts(vals[0], "@"); //get comments from associated thread
+				List<Comment> com = disqus.getThreadPosts(vals[0], "@"); //get comments from associated thread
 
 				for(Comment c: com) {
 					//iterates through comments for given thread
@@ -314,10 +311,10 @@ public class ThreadMod {
 	 * @returns the index, if available, of d in lst based on d.getID()
 	 */
 	private int containsDisqusObject(List<?> lst, Object d) {
-		DisqusObject dObj = (DisqusObject)d;
+		BaseObject dObj = (BaseObject)d;
 		Iterator<?> itr = lst.iterator();
 		while(itr.hasNext()) {
-			DisqusObject t = (DisqusObject)itr.next();
+			BaseObject t = (BaseObject)itr.next();
 			if(t.getID().equals(dObj.getID())) {
 				return lst.indexOf(t);
 			}
@@ -330,10 +327,15 @@ public class ThreadMod {
 	 * @returns a ThreadDescription object from the JSON information
 	 */
 	private ThreadDescription tdFromString(String s) {
-		JsonParser parser = new JsonParser();
-		JsonElement je = parser.parse(s);
-		Gson gson = new Gson();
-		return gson.fromJson(je, ThreadDescription.class);
+	    try {
+    		ObjectMapper mapper = new ObjectMapper();
+    		return mapper.readValue(s, ThreadDescription.class);
+	    }
+	    catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+
 	}
 
 	/**

@@ -47,6 +47,7 @@ public class Config {
                 value = resolvedValue;
                 Config.config.setProperty(key, value);
             }
+            System.out.println(key+": "+value);
             return value;
         }
         catch (ConfigurationException e) {

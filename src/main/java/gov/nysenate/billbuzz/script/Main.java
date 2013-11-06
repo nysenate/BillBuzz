@@ -3,11 +3,12 @@ package gov.nysenate.billbuzz.script;
 import gov.nysenate.billbuzz.BillBuzz;
 import gov.nysenate.billbuzz.service.PMF;
 
-
-
-public class Main {
+public class Main
+{
 	private static String _dateInputRegExp = "[\\d]{4}+\\-[\\d]{2}+\\-[\\d]{2}+T[\\d]{2}+\\:[\\d]{2}+";
-	public static void main(String[] args) throws Exception {
+
+	public static void main(String[] args) throws Exception
+	{
 		if(args.length == 0) {
 			new BillBuzz();
 		}
@@ -27,7 +28,6 @@ public class Main {
 		else {
 			System.out.println("Invalid paramters, correct usage is: BillBuzz or BillBuzz -m \"YYYY-MM-DD\"");
 		}
-//		new BillBuzz("2011-08-01T17:30");
 	}
 }
 

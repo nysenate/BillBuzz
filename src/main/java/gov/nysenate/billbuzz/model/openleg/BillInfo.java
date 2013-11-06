@@ -1,4 +1,4 @@
-package gov.nysenate.billbuzz.model;
+package gov.nysenate.billbuzz.model.openleg;
 
 import java.util.ArrayList;
 
@@ -11,19 +11,23 @@ public class BillInfo {
 	private String sponsor;
 	private String assemblySameAs;
 	private String sameAs;
-	
-	private ArrayList<String> cosponsors;
-	
+	private ArrayList<Vote> votes;
+	private ArrayList<Action> actions;
+	private ArrayList<Cosponsor> cosponsors;
+
 	private String summary;
 
 	private String committee;
-	
+
 	public BillInfo() {
-		cosponsors = new ArrayList<String>();
+		this.cosponsors = new ArrayList<Cosponsor>();
+		this.actions = new ArrayList<Action>();
+		this.votes = new ArrayList<Vote>();
 	}
-	
+
 	public BillInfo(String senateId, String sponsor, String title, String summary) {
-		cosponsors = new ArrayList<String>();
+	    super();
+
 		this.senateId = senateId;
 		this.sponsor = sponsor;
 		this.title = title;
@@ -78,14 +82,14 @@ public class BillInfo {
 	public void setSameAs(String sameAs) {
 		this.sameAs = (sameAs == null) ? "":sameAs;
 	}
-	public ArrayList<String> getCosponsors() {
+	public ArrayList<Cosponsor> getCosponsors() {
 		return cosponsors;
 	}
-	public void setCosponsors(ArrayList<String> cosponsors) {
+	public void setCosponsors(ArrayList<Cosponsor> cosponsors) {
 		this.cosponsors = cosponsors;
 	}
 	public void addCosponsor(String s) {
-		cosponsors.add(s);
+		cosponsors.add(new Cosponsor(s));
 	}
 	public String getSummary() {
 		return summary;
@@ -109,4 +113,24 @@ public class BillInfo {
 				+ ", summary=" + summary + ", title=" + title + ", year="
 				+ year + "]";
 	}
+
+    public ArrayList<Action> getActions()
+    {
+        return actions;
+    }
+
+    public void setActions(ArrayList<Action> actions)
+    {
+        this.actions = actions;
+    }
+
+    public ArrayList<Vote> getVotes()
+    {
+        return votes;
+    }
+
+    public void setVotes(ArrayList<Vote> votes)
+    {
+        this.votes = votes;
+    }
 }

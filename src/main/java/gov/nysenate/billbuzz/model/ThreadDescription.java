@@ -1,15 +1,18 @@
 package gov.nysenate.billbuzz.model;
 
 
+import gov.nysenate.billbuzz.disqus.models.BaseObject;
+import gov.nysenate.billbuzz.model.openleg.BillInfo;
+
 import java.util.ArrayList;
 import java.util.List;
-public class ThreadDescription extends DisqusObject {
+
+public class ThreadDescription extends BaseObject {
 //	private String category;
 //	private String forum;
 //	private String title;
 //	private String num_comments;
 //	private String created_at
-	private String id;
 	private String url;
 	private BillInfo bi;
 	private List<Comment> _comments;
@@ -17,14 +20,14 @@ public class ThreadDescription extends DisqusObject {
 	public ThreadDescription() {
 		_comments = new ArrayList<Comment>();
 		sameAsThread = null;
-		super.id = id;
 	}
+
 	public ThreadDescription(ThreadDescription td) {
 		_comments = new ArrayList<Comment>();
 		sameAsThread = null;
-		this.id = td.getID();
-		this.url = td.getURL();
-		this.bi = td.getBill();
+		id = td.getID();
+		url = td.getURL();
+		bi = td.getBill();
 		this._comments.addAll(td.getComments());
 	}
 	public String getURL() {
