@@ -111,7 +111,7 @@ public class Send extends BaseScript
                     for (BillBuzzApproval approval : sponsorApprovals.get(senator.getShortName())) {
 
                         // Shorten the thread title for the email
-                        String title = approval.getThread().getTitle().replace("NY Senate Open Legislation - ", "");
+                        String title = approval.getThread().getTitle().replaceAll(".*?NY Senate Open Legislation - ", "");
                         if (title.length() > 100) {
                             title = title.subSequence(0, 100)+"...";
                         }

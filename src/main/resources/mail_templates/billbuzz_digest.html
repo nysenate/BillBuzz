@@ -10,30 +10,29 @@ Greetings, $user.firstName. Here's the latest buzz on your subscribed legislatio
 #foreach( $senator in $userApprovals.keySet() )
     #set($senatorApprovals = $userApprovals.get($senator))
     <tr>
-        <td style="font-size:20px; font-style:bolder;"><a href="http://open.nysenate.gov/legislation/sponsor/$senator.shortName">Legislation for $senator.name</a></td>
+        <td style="font-size:22px; font-style:bolder; padding-bottom:5px; padding-top:10px;"><a href="http://open.nysenate.gov/legislation/sponsor/$senator.shortName" style="text-decoration:none; ">Senator $senator.name</a> Legislation</td>
     </tr>
     #foreach( $thread in $senatorApprovals.keySet() )
         #set($threadApprovals = $senatorApprovals.get($thread))
         <tr>
             <td style="padding-left:10px; font-size:16px; font-style:bold;">
-                Comments on: <a href="$thread.link">$thread.title</a>
-                <hr/>
+                <a href="$thread.link" style="text-decoration:none;">Bill $thread.billId</a>: $thread.title
             </td>
         </tr>
         #foreach( $approval in $threadApprovals )
             <tr>
                 <td style="padding-left:20px; font-size:14px;">
+                <hr/>
                 On $dateFormat.format($approval.post.createdAt): <b>$approval.author.username</b> said:<br/>
                 <span style="font-family:monospace">
                     $approval.post.message
                 </span>
-                <hr/>
                 </td>
             </tr>
         #end
         <tr>
-            <td style="padding-left:10px">
-                <a href="http://open.nysenate.gov/legislation/bill/${thread.billId}#comments">View and respond to all comments for S3747-2011</a>
+            <td style="padding-left:20px;">
+                <a style="text-decoration:none" href="http://open.nysenate.gov/legislation/bill/${thread.billId}#comments">View and respond to all comments for S3747-2011</a>
                 <hr />
             </td>
         </tr>
