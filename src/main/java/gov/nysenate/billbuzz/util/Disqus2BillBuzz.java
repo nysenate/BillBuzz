@@ -14,11 +14,14 @@ import java.util.regex.Pattern;
 
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class Disqus2BillBuzz
 {
+    private static Logger logger = Logger.getLogger(Disqus2BillBuzz.class);
+
     public static Pattern billPattern = Pattern.compile("/bill/([A-Z])0*([0-9]+)([A-Z])?(?:-([0-9]+))?", Pattern.CASE_INSENSITIVE);
 
     /**
@@ -91,14 +94,16 @@ public class Disqus2BillBuzz
                 }
                 else {
                     // Bill doesn't exist
+                    logger.error("Could not retrieve billId "+billId+" from OpenLeg. Thread link was: "+thread.getLink());
                 }
             }
             else {
-                // Can't get bill out of the thread's link
+                logger.error("Could not extract billId from "+thread.getLink());
             }
         }
         else {
             // Thread doesn't have a link? what?
+            logger.error("The thread ["+thread.getId()+"] doesn't have a link. This can't happen?");
         }
 
         bbThread.setId(thread.getId());
