@@ -153,6 +153,27 @@ public class BillBuzzDAO
         }, session);
     }
 
+    public List<BillBuzzSenator> getSenators() throws SQLException
+    {
+        // Render signup page
+        return runner.query("SELECT id, name, shortName, session, GROUP_CONCAT(partyId) as partyList FROM billbuzz_senator JOIN billbuzz_affiliation ON id=senatorId WHERE active=1 GROUP BY senatorId ORDER BY shortName", new ResultSetHandler<List<BillBuzzSenator>>() {
+            public List<BillBuzzSenator> handle(ResultSet rs) throws SQLException {
+                BeanProcessor processor = new BeanProcessor();
+                List<BillBuzzSenator> senators = new ArrayList<BillBuzzSenator>();
+                while(rs.next()) {
+                    List<BillBuzzParty> parties = new ArrayList<BillBuzzParty>();
+                    for (String partyId : rs.getString("partyList").split(",")) {
+                        parties.add(new BillBuzzParty(partyId.trim()));
+                    }
+                    BillBuzzSenator senator = processor.toBean(rs, BillBuzzSenator.class);
+                    senator.setParties(parties);
+                    senators.add(senator);
+                }
+                return senators;
+            }
+        });
+    }
+
     /**
      * This sets the auto increment id to the object after saving.
      *
