@@ -17,6 +17,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Handles /BillBuzz/update/form requests.
+ *
+ * @author GraylinKim
+ *
+ */
 @SuppressWarnings("serial")
 public class UpdateForm extends HttpServlet
 {

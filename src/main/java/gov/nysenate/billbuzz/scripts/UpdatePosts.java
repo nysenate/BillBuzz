@@ -24,6 +24,15 @@ import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.log4j.Logger;
 
+/**
+ * Checks Disqus for newly created threads and posts. Any new content is saved to the BillBuzz
+ * database. Any new or previously unapproved content is checked for approval. If approvals are
+ * found a new billbuzz_update record is created with billbuzz_approval records for each approved
+ * post.
+ *
+ * @author GraylinKim
+ *
+ */
 public class UpdatePosts extends BaseScript
 {
     private static final Logger logger = Logger.getLogger(UpdatePosts.class);
@@ -45,7 +54,9 @@ public class UpdatePosts extends BaseScript
             config.getValue("access_token")
         );
 
-        // Get and save newThreads
+        // Get and save new threads. At the time of writing the since= parameter was broken as confirmed by the
+        // disqus support team with no ETA on a fix. Instead, we sort by createdAt desc and stop searching when
+        // we find a thread at or before the last update time.
         int threads = 0;
         Date lastThreadUpdate = runner.query("SELECT createdAt FROM billbuzz_thread ORDER BY createdAt DESC LIMIT 1", new ScalarHandler<Date>("createdAt"));
         DisqusListResponse<DisqusThread> threadResponse = disqus.forumsListThreads("forum=nysenateopenleg", "limit=100", "order=desc");
@@ -78,7 +89,7 @@ public class UpdatePosts extends BaseScript
             posts.add(disqus.postDetails("post="+postId));
         }
 
-        // Get new posts since last time we updated
+        // Get new posts since last time we updated; again since= is broken here. Use the sorted approach.
         Date lastPostUpdate = runner.query("SELECT createdAt FROM billbuzz_post ORDER BY createdAt DESC LIMIT 1", new ScalarHandler<Date>("createdAt"));
         DisqusListResponse<DisqusPost> postResponse = disqus.forumsListPosts("forum=nysenateopenleg", "limit=100", "order=desc", "include=unapproved", "include=approved", "include=spam", "include=deleted", "include=flagged");
         processPosts: while (true) {

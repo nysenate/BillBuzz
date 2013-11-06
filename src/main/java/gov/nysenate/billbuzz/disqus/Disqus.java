@@ -11,6 +11,21 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.codehaus.jackson.map.ObjectMapper;
 
+/**
+ * Connector for the Disqus API.
+ *
+ * The Disqus API has two distinct response types: Single document and document list. Each of these response types
+ * is extended by a specific document type represented so that they system is type safe. List responses contain a
+ * cursor which can be used to fetch the next page repeatedly and list out all results as necessary.
+ *
+ * Methods are named according to their API path. user/listForums => userListForums
+ * Parameters are passed in apiMethod("key=value", "key2=value2") format. Values must already be escaped if necessary.
+ *
+ * NOTE: At time of writing, the API since= parameter was broken; confirmed by Disqus support. No ETA on a fix.
+ *
+ * @author GraylinKim
+ *
+ */
 @SuppressWarnings("unchecked")
 public class Disqus
 {

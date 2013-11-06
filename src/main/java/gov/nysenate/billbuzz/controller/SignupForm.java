@@ -29,7 +29,7 @@ import org.apache.commons.mail.EmailException;
 import org.apache.velocity.VelocityContext;
 
 /**
- * Answers /signup/(form|confirm)? requests.
+ * Handles BillBuzz/(signup/(form)?)? requests.
  *
  * SignUp requests are posted to the server while form loads and confirmations
  * use get requests.

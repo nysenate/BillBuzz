@@ -17,6 +17,12 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
+/**
+ * Bootstraps the BillBuzz database with all the Disqus threads, posts, and authors to date.
+ *
+ * @author GraylinKim
+ *
+ */
 public class Setup extends BaseScript
 {
     private final Logger logger = Logger.getLogger(Setup.class);
@@ -46,7 +52,7 @@ public class Setup extends BaseScript
                 dao.saveThread(Disqus2BillBuzz.thread(thread));
             }
             if (threadResponse.getCursor().getHasNext()) {
-                // Don't want to go over query limit!
+                // Don't want to go over query limit of 1000 an hour!
                 java.lang.Thread.sleep(4000);
                 System.out.println("Fetching next batch...");
                 threadResponse = (DisqusListResponse<DisqusThread>)disqus.getNext(threadResponse);
@@ -68,7 +74,7 @@ public class Setup extends BaseScript
                 dao.saveAuthor(bbPost.getAuthor());
             }
             if (postResponse.getCursor().getHasNext()) {
-                // Don't want to go over query limit!
+                // Don't want to go over query limit of 1000 an hour!
                 java.lang.Thread.sleep(4000);
                 System.out.println("Fetching next batch...");
                 postResponse = (DisqusListResponse<DisqusPost>)disqus.getNext(postResponse);

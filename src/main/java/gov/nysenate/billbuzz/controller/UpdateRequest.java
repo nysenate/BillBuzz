@@ -18,6 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.mail.EmailException;
 import org.apache.velocity.VelocityContext;
 
+/**
+ * Handles /BillBuzz/update/(request)? requests.
+ *
+ * @author GraylinKim
+ *
+ */
 @SuppressWarnings("serial")
 public class UpdateRequest extends HttpServlet
 {
@@ -32,6 +38,7 @@ public class UpdateRequest extends HttpServlet
 
     /**
      * Create confirmation code and send email with valid link to the update form
+     *
      * @throws IOException
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException

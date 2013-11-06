@@ -14,10 +14,11 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.log4j.Logger;
 
 /**
- * Provides a base wrapping layer for scripts that logs all uncaught exceptions
- * and provides utility functions for processing options and help messages.
+ * Provides a base wrapping layer for scripts that logs all uncaught exceptions,
+ * does basic utility instantiation/setup, and provides utility functions for
+ * processing options and help messages.
  *
- * @author graylinkim
+ * @author GraylinKim
  *
  */
 abstract public class BaseScript

@@ -18,6 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbutils.QueryRunner;
 
+/**
+ * Handles /BillBuzz/signup/confirm requests.
+ *
+ * @author Graylin
+ *
+ */
 @SuppressWarnings("serial")
 public class SignupConfirmation extends HttpServlet
 {

@@ -20,6 +20,14 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+/**
+ * Checks the OpenLegislation senators listing for the current session for new senators.
+ *
+ * Each run completely replaces affiliations in case they have changed over time.
+ *
+ * @author GraylinKim
+ *
+ */
 public class UpdateSenators extends BaseScript
 {
     private static final Logger logger = Logger.getLogger(UpdateSenators.class);

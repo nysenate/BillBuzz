@@ -18,6 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.mail.EmailException;
 import org.apache.velocity.VelocityContext;
 
+/**
+ * Handles /BillBuzz/unsubscribe/(request)? requests.
+ *
+ * @author GraylinKim
+ *
+ */
 @SuppressWarnings("serial")
 public class UnsubscribeRequest extends HttpServlet
 {

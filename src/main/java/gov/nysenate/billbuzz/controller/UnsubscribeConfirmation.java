@@ -15,6 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbutils.QueryRunner;
 
+/**
+ * Handles /BillBuzz/unsubscribe/confirm requests
+ *
+ * @author GraylinKim
+ *
+ */
 @SuppressWarnings("serial")
 public class UnsubscribeConfirmation extends HttpServlet
 {
