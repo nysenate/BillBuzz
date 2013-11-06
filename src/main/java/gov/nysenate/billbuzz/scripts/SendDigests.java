@@ -32,15 +32,22 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 
-public class Send extends BaseScript
+/**
+ * Gets all unsent BillBuzzApproval objects from the database and sends them
+ * to active users according to their BillBuzzSubscription preferences.
+ *
+ * @author GraylinKim
+ *
+ */
+public class SendDigests extends BaseScript
 {
-    private static final Logger logger = Logger.getLogger(Send.class);
+    private static final Logger logger = Logger.getLogger(SendDigests.class);
 
     public static Pattern billPattern = Pattern.compile("/bill/([A-Z][0-9]+[A-Z]?)(?:-([0-9]+))?", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) throws Exception
     {
-        new Send().run(args);
+        new SendDigests().run(args);
     }
 
     public void execute(CommandLine opts) throws Exception
@@ -50,7 +57,8 @@ public class Send extends BaseScript
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
 
         List<BillBuzzApproval> approvals = getApprovals(runner);
-        List<BillBuzzSenator> senators = dao.getSenators(dao.getSession());
+        List<BillBuzzSenator> senators = dao.getSenators();
+        senators.add(new BillBuzzSenator("Other Sponsors", "billbuzz_other", 2013, new ArrayList<BillBuzzParty>()));
 
         if (approvals.size() == 0) {
             logger.info("No approvals to mail out. Shutting down.");
@@ -59,7 +67,7 @@ public class Send extends BaseScript
 
         // Senators need to be organized by party and name
         Set<String> senatorShortNames = new TreeSet<String>();
-        HashMap<String, BillBuzzSenator> senatorsByName = new HashMap<String, BillBuzzSenator>();
+        HashMap<String, BillBuzzSenator> senatorsByShortName = new HashMap<String, BillBuzzSenator>();
         HashMap<String, List<BillBuzzSenator>> senatorsByParty = new HashMap<String, List<BillBuzzSenator>>();
         for (BillBuzzSenator senator : senators) {
             senatorShortNames.add(senator.getShortName());
@@ -69,10 +77,10 @@ public class Send extends BaseScript
                 }
                 senatorsByParty.get(party.getId()).add(senator);
             }
-            senatorsByName.put(senator.getShortName(), senator);
+            senatorsByShortName.put(senator.getShortName(), senator);
         }
 
-        // Organize approvals by sponsor
+        // Organize approvals by sponsor - sponsors not in the senators listing fall under other
         TreeMap<String, Set<BillBuzzApproval>> sponsorApprovals = new TreeMap<String, Set<BillBuzzApproval>>();
         for (BillBuzzApproval approval : approvals) {
             String sponsor = approval.getThread().getSponsor().toLowerCase();
@@ -98,11 +106,11 @@ public class Send extends BaseScript
                     userSubscriptions.addAll(senators);
                 }
                 else if (subscription.getCategory().equals("sponsor")) {
-                    userSubscriptions.add(senatorsByName.get(subscription.getValue()));
+                    userSubscriptions.add(senatorsByShortName.get(subscription.getValue()));
                 }
                 else if (subscription.getCategory().equals("other")){
                     // Handle other by creating a catch all senator
-                    userSubscriptions.add(new BillBuzzSenator("Other Sponsors", "billbuzz_other", 2013, new ArrayList<BillBuzzParty>()));
+                    userSubscriptions.add(senatorsByShortName.get("billbuzz_other"));
                 }
                 else {
                     logger.error("bad subscription category: "+subscription.getCategory()+" ["+subscription.getValue()+"]");
@@ -110,6 +118,7 @@ public class Send extends BaseScript
             }
 
             // Get a list of approved comments on bills sponsored by these people.
+            // This organization scheme corresponds to the hierarchy used to render comments in the digest email.
             Map<BillBuzzSenator, Map<BillBuzzThread, Set<BillBuzzApproval>>> userApprovals = new TreeMap<BillBuzzSenator, Map<BillBuzzThread, Set<BillBuzzApproval>>>();
             for (BillBuzzSenator senator : userSubscriptions) {
                 if (sponsorApprovals.containsKey(senator.getShortName())) {
@@ -132,6 +141,9 @@ public class Send extends BaseScript
                     }
                     userApprovals.put(senator, senatorApprovals);
                 }
+                else {
+                    // This senator didn't have any approved comments for this update
+                }
             }
 
             // Send out a mailing to that user.
@@ -144,6 +156,7 @@ public class Send extends BaseScript
         }
 
         // Get all the distinct updateIds and mark them as sent.
+        // This allows for the possibility of running multiple updates in between SendDigests runs.
         Set<Long> updateIds = new TreeSet<Long>();
         for(BillBuzzApproval approval : approvals) {
             updateIds.add(approval.getUpdateId());
