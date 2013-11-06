@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.mail.EmailException;
+import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 
 /**
@@ -27,6 +28,8 @@ import org.apache.velocity.VelocityContext;
 @SuppressWarnings("serial")
 public class UnsubscribeRequest extends HttpServlet
 {
+    private final Logger logger = Logger.getLogger(UnsubscribeRequest.class);
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         request.setAttribute("message", "instruction");
@@ -64,15 +67,16 @@ public class UnsubscribeRequest extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/unsubscribe_request.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
         catch (EmailException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
         }
         catch (MessagingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
         }
     }
 }

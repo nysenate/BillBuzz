@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.log4j.Logger;
 
 /**
  * Handles /BillBuzz/unsubscribe/confirm requests
@@ -24,6 +25,8 @@ import org.apache.commons.dbutils.QueryRunner;
 @SuppressWarnings("serial")
 public class UnsubscribeConfirmation extends HttpServlet
 {
+    private final Logger logger = Logger.getLogger(UnsubscribeConfirmation.class);
+
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         try {
@@ -58,6 +61,7 @@ public class UnsubscribeConfirmation extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/unsubscribe_confirmation.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
     }

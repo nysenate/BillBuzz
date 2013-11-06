@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.log4j.Logger;
 
 /**
  * Handles /BillBuzz/signup/confirm requests.
@@ -27,6 +28,8 @@ import org.apache.commons.dbutils.QueryRunner;
 @SuppressWarnings("serial")
 public class SignupConfirmation extends HttpServlet
 {
+    private final Logger logger = Logger.getLogger(SignupConfirmation.class);
+
     /**
      * Verify confirmation email and update the user account accordingly
      */
@@ -76,6 +79,7 @@ public class SignupConfirmation extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/signup_confirmation.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
     }

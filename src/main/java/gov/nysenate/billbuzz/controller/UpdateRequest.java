@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.mail.EmailException;
+import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 
 /**
@@ -27,6 +28,8 @@ import org.apache.velocity.VelocityContext;
 @SuppressWarnings("serial")
 public class UpdateRequest extends HttpServlet
 {
+    private final Logger logger = Logger.getLogger(UpdateRequest.class);
+
     /**
      * Serve up the simple request form.
      */
@@ -65,12 +68,15 @@ public class UpdateRequest extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/update_request.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
         catch (EmailException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
         catch (MessagingException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
     }

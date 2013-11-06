@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.mail.EmailException;
+import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 
 /**
@@ -40,6 +41,8 @@ import org.apache.velocity.VelocityContext;
 @SuppressWarnings("serial")
 public class SignupForm extends HttpServlet
 {
+    private final Logger logger = Logger.getLogger(SignupForm.class);
+
     /**
      * Render the signup form.
      */
@@ -53,6 +56,7 @@ public class SignupForm extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/signup_form.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
     }
@@ -129,14 +133,16 @@ public class SignupForm extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/signup_form.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
         catch (EmailException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
         catch (MessagingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            throw new ServletException(e.getMessage(), e);
         }
     }
 }

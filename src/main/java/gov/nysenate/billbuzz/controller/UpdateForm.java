@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 /**
  * Handles /BillBuzz/update/form requests.
  *
@@ -26,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class UpdateForm extends HttpServlet
 {
+    private final Logger logger = Logger.getLogger(UpdateForm.class);
+
     /**
      * Get requests to update form need to have a valid confirmation code.
      */
@@ -54,6 +58,7 @@ public class UpdateForm extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/update_form.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
     }
@@ -113,6 +118,7 @@ public class UpdateForm extends HttpServlet
             request.getRequestDispatcher("/WEB-INF/pages/update_form.jsp").forward(request, response);
         }
         catch (SQLException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
     }
