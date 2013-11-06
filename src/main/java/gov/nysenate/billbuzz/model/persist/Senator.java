@@ -3,7 +3,7 @@ package gov.nysenate.billbuzz.model.persist;
 import javax.jdo.annotations.PersistenceCapable;
 
 @PersistenceCapable
-public class Senator {
+public class Senator implements Comparable<Senator> {
 	String name;
 	String url;
 	String openLegName;
@@ -168,6 +168,12 @@ public class Senator {
 		}
 		return parties + " - " + party;
 	}
+
+    @Override
+    public int compareTo(Senator other)
+    {
+        return this.getUrl().compareTo(other.getUrl());
+    }
 
 
 }
