@@ -7,6 +7,7 @@ public class BillBuzzSenator implements Comparable<BillBuzzSenator>
     private Long id;
     private String name;
     private Integer session;
+    private boolean active;
     private String shortName;
     private List<BillBuzzParty> parties;
 
@@ -21,6 +22,7 @@ public class BillBuzzSenator implements Comparable<BillBuzzSenator>
         this.setSession(year);
         this.setShortName(shortName);
         this.setParties(parties);
+        this.setActive(true);
     }
 
     public String getName()
@@ -78,6 +80,16 @@ public class BillBuzzSenator implements Comparable<BillBuzzSenator>
         int cmpName = this.getShortName().compareTo(other.getShortName());
         int cmpSession = this.getSession().compareTo(other.getSession());
         return cmpName == 0 ? cmpSession : cmpName;
+    }
+
+    public boolean isActive()
+    {
+        return active;
+    }
+
+    public void setActive(boolean active)
+    {
+        this.active = active;
     }
 
 

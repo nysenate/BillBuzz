@@ -86,6 +86,7 @@ DROP TABLE IF EXISTS billbuzz_senator;
 CREATE TABLE billbuzz_senator (
     id int(11) AUTO_INCREMENT PRIMARY KEY,
     name varchar(255),
+    active boolean,
     shortName varchar(255),
     session int(11),
     UNIQUE KEY (shortname, session)

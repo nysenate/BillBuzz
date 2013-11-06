@@ -135,7 +135,7 @@ public class BillBuzzDAO
     public List<BillBuzzSenator> getSenators(int session) throws SQLException
     {
         // Render signup page
-        return runner.query("SELECT id, name, shortName, session, GROUP_CONCAT(partyId) as partyList FROM billbuzz_senator JOIN billbuzz_affiliation ON id=senatorId WHERE session=? GROUP BY senatorId ORDER BY shortName", new ResultSetHandler<List<BillBuzzSenator>>() {
+        return runner.query("SELECT id, name, shortName, session, GROUP_CONCAT(partyId) as partyList FROM billbuzz_senator JOIN billbuzz_affiliation ON id=senatorId WHERE session=? and active=1 GROUP BY senatorId ORDER BY shortName", new ResultSetHandler<List<BillBuzzSenator>>() {
             public List<BillBuzzSenator> handle(ResultSet rs) throws SQLException {
                 BeanProcessor processor = new BeanProcessor();
                 List<BillBuzzSenator> senators = new ArrayList<BillBuzzSenator>();
