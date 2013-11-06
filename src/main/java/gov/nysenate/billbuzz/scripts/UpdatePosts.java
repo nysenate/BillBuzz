@@ -102,10 +102,7 @@ public class UpdatePosts extends BaseScript
         logger.info((posts.size()-postIds.size())+" new posts since "+lastPostUpdate);
 
         if (!posts.isEmpty()) {
-            // Create and save a new update
-            BillBuzzUpdate update = new BillBuzzUpdate();
-            update.setCreatedAt(new Date());
-            dao.saveUpdate(update);
+            BillBuzzUpdate update = null;
 
             // Update the database records and record new approvals for this update.
             for (DisqusPost post : posts) {
@@ -113,6 +110,12 @@ public class UpdatePosts extends BaseScript
                 dao.savePost(bbPost);
                 dao.saveAuthor(bbPost.getAuthor());
                 if (post.getIsApproved()) {
+                    // Only create a new update if it has atleast 1 approval
+                    if (update == null) {
+                        update = new BillBuzzUpdate();
+                        update.setCreatedAt(new Date());
+                        dao.saveUpdate(update);
+                    }
                     logger.info("New Approval: "+post.getId()+" - "+post.getCreatedAt());
                     BillBuzzApproval approval = new BillBuzzApproval(update.getId(), bbPost.getId(), bbPost.getAuthorId(), bbPost.getThreadId());
                     dao.saveApproval(approval);
