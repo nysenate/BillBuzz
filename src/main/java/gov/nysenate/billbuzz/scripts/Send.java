@@ -45,11 +45,17 @@ public class Send extends BaseScript
 
     public void execute(CommandLine opts) throws Exception
     {
+        Date now = new Date();
         BillBuzzDAO dao = new BillBuzzDAO();
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
 
         List<BillBuzzApproval> approvals = getApprovals(runner);
         List<BillBuzzSenator> senators = dao.getSenators(dao.getSession());
+
+        if (approvals.size() == 0) {
+            logger.info("No approvals to mail out. Shutting down.");
+            return;
+        }
 
         // Senators need to be organized by party and name
         Set<String> senatorShortNames = new TreeSet<String>();
@@ -134,7 +140,16 @@ public class Send extends BaseScript
             context.put("user", user);
             context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
             context.put("userApprovals", userApprovals);
-            Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(new Date()), user, context);
+            Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, context);
+        }
+
+        // Get all the distinct updateIds and mark them as sent.
+        Set<Long> updateIds = new TreeSet<Long>();
+        for(BillBuzzApproval approval : approvals) {
+            updateIds.add(approval.getUpdateId());
+        }
+        for (Long updateId : updateIds) {
+            runner.update("UPDATE billbuzz_update SET sentAt = ? WHERE id = ?", now, updateId);
         }
     }
 
