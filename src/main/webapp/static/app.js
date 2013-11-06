@@ -61,13 +61,9 @@ $(document).ready(function() {
 		e1 = document.forms.senators.email1.value;
 		e2 = document.forms.senators.email2.value;
 		fn = document.forms.senators.firstname.value;
-		ln = document.forms.senators.lastname.value;
 		
 		if(!fn){
 			message = addError(message, "Enter your first name");
-		}
-		if(!ln) {
-			message = addError(message, "Enter your last name");
 		}
 		if(e1 == null || e2 == null || e1 != e2) {
 			message = addError(message, "Your email addresses must match!");
