@@ -24,8 +24,8 @@ CREATE TABLE billbuzz_thread (
     reactions int(11),
     userScore int(11),
 
-    createdAt timestamp,
-    updatedAt timestamp
+    createdAt timestamp NULL DEFAULT NULL,
+    updatedAt timestamp NULL DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS billbuzz_post;
@@ -53,8 +53,8 @@ CREATE TABLE billbuzz_post (
     userScore int(11),
     numReports int(11),
 
-    createdAt timestamp,
-    updatedAt timestamp
+    createdAt timestamp NULL DEFAULT NULL,
+    updatedAt timestamp NULL DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS billbuzz_author;
@@ -79,7 +79,7 @@ CREATE TABLE billbuzz_author (
     rep double,
     reputation double,
     joinedAt timestamp NULL DEFAULT NULL,
-    updatedAt timestamp
+    updatedAt timestamp NULL DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS billbuzz_senator;
@@ -101,7 +101,7 @@ CREATE TABLE billbuzz_affiliation (
 DROP TABLE IF EXISTS billbuzz_update;
 CREATE TABLE billbuzz_update (
     id int(11) AUTO_INCREMENT PRIMARY KEY,
-    createdAt timestamp,
+    createdAt timestamp NULL DEFAULT NULL,
     sentAt timestamp NULL DEFAULT NULL
 );
 
@@ -120,8 +120,8 @@ CREATE TABLE billbuzz_user (
     firstName varchar(255),
     lastName varchar(255),
     activated boolean,
-    confirmedAt timestamp NULL,
-    createdAt timestamp NOT NULL
+    confirmedAt timestamp NULL DEFAULT NULL,
+    createdAt timestamp NULL DEFAULT NULL,
 );
 
 DROP TABLE IF EXISTS billbuzz_confirmation;
@@ -130,7 +130,7 @@ CREATE TABLE billbuzz_confirmation (
     code varchar(255),
     action varchar(255),
     userId int,
-    createdAt timestamp NOT NULL,
+    createdAt timestamp NULL DEFAULT NULL,
     expiresAt timestamp NULL DEFAULT NULL,
     usedAt timestamp NULL DEFAULT NULL
 );
@@ -141,5 +141,5 @@ CREATE TABLE billbuzz_subscription (
     userId int,
     category varchar(255),
     value varchar(255),
-    createdAt timestamp NOT NULL
+    createdAt timestamp NULL DEFAULT NULL
 );
