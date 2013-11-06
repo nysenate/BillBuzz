@@ -36,6 +36,10 @@
     <servlet-name>UnsubscribeRequest</servlet-name>
     <url-pattern>/unsubscribe/request</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UnsubscribeRequest</servlet-name>
+    <url-pattern>/unsubscribe/</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>UnsubscribeConfirmation</servlet-name>
@@ -53,6 +57,10 @@
   <servlet-mapping>
     <servlet-name>UpdateRequest</servlet-name>
     <url-pattern>/update/request</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UpdateRequest</servlet-name>
+    <url-pattern>/update/</url-pattern>
   </servlet-mapping>
 
   <servlet>
