@@ -105,7 +105,7 @@ public class FormProcessor
        List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
 
        if (all != null) {
-           BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "sponsor", "all", now);
+           BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "all", "all", now);
            subscriptions.add(subscription);
        }
        else {

@@ -95,6 +95,7 @@ public class SendDigests extends BaseScript
 
 
         for (BillBuzzUser user : getUsers(runner)) {
+            logger.info("Gathering updates for: "+user.getEmail());
 
             // For every user, get a list of subscribed sponsors.
             Set<BillBuzzSenator> userSubscriptions = new TreeSet<BillBuzzSenator>();
