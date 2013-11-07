@@ -34,6 +34,10 @@ At least one subscription is required to activate a BillBuzz account.
 <div class="bb_main success">
 We've sent you a email with a link to confirm your subscription to the parties and senators checked below.
 </div>
+<% } else if (message.equals("update_required")) { %>
+<div class="bb_main error">
+It seems like you already have an account with us. We've sent you a link that can be used to update or reactivate your account.
+</div>
 <% } %>
 <br/>
 <div class="bb_main">
