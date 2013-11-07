@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -52,7 +50,7 @@ public class SignupForm extends HttpServlet
             BillBuzzDAO dao = new BillBuzzDAO();
             request.setAttribute("message", "instruction");
             request.setAttribute("senators", dao.getSenators(dao.getSession()));
-            request.setAttribute("subscriptions", new HashMap<String, TreeSet<String>>());
+            request.setAttribute("subscriptions", FormProcessor.getSubscriptionMap(new ArrayList<BillBuzzSubscription>()));
             request.getRequestDispatcher("/WEB-INF/pages/signup_form.jsp").forward(request, response);
         }
         catch (SQLException e) {
@@ -119,16 +117,9 @@ public class SignupForm extends HttpServlet
                 message = "update_required";
             }
 
-            HashMap<String, TreeSet<String>> subscriptionMap = new HashMap<String, TreeSet<String>>();
-            for (BillBuzzSubscription subscription : subscriptions) {
-                if (!subscriptionMap.containsKey(subscription.getCategory())) {
-                    subscriptionMap.put(subscription.getCategory(), new TreeSet<String>());
-                }
-                subscriptionMap.get(subscription.getCategory()).add(subscription.getValue());
-            }
             request.setAttribute("user", user);
             request.setAttribute("message", message);
-            request.setAttribute("subscriptions", subscriptionMap);
+            request.setAttribute("subscriptions", FormProcessor.getSubscriptionMap(subscriptions));
             request.setAttribute("senators", dao.getSenators(dao.getSession()));
             request.getRequestDispatcher("/WEB-INF/pages/signup_form.jsp").forward(request, response);
         }
