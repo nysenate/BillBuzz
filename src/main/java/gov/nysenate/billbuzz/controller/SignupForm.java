@@ -72,7 +72,7 @@ public class SignupForm extends HttpServlet
             List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
             if (user == null) {
                 message = "missing_userinfo";
-                subscriptions = FormProcessor.getSubscriptions(request);
+                subscriptions = FormProcessor.getSubscriptions(request, 0L, createdAt);
             }
             else if (user.getSubscriptions().isEmpty()) {
                 message = "missing_subscription";

@@ -46,7 +46,6 @@ public class BillBuzzDAO
     public void saveConfirmation(BillBuzzConfirmation confirmation) throws SQLException
     {
         int count = runner.update("REPLACE INTO billbuzz_confirmation (id, code, action, userId, createdAt, expiresAt, usedAt) VALUES (?, ?, ?, ?, ?, ?, ?)", confirmation.getId(), confirmation.getCode(), confirmation.getAction(), confirmation.getUserId(), confirmation.getCreatedAt(), confirmation.getExpiresAt(), confirmation.getUsedAt());
-        System.out.println(count+" rows updated");
         if (confirmation.getId() == null) {
             confirmation.setId(this.lastInsertId(runner));
         }
@@ -71,24 +70,6 @@ public class BillBuzzDAO
 
     public BillBuzzConfirmation loadConfirmation(String action, String code) throws SQLException
     {
-        System.out.println("SELECT billbuzz_user.id as userId, " +
-            "       billbuzz_user.email as userEmail, " +
-            "       billbuzz_user.firstName as userFirstName, " +
-            "       billbuzz_user.lastName as userLastName, " +
-            "       billbuzz_user.activated as userActivated, " +
-            "       billbuzz_user.createdAt as userCreatedAt, " +
-            "       billbuzz_user.confirmedAt as userConfirmedAt, " +
-            "       billbuzz_confirmation.id as confirmationId, " +
-            "       billbuzz_confirmation.code as confirmationCode, " +
-            "       billbuzz_confirmation.action as confirmationAction, " +
-            "       billbuzz_confirmation.userId as confirmationUserId, " +
-            "       billbuzz_confirmation.createdAt as confirmationCreatedAt, " +
-            "       billbuzz_confirmation.expiresAt as confirmationExpiresAt, " +
-            "       billbuzz_confirmation.usedAt as confirmationUsedAt " +
-            "FROM billbuzz_confirmation, billbuzz_user " +
-            "WHERE userId=billbuzz_user.id " +
-            "  AND action = '"+action+"' " +
-            "  AND code = '"+code+"' ");
         return runner.query(
             "SELECT billbuzz_user.id as userId, " +
             "       billbuzz_user.email as userEmail, " +
@@ -116,7 +97,6 @@ public class BillBuzzDAO
                     if (rs.next()) {
                         BillBuzzUser user = processor.toBean(rs, BillBuzzUser.class, "user");
                         BillBuzzConfirmation confirmation = processor.toBean(rs, BillBuzzConfirmation.class, "confirmation");
-                        System.out.println("Off the bat!: "+confirmation.getCreatedAt());
                         confirmation.setUser(user);
                         return confirmation;
                     }

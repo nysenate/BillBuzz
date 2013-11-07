@@ -1,21 +1,29 @@
 package gov.nysenate.billbuzz.util;
 
 import gov.nysenate.billbuzz.model.BillBuzzConfirmation;
+import gov.nysenate.billbuzz.model.BillBuzzParty;
+import gov.nysenate.billbuzz.model.BillBuzzSenator;
 import gov.nysenate.billbuzz.model.BillBuzzSubscription;
 import gov.nysenate.billbuzz.model.BillBuzzUser;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
 public class FormProcessor
 {
+    private final static Logger logger = Logger.getLogger(FormProcessor.class);
+
     public static BillBuzzConfirmation getConfirmation(HttpServletRequest request) throws SQLException
     {
         String code = request.getParameter("key");
@@ -65,7 +73,6 @@ public class FormProcessor
    public static BillBuzzUser processSubscriptionForm(HttpServletRequest request, Date createdAt) throws SQLException
    {
        BillBuzzDAO dao = new BillBuzzDAO();
-
        String email = request.getParameter("email");
        String email2 = request.getParameter("email2");
        String firstName = request.getParameter("firstName");
@@ -85,65 +92,65 @@ public class FormProcessor
            user.setLastName(lastName);
        }
 
-       String all = request.getParameter("all");
-       String other = request.getParameter("other");
-       String[] senators = request.getParameterValues("senators");
-       String[] parties = request.getParameterValues("parties");
-       List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
-
-       // Add subscription to other if they've requested it.
-       if (other != null && other.equals("yes")) {
-           BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "other", "other", createdAt);
-           subscriptions.add(subscription);
-       }
-
-       // Subscribe to all known sponsors if marked
-       if (all != null && other.equals("all")) {
-           BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "all", "all", createdAt);
-           subscriptions.add(subscription);
-       }
-       else {
-           // Otherwise subscribe to all marked senators
-           if (senators != null) {
-               for (String sponsor : senators) {
-                   BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "sponsor", sponsor, createdAt);
-                   subscriptions.add(subscription);
-               }
-           }
-
-           // And all marked parties
-           if (parties != null) {
-               for (String party : parties) {
-                   BillBuzzSubscription subscription = new BillBuzzSubscription(user.getId(), "party", party, createdAt);
-                   subscriptions.add(subscription);
-               }
-           }
-       }
-       user.setSubscriptions(subscriptions);
+       user.setSubscriptions(getSubscriptions(request, user.getId(), createdAt));
 
        return user;
    }
 
-   public static List<BillBuzzSubscription> getSubscriptions(HttpServletRequest request) {
+   public static List<BillBuzzSubscription> getSubscriptions(HttpServletRequest request, Long userId, Date now) throws SQLException {
        String all = request.getParameter("all");
-       String[] senators = request.getParameterValues("senators");
+       String other = request.getParameter("other");
+       Set<String> sponsors = new TreeSet<String>(Arrays.asList(request.getParameterValues("senators")));
        String[] parties = request.getParameterValues("parties");
        List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
+
        if (all != null) {
-           BillBuzzSubscription subscription = new BillBuzzSubscription(0L, "sponsor", "all", new Date());
+           BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "sponsor", "all", now);
            subscriptions.add(subscription);
        }
        else {
-           if (senators != null) {
-               for (String sponsor : senators) {
-                   BillBuzzSubscription subscription = new BillBuzzSubscription(0L, "sponsor", sponsor, new Date());
-                   subscriptions.add(subscription);
-               }
+           // Add subscription to other if they've requested it.
+           if (other != null && other.equals("Yes")) {
+               BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "other", "other", now);
+               subscriptions.add(subscription);
            }
 
            if (parties != null) {
-               for (String party : parties) {
-                   BillBuzzSubscription subscription = new BillBuzzSubscription(0L, "party", party, new Date());
+               // Get senators and order by name so that party entries can be removed.
+               BillBuzzDAO dao = new BillBuzzDAO();
+               List<BillBuzzSenator> senators = dao.getSenators();
+               Map<String, BillBuzzSenator> senatorsByName = new HashMap<String, BillBuzzSenator>();
+               for (BillBuzzSenator senator : senators) {
+                   senatorsByName.put(senator.getShortName(), senator);
+               }
+
+               for (String partyId : parties) {
+                   BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "party", partyId, now);
+                   subscriptions.add(subscription);
+
+                   // Remove party senators from subscription preferences so we don't have double coverage
+                   List<String> sponsorsToRemove = new ArrayList<String>();
+                   for (String sponsor : sponsors) {
+                       if (senatorsByName.containsKey(sponsor)) {
+                           for (BillBuzzParty party : senatorsByName.get(sponsor).getParties()) {
+                               if (party.getId().equals(partyId)) {
+                                   sponsorsToRemove.add(sponsor);
+                                   break;
+                               }
+                           }
+                       }
+                       else {
+                           // Subscribed to sponsor we don't have.. impossible?
+                           logger.error("Subscribed to sponsor we don't have: "+sponsor+". Impossible?");
+                       }
+                   }
+                   sponsors.removeAll(sponsorsToRemove);
+               }
+           }
+
+           if (sponsors != null) {
+               for (String sponsor : sponsors) {
+                   BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "sponsor", sponsor, now);
                    subscriptions.add(subscription);
                }
            }

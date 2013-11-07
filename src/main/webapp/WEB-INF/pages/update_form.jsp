@@ -10,7 +10,11 @@ String firstName = request.getParameter("firstName");
 String message = (String)request.getAttribute("message");
 BillBuzzConfirmation confirmation = (BillBuzzConfirmation)request.getAttribute("confirmation");
 BillBuzzUser user = (BillBuzzUser)request.getAttribute("user");
+
+@SuppressWarnings("unchecked")
 List<BillBuzzSenator> senators = (List<BillBuzzSenator>)request.getAttribute("senators");
+
+@SuppressWarnings("unchecked")
 Map<String, Set<String>> subscriptions = (Map<String, Set<String>>)request.getAttribute("subscriptions");
 
 if (user != null) {
@@ -74,23 +78,23 @@ That's it, your subscription has been updated to reflect the preferences checked
         <tr>
             <td><input type="checkbox" name="all" value="all" <%=subscriptions.get("all").contains("all") ? "checked=\"yes\"" : ""%>></input></td>
             <td>All</td>
-            <td><input type="checkbox" name="parties" value="D" <%=subscriptions.get("party").contains("D") ? "checked=\"yes\"" : ""%>></input></td>
+            <td><input type="checkbox" name="parties" value="D" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("D") ? "checked=\"yes\"" : ""%>></input></td>
             <td>Democratic</td>
-            <td><input type="checkbox" name="parties" value="R" <%=subscriptions.get("party").contains("R") ? "checked=\"yes\"" : ""%>></input></td>
+            <td><input type="checkbox" name="parties" value="R" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("R") ? "checked=\"yes\"" : ""%>></input></td>
             <td>Republican</td>
         </tr>
         <tr>
-            <td><input type="checkbox" name="parties" value="IP" <%=subscriptions.get("party").contains("IP") ? "checked=\"yes\"" : ""%>></input></td>
+            <td><input type="checkbox" name="parties" value="IP" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("IP") ? "checked=\"yes\"" : ""%>></input></td>
             <td>Independence</td>
-            <td><input type="checkbox" name="parties" value="C" <%=subscriptions.get("party").contains("C") ? "checked=\"yes\"" : ""%>></input></td>
+            <td><input type="checkbox" name="parties" value="C" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("C") ? "checked=\"yes\"" : ""%>></input></td>
             <td>Conservative</td>
-            <td><input type="checkbox" name="parties" value="WF" <%=subscriptions.get("party").contains("WF") ? "checked=\"yes\"" : ""%>></input></td>
+            <td><input type="checkbox" name="parties" value="WF" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("WF") ? "checked=\"yes\"" : ""%>></input></td>
             <td>Working Families</td>
         </tr>
     </table>
     <br/>
     <div style="position:relative;right:-7px;">
-        <table cellpadding=3>
+        <table>
             <tr>
             <% if (senators != null) {
                 int i = 0;
@@ -100,9 +104,18 @@ That's it, your subscription has been updated to reflect the preferences checked
             <tr><%
                     }
                     i++;
+
+                    String partyClasses = "";
+                    boolean checked = subscriptions.get("all").contains("all") || subscriptions.get("sponsor").contains(senator.getShortName());
+                    for (BillBuzzParty party : senator.getParties()) {
+                        if (subscriptions.get("party").contains(party.getId())) {
+                            checked = true;
+                        }
+                        partyClasses += " "+party.getId();
+                    }
                     %><td>
                        <div class="senator">
-                           <input type="checkbox" name="senators" value="<%=senator.getShortName()%>" <%=subscriptions.get("sponsor").contains(senator.getShortName()) ? "checked=\"yes\"" : "" %>></input>
+                           <input type="checkbox" name="senators" class="<%=partyClasses%>" value="<%=senator.getShortName()%>" <%=checked ? "checked=\"yes\"" : "" %>></input>
                        </div>
                     </td>
                     <td><%=senator.getName()%></td>
@@ -128,7 +141,7 @@ That's it, your subscription has been updated to reflect the preferences checked
         </table>
 
         <div style="position:right;right:250px;">
-            <input type="button" name="clear" value="Clear Selections" onClick="clearAll()"></input>
+            <input type="button" name="clear" value="Clear Selection"></input>
             <input type="submit" id="process" name="submit" value="Update Subscription"></input>
         </div>
         <p></p>

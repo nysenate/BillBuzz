@@ -1,7 +1,7 @@
             </div></center>
 		</div>
 		<center><div class="foot">
-			<table cellpadding=5>
+			<table>
 				<tr>
 					<td>
 						<a href="<%=request.getContextPath()%>">BillBuzz Home</a>
