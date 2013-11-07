@@ -32,9 +32,9 @@ The form below has been filled with your current subscription preferences. Just 
 to update your account.
 </div>
 <% } else if (message.equals("missing_userinfo")) { 
-    if (lastName == null || firstName == null || email == null) { %>
+    if (firstName == null || email == null) { %>
         <div class="bb_main error">
-        Email, first name, and last name are required when registering an account with BillBuzz.
+        Email and first name are required when registering an account with BillBuzz.
         </div><%
     } else { %>
         <div class="bb_main error">
@@ -57,19 +57,19 @@ That's it, your subscription has been updated to reflect the preferences checked
 <br>
     <table>
         <tr>
-            <td>First name</td>
+            <td>* First name</td>
             <td><input type="text" name="firstName" value="<%=((firstName == null) ? "" : firstName)%>"></input></td>
         </tr>
         <tr>
-            <td>Last name</td>
+            <td>&nbsp;&nbsp;Last name</td>
             <td><input type="text" name="lastName" value="<%=((lastName == null) ? "" : lastName)%>"></input></td>
         </tr>
         <tr>
-            <td>Email</td>
+            <td>* Email</td>
             <td><input type="text" name="email" value="<%=((email == null) ? "" : email)%>"></input></td>
         </tr>
         <tr>
-            <td>Confirm email</td>
+            <td>* Email (confirm)</td>
             <td><input type="text" name="email2" value="<%=((email2 == null) ? "" : email2)%>"></input></td>
         </tr>
     </table>
