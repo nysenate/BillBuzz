@@ -1,5 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" language="java" import="java.util.*,gov.nysenate.billbuzz.model.*"%>
-<jsp:include page="/WEB-INF/pages/header.jsp">
+<jsp:include page="/WEB-INF/parts/header.jsp">
 <jsp:param value="signup" name="page"/>
 </jsp:include>
 <%
@@ -8,16 +8,9 @@ String email2 = request.getParameter("email2");
 String lastName = request.getParameter("lastName");
 String firstName = request.getParameter("firstName");
 String message = (String)request.getAttribute("message");
+BillBuzzUser user = (BillBuzzUser)request.getAttribute("user");
 List<BillBuzzSenator> senators = (List<BillBuzzSenator>)request.getAttribute("senators");
 Map<String, Set<String>> subscriptions = (Map<String, Set<String>>)request.getAttribute("subscriptions");
-if (!subscriptions.containsKey("sponsor")) {
-    subscriptions.put("sponsor", new TreeSet<String>());
-}
-if (!subscriptions.containsKey("party")) {
-    subscriptions.put("party", new TreeSet<String>());
-}
-
-BillBuzzUser user = (BillBuzzUser)request.getAttribute("user");
 %>
 <% if (message.equals("instruction")) { %>
 <div class="bb_main instruction">
@@ -130,4 +123,4 @@ We've sent you a email with a link to confirm your subscription to the parties a
 	</div>
 </form>
 </div>
-<%@ include file="/WEB-INF/pages/footer.jsp"%>
+<%@ include file="/WEB-INF/parts/footer.jsp"%>

@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.*,gov.nysenate.billbuzz.model.*" %>
-<jsp:include page="/WEB-INF/pages/header.jsp">
+<jsp:include page="/WEB-INF/parts/header.jsp">
     <jsp:param value="unsubscribe" name="page"/>
 </jsp:include>
 <%
@@ -42,4 +42,4 @@ We've sent you an email. Just click the link in the email to update your account
 </form>
 </div>
 </div>
-<%@ include file="/WEB-INF/pages/footer.jsp"%>
+<%@ include file="/WEB-INF/parts/footer.jsp"%>

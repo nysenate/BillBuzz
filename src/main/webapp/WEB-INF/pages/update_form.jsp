@@ -1,5 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" language="java" import="java.util.*,gov.nysenate.billbuzz.model.*"%>
-<jsp:include page="/WEB-INF/pages/header.jsp">
+<jsp:include page="/WEB-INF/parts/header.jsp">
 <jsp:param value="update" name="page"/>
 </jsp:include>
 <%
@@ -134,4 +134,4 @@ That's it, your subscription has been updated to reflect the preferences checked
     </div>
 </form>
 </div>
-<%@ include file="/WEB-INF/pages/footer.jsp"%>
+<%@ include file="/WEB-INF/parts/footer.jsp"%>
