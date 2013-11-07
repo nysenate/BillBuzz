@@ -7,7 +7,7 @@ String email = request.getParameter("email");
 String message = (String)request.getAttribute("message");
 if (message.equals("instruction")) { %>
 <div class="bb_main instruction">
-Enter your email below and we'll send you a link that can be used to update your subscription preferences.
+Enter your email below and we'll send you a link that can be used to cancel your subscription.
 </div>
 <% } else if (message.equals("invalid_email")) { %>
 <div class="bb_main error">
@@ -19,7 +19,7 @@ You account has already been deactivated.
 </div>
 <% } else if (message.equals("success")) { %>
 <div class="bb_main success">
-We've sent you an email. Just click the link in the email to update your account.
+We've sent you an email. Just click the link in the email confirm cancellation of your subscription.
 </div>
 <% } %>
 <br/>
