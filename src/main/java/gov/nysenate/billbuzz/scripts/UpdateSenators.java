@@ -66,7 +66,7 @@ public class UpdateSenators extends BaseScript
             BillBuzzSenator senator = runner.query("SELECT * FROM billbuzz_senator WHERE shortName=? and session=?", new BeanHandler<BillBuzzSenator>(BillBuzzSenator.class), shortName, session);
             if (senator == null) {
                 senator = new BillBuzzSenator(name, shortName, session, parties);
-                runner.update("INSERT INTO billbuzz_senator (name, shortName, session) VALUES (?, ?, ?)", senator.getName(), senator.getShortName(), senator.getSession());
+                runner.update("INSERT INTO billbuzz_senator (name, shortName, active, session) VALUES (?, ?, ?, ?)", senator.getName(), senator.getShortName(), senator.isActive(), senator.getSession());
                 senator.setId(dao.lastInsertId(runner));
             }
 

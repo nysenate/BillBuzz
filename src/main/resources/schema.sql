@@ -122,7 +122,7 @@ CREATE TABLE billbuzz_user (
     lastName varchar(255),
     activated boolean,
     confirmedAt timestamp NULL DEFAULT NULL,
-    createdAt timestamp NULL DEFAULT NULL,
+    createdAt timestamp NULL DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS billbuzz_confirmation;
