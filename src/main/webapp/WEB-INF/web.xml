@@ -72,6 +72,11 @@
     <url-pattern>/update/form</url-pattern>
   </servlet-mapping>
 
+  <error-page>
+    <error-code>500</error-code>
+    <location>/WEB-INF/pages/500.jsp</location>
+  </error-page>
+
   <context-param>
      <param-name>Application</param-name>
      <param-value>gov.nysenate.billbuzz.util.Application</param-value>
