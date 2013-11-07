@@ -5,7 +5,7 @@
 <%
 String message = (String)request.getAttribute("message");
 if (message.equals("success")) { %>
-<div class="bb_main error">
+<div class="bb_main success">
 Success!  Thanks for signing up.
 </div>
 <% } else if (message.equals("invalid")) { %>

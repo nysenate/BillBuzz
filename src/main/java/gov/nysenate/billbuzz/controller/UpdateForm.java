@@ -42,7 +42,7 @@ public class UpdateForm extends HttpServlet
             BillBuzzConfirmation confirmation = FormProcessor.getConfirmation(request);
 
             if (confirmation != null) {
-                message = "success";
+                message = "instruction";
                 subscriptions = dao.loadSubscriptions(confirmation.getUserId());
             }
             else {
