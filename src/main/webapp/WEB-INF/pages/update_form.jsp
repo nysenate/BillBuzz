@@ -24,7 +24,8 @@ if (user != null) {
 %>
 <% if (message.equals("instruction")) { %>
 <div class="bb_main instruction">
-To sign up simply fill out the form below and select parties or individuals that you would like to receive updates for!
+The form below has been filled with your current subscription preferences. Just modify them as necessary and submit them
+to update your account.
 </div>
 <% } else if (message.equals("missing_userinfo")) { 
     if (lastName == null || firstName == null || email == null) { %>
