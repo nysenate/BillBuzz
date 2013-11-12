@@ -101,6 +101,6 @@ public class BillBuzzApproval implements Comparable<BillBuzzApproval>
     @Override
     public int compareTo(BillBuzzApproval other)
     {
-        return this.thread.getBillId().compareTo(other.getThread().getBillId());
+        return this.getPostId().compareTo(other.getPostId());
     }
 }
