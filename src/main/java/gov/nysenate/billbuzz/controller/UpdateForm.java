@@ -90,6 +90,7 @@ public class UpdateForm extends HttpServlet
                 user.setLastName(formUser.getLastName());
                 user.setEmail(formUser.getEmail());
                 user.setSubscriptions(formUser.getSubscriptions());
+                user.setActivated(true);
 
                 if (user.getSubscriptions().isEmpty()) {
                     message = "missing_subscription";
