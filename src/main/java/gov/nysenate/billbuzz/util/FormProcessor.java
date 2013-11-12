@@ -1,8 +1,6 @@
 package gov.nysenate.billbuzz.util;
 
 import gov.nysenate.billbuzz.model.BillBuzzConfirmation;
-import gov.nysenate.billbuzz.model.BillBuzzParty;
-import gov.nysenate.billbuzz.model.BillBuzzSenator;
 import gov.nysenate.billbuzz.model.BillBuzzSubscription;
 import gov.nysenate.billbuzz.model.BillBuzzUser;
 
@@ -41,7 +39,6 @@ public class FormProcessor
     {
         Map<String, TreeSet<String>> subscriptionMap = new HashMap<String, TreeSet<String>>();
         subscriptionMap.put("sponsor", new TreeSet<String>());
-        subscriptionMap.put("party", new TreeSet<String>());
         subscriptionMap.put("other", new TreeSet<String>());
         subscriptionMap.put("all", new TreeSet<String>());
         for (BillBuzzSubscription subscription : subscriptions) {
@@ -101,7 +98,6 @@ public class FormProcessor
        String all = request.getParameter("all");
        String other = request.getParameter("other");
        Set<String> sponsors = new TreeSet<String>(Arrays.asList(request.getParameterValues("senators")));
-       String[] parties = request.getParameterValues("parties");
        List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
 
        if (all != null) {
@@ -110,42 +106,9 @@ public class FormProcessor
        }
        else {
            // Add subscription to other if they've requested it.
-           if (other != null && other.equals("Yes")) {
+           if (other != null) {
                BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "other", "other", now);
                subscriptions.add(subscription);
-           }
-
-           if (parties != null) {
-               // Get senators and order by name so that party entries can be removed.
-               BillBuzzDAO dao = new BillBuzzDAO();
-               List<BillBuzzSenator> senators = dao.getSenators();
-               Map<String, BillBuzzSenator> senatorsByName = new HashMap<String, BillBuzzSenator>();
-               for (BillBuzzSenator senator : senators) {
-                   senatorsByName.put(senator.getShortName(), senator);
-               }
-
-               for (String partyId : parties) {
-                   BillBuzzSubscription subscription = new BillBuzzSubscription(userId, "party", partyId, now);
-                   subscriptions.add(subscription);
-
-                   // Remove party senators from subscription preferences so we don't have double coverage
-                   List<String> sponsorsToRemove = new ArrayList<String>();
-                   for (String sponsor : sponsors) {
-                       if (senatorsByName.containsKey(sponsor)) {
-                           for (BillBuzzParty party : senatorsByName.get(sponsor).getParties()) {
-                               if (party.getId().equals(partyId)) {
-                                   sponsorsToRemove.add(sponsor);
-                                   break;
-                               }
-                           }
-                       }
-                       else {
-                           // Subscribed to sponsor we don't have.. impossible?
-                           logger.error("Subscribed to sponsor we don't have: "+sponsor+". Impossible?");
-                       }
-                   }
-                   sponsors.removeAll(sponsorsToRemove);
-               }
            }
 
            if (sponsors != null) {

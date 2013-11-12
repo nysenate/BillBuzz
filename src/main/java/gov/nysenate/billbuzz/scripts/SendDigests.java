@@ -3,7 +3,6 @@ package gov.nysenate.billbuzz.scripts;
 import gov.nysenate.billbuzz.disqus.DisqusPost;
 import gov.nysenate.billbuzz.model.BillBuzzApproval;
 import gov.nysenate.billbuzz.model.BillBuzzAuthor;
-import gov.nysenate.billbuzz.model.BillBuzzParty;
 import gov.nysenate.billbuzz.model.BillBuzzSenator;
 import gov.nysenate.billbuzz.model.BillBuzzSubscription;
 import gov.nysenate.billbuzz.model.BillBuzzThread;
@@ -53,65 +52,55 @@ public class SendDigests extends BaseScript
     public void execute(CommandLine opts) throws Exception
     {
         Date now = new Date();
-        BillBuzzDAO dao = new BillBuzzDAO();
+
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
-
         List<BillBuzzApproval> approvals = getApprovals(runner);
-        List<BillBuzzSenator> senators = dao.getSenators();
-        senators.add(new BillBuzzSenator("Other Sponsors", "billbuzz_other", 2013, new ArrayList<BillBuzzParty>()));
-
         if (approvals.size() == 0) {
             logger.info("No approvals to mail out. Shutting down.");
             return;
         }
 
-        // Senators need to be organized by party and name
-        Set<String> senatorShortNames = new TreeSet<String>();
+        // Get all known senators and organize them by name.
+        // Add in budget and rules "senators" to cover "other" subscriptions.
+        BillBuzzDAO dao = new BillBuzzDAO();
+        List<BillBuzzSenator> senators = dao.getSenators();
+        senators.add(new BillBuzzSenator("Budget", "budget", 0));
+        senators.add(new BillBuzzSenator("Rules Committee", "rules", 0));
+
+        // Senators need to be organized by name
         HashMap<String, BillBuzzSenator> senatorsByShortName = new HashMap<String, BillBuzzSenator>();
-        HashMap<String, List<BillBuzzSenator>> senatorsByParty = new HashMap<String, List<BillBuzzSenator>>();
         for (BillBuzzSenator senator : senators) {
-            senatorShortNames.add(senator.getShortName());
-            for (BillBuzzParty party : senator.getParties()) {
-                if (!senatorsByParty.containsKey(party.getId())) {
-                    senatorsByParty.put(party.getId(), new ArrayList<BillBuzzSenator>());
-                }
-                senatorsByParty.get(party.getId()).add(senator);
-            }
             senatorsByShortName.put(senator.getShortName(), senator);
         }
 
-        // Organize approvals by sponsor - sponsors not in the senators listing fall under other
+        // Organize approvals by sponsor; sponsors not in the senators listing are excluded.
         TreeMap<String, Set<BillBuzzApproval>> sponsorApprovals = new TreeMap<String, Set<BillBuzzApproval>>();
         for (BillBuzzApproval approval : approvals) {
             String sponsor = approval.getThread().getSponsor().toLowerCase();
-            if (!senatorShortNames.contains(sponsor)) {
-                sponsor = "billbuzz_other";
+            if (senatorsByShortName.containsKey(sponsor)) {
+                if (!sponsorApprovals.containsKey(sponsor)) {
+                    sponsorApprovals.put(sponsor, new TreeSet<BillBuzzApproval>());
+                }
+                sponsorApprovals.get(sponsor).add(approval);
             }
-            if (!sponsorApprovals.containsKey(sponsor)) {
-                sponsorApprovals.put(sponsor, new TreeSet<BillBuzzApproval>());
-            }
-            sponsorApprovals.get(sponsor).add(approval);
         }
-
 
         for (BillBuzzUser user : getUsers(runner)) {
             logger.info("Gathering updates for: "+user.getEmail());
 
-            // For every user, get a list of subscribed sponsors.
+            // For every user, get a list of subscribed senators.
             Set<BillBuzzSenator> userSubscriptions = new TreeSet<BillBuzzSenator>();
             for (BillBuzzSubscription subscription : user.getSubscriptions()) {
-                if (subscription.getCategory().equals("party")) {
-                    userSubscriptions.addAll(senatorsByParty.get(subscription.getValue()));
-                }
-                else if (subscription.getCategory().equals("all")) {
+                if (subscription.getCategory().equals("all")) {
                     userSubscriptions.addAll(senators);
-                }
-                else if (subscription.getCategory().equals("sponsor")) {
-                    userSubscriptions.add(senatorsByShortName.get(subscription.getValue()));
                 }
                 else if (subscription.getCategory().equals("other")){
                     // Handle other by creating a catch all senator
-                    userSubscriptions.add(senatorsByShortName.get("billbuzz_other"));
+                    userSubscriptions.add(senatorsByShortName.get("rules"));
+                    userSubscriptions.add(senatorsByShortName.get("budget"));
+                }
+                else if (subscription.getCategory().equals("sponsor")) {
+                    userSubscriptions.add(senatorsByShortName.get(subscription.getValue()));
                 }
                 else {
                     logger.error("bad subscription category: "+subscription.getCategory()+" ["+subscription.getValue()+"]");

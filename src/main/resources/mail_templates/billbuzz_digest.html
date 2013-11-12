@@ -10,7 +10,7 @@ Greetings, $user.firstName. Here's the latest buzz on your subscribed legislatio
 #foreach( $senator in $userApprovals.keySet() )
     #set($senatorApprovals = $userApprovals.get($senator))
     <tr>
-        <td style="font-size:22px; font-style:bolder; padding-bottom:5px; padding-top:10px;"><a href="http://open.nysenate.gov/legislation/sponsor/$senator.shortName" style="text-decoration:none; ">Senator $senator.name</a> Legislation</td>
+        <td style="font-size:22px; font-style:bolder; padding-bottom:5px; padding-top:10px;"><a href="http://open.nysenate.gov/legislation/sponsor/$senator.shortName" style="text-decoration:none; ">$senator.name</a> Legislation</td>
     </tr>
     #foreach( $thread in $senatorApprovals.keySet() )
         #set($threadApprovals = $senatorApprovals.get($thread))

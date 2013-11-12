@@ -3,7 +3,6 @@ package gov.nysenate.billbuzz.util;
 import gov.nysenate.billbuzz.model.BillBuzzApproval;
 import gov.nysenate.billbuzz.model.BillBuzzAuthor;
 import gov.nysenate.billbuzz.model.BillBuzzConfirmation;
-import gov.nysenate.billbuzz.model.BillBuzzParty;
 import gov.nysenate.billbuzz.model.BillBuzzPost;
 import gov.nysenate.billbuzz.model.BillBuzzSenator;
 import gov.nysenate.billbuzz.model.BillBuzzSubscription;
@@ -14,13 +13,11 @@ import gov.nysenate.billbuzz.model.BillBuzzUser;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.dbutils.BeanProcessor;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -45,7 +42,7 @@ public class BillBuzzDAO
 
     public void saveConfirmation(BillBuzzConfirmation confirmation) throws SQLException
     {
-        int count = runner.update("REPLACE INTO billbuzz_confirmation (id, code, action, userId, createdAt, expiresAt, usedAt) VALUES (?, ?, ?, ?, ?, ?, ?)", confirmation.getId(), confirmation.getCode(), confirmation.getAction(), confirmation.getUserId(), confirmation.getCreatedAt(), confirmation.getExpiresAt(), confirmation.getUsedAt());
+        runner.update("REPLACE INTO billbuzz_confirmation (id, code, action, userId, createdAt, expiresAt, usedAt) VALUES (?, ?, ?, ?, ?, ?, ?)", confirmation.getId(), confirmation.getCode(), confirmation.getAction(), confirmation.getUserId(), confirmation.getCreatedAt(), confirmation.getExpiresAt(), confirmation.getUsedAt());
         if (confirmation.getId() == null) {
             confirmation.setId(this.lastInsertId(runner));
         }
@@ -114,44 +111,12 @@ public class BillBuzzDAO
 
     public List<BillBuzzSenator> getSenators(int session) throws SQLException
     {
-        // Render signup page
-        return runner.query("SELECT id, name, shortName, session, GROUP_CONCAT(partyId) as partyList FROM billbuzz_senator JOIN billbuzz_affiliation ON id=senatorId WHERE session=? and active=1 GROUP BY senatorId ORDER BY shortName", new ResultSetHandler<List<BillBuzzSenator>>() {
-            public List<BillBuzzSenator> handle(ResultSet rs) throws SQLException {
-                BeanProcessor processor = new BeanProcessor();
-                List<BillBuzzSenator> senators = new ArrayList<BillBuzzSenator>();
-                while(rs.next()) {
-                    List<BillBuzzParty> parties = new ArrayList<BillBuzzParty>();
-                    for (String partyId : rs.getString("partyList").split(",")) {
-                        parties.add(new BillBuzzParty(partyId.trim()));
-                    }
-                    BillBuzzSenator senator = processor.toBean(rs, BillBuzzSenator.class);
-                    senator.setParties(parties);
-                    senators.add(senator);
-                }
-                return senators;
-            }
-        }, session);
+        return runner.query("SELECT * FROM billbuzz_senator WHERE session=? and active=1 ORDER BY shortName", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class), session);
     }
 
     public List<BillBuzzSenator> getSenators() throws SQLException
     {
-        // Render signup page
-        return runner.query("SELECT id, name, shortName, session, GROUP_CONCAT(partyId) as partyList FROM billbuzz_senator JOIN billbuzz_affiliation ON id=senatorId WHERE active=1 GROUP BY senatorId ORDER BY shortName", new ResultSetHandler<List<BillBuzzSenator>>() {
-            public List<BillBuzzSenator> handle(ResultSet rs) throws SQLException {
-                BeanProcessor processor = new BeanProcessor();
-                List<BillBuzzSenator> senators = new ArrayList<BillBuzzSenator>();
-                while(rs.next()) {
-                    List<BillBuzzParty> parties = new ArrayList<BillBuzzParty>();
-                    for (String partyId : rs.getString("partyList").split(",")) {
-                        parties.add(new BillBuzzParty(partyId.trim()));
-                    }
-                    BillBuzzSenator senator = processor.toBean(rs, BillBuzzSenator.class);
-                    senator.setParties(parties);
-                    senators.add(senator);
-                }
-                return senators;
-            }
-        });
+        return runner.query("SELECT * FROM billbuzz_senator WHERE active=1 ORDER BY shortName", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class));
     }
 
     /**
@@ -223,10 +188,6 @@ public class BillBuzzDAO
         runner.update("REPLACE INTO billbuzz_senator (id, name, shortName, session) VALUES (?, ?, ?, ?)", senator.getId(), senator.getName(), senator.getShortName(), senator.getSession());
         if (senator.getId() == null) {
             senator.setId(this.lastInsertId(runner));
-        }
-
-        for (BillBuzzParty party : senator.getParties()) {
-            runner.update("REPLACE INTO billbuzz_affiliation (senatorId, partyId) VALUES (?, ?)", senator.getId(), party.getId());
         }
     }
 

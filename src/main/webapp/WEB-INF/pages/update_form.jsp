@@ -77,19 +77,7 @@ That's it, your subscription has been updated to reflect the preferences checked
     <table>
         <tr>
             <td><input type="checkbox" name="all" value="all" <%=subscriptions.get("all").contains("all") ? "checked=\"yes\"" : ""%>></input></td>
-            <td>All</td>
-            <td><input type="checkbox" name="parties" value="D" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("D") ? "checked=\"yes\"" : ""%>></input></td>
-            <td>Democratic</td>
-            <td><input type="checkbox" name="parties" value="R" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("R") ? "checked=\"yes\"" : ""%>></input></td>
-            <td>Republican</td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" name="parties" value="IP" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("IP") ? "checked=\"yes\"" : ""%>></input></td>
-            <td>Independence</td>
-            <td><input type="checkbox" name="parties" value="C" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("C") ? "checked=\"yes\"" : ""%>></input></td>
-            <td>Conservative</td>
-            <td><input type="checkbox" name="parties" value="WF" <%=subscriptions.get("all").contains("all") || subscriptions.get("party").contains("WF") ? "checked=\"yes\"" : ""%>></input></td>
-            <td>Working Families</td>
+            <td>Subscribe to all comments on senate legislation.</td>
         </tr>
     </table>
     <br/>
@@ -104,18 +92,9 @@ That's it, your subscription has been updated to reflect the preferences checked
             <tr><%
                     }
                     i++;
-
-                    String partyClasses = "";
-                    boolean checked = subscriptions.get("all").contains("all") || subscriptions.get("sponsor").contains(senator.getShortName());
-                    for (BillBuzzParty party : senator.getParties()) {
-                        if (subscriptions.get("party").contains(party.getId())) {
-                            checked = true;
-                        }
-                        partyClasses += " "+party.getId();
-                    }
                     %><td>
                        <div class="senator">
-                           <input type="checkbox" name="senators" class="<%=partyClasses%>" value="<%=senator.getShortName()%>" <%=checked ? "checked=\"yes\"" : "" %>></input>
+                           <input type="checkbox" name="senators" value="<%=senator.getShortName()%>" <%=subscriptions.get("all").contains("all") || subscriptions.get("sponsor").contains(senator.getShortName()) ? "checked=\"yes\"" : "" %>></input>
                        </div>
                     </td>
                     <td><%=senator.getName()%></td>
@@ -124,22 +103,15 @@ That's it, your subscription has been updated to reflect the preferences checked
                 }
                 %>
             </tr>
-        
-            <%%>
-            <tr></tr>
+        </table>
+        <p></p>
+        <table>
             <tr>
-                <td colspan=8>
-                    <p>Would you like to receive updates for bills without an individual sponsor?
-                    <select name="other">
-                        <option <%=subscriptions.get("other").contains("other")?"SELECTED":"" %>>Yes</option>
-                        <option <%=!subscriptions.get("other").contains("other")?"SELECTED":"" %>>No</option>
-                    </select>
-                    <br/><i>This primarily refers to the budget bill and bills introduced collectively by the rules committee.</i>
-                    </p>
-                </td>
+                <td><input type="checkbox" name="other" value="other" <%=subscriptions.get("other").contains("other") ? "checked=\"yes\"" : ""%>></input></td>
+                <td>Receive updates for budget bills and legislation from the Rules committee?</td>
             </tr>
         </table>
-
+        <p></p>
         <div style="position:right;right:250px;">
             <input type="button" name="clear" value="Clear Selection"></input>
             <input type="submit" id="process" name="submit" value="Update Subscription"></input>

@@ -92,13 +92,6 @@ CREATE TABLE billbuzz_senator (
     UNIQUE KEY (shortname, session)
 );
 
-DROP TABLE IF EXISTS billbuzz_affiliation;
-CREATE TABLE billbuzz_affiliation (
-    senatorId int(11),
-    partyId varchar(255),
-    UNIQUE KEY (senatorId, partyId)
-);
-
 DROP TABLE IF EXISTS billbuzz_update;
 CREATE TABLE billbuzz_update (
     id int(11) AUTO_INCREMENT PRIMARY KEY,

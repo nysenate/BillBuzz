@@ -3,7 +3,7 @@ Greetings, $user.firstName. Here's the latest buzz on your subscribed legislatio
 
 #foreach( $senator in $userApprovals.keySet() )
 #set($senatorApprovals = $userApprovals.get($senator))
-Legislation for $senator.name
+$senator.name Legislation
 ========================================
 #foreach( $thread in $senatorApprovals.keySet() )
 #set($threadApprovals = $senatorApprovals.get($thread))

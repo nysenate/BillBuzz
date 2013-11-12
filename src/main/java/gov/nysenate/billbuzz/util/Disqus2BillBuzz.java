@@ -89,7 +89,15 @@ public class Disqus2BillBuzz
                 if (root.get("response").get("metadata").get("totalresults").asInt() == 1) {
                     JsonNode result = root.get("response").get("results").get(0);
                     String sponsor = result.get("data").get("bill").get("sponsor").get("fullname").asText();
-                    sponsor = sponsor.replaceAll("RULES COM ", "").replaceAll(" \\(MS\\)", "").split(",")[0];
+                    if (sponsor.equalsIgnoreCase("BUDGET BILL")) {
+                        sponsor = "BUDGET";
+                    }
+                    else if (sponsor.toUpperCase().startsWith("RULES")) {
+                        sponsor = "RULES";
+                    }
+                    else {
+                        sponsor = sponsor.replace(" (MS)", "");
+                    }
                     bbThread.setSponsor(sponsor);
                 }
                 else {

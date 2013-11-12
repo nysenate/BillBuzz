@@ -15,24 +15,6 @@ $(document).ready(function() {
 	senators.change(function() {
 		if(!$(this).is(':checked')) {
 			all.attr('checked',false);
-			var classes = this.className.split(" ");
-			for (var i = 0; i < classes.length; i++) {
-				$("INPUT[value='"+classes[i]+"']").attr('checked', false);
-			}
 		}
-	});
-
-	// Unselect party senators, then reselect all relevant party senators
-	var parties = $("INPUT[name='parties']");
-	parties.change(function() {
-		if(!$(this).is(':checked')) {
-			all.attr('checked',false);
-		}
-		$("INPUT."+$(this).val()).attr('checked', $(this).is(':checked'));
-		parties.each(function() {
-			if ($(this).is(':checked')) {
-				$("INPUT."+$(this).val()).attr('checked', $(this).is(':checked'));
-			}
-		});
 	});
 });

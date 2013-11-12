@@ -1,6 +1,5 @@
 package gov.nysenate.billbuzz.model;
 
-import java.util.List;
 
 public class BillBuzzSenator implements Comparable<BillBuzzSenator>
 {
@@ -9,19 +8,17 @@ public class BillBuzzSenator implements Comparable<BillBuzzSenator>
     private Integer session;
     private boolean active;
     private String shortName;
-    private List<BillBuzzParty> parties;
 
     public BillBuzzSenator()
     {
 
     }
 
-    public BillBuzzSenator(String name, String shortName, Integer year, List<BillBuzzParty> parties)
+    public BillBuzzSenator(String name, String shortName, Integer year)
     {
         this.setName(name);
         this.setSession(year);
         this.setShortName(shortName);
-        this.setParties(parties);
         this.setActive(true);
     }
 
@@ -52,16 +49,6 @@ public class BillBuzzSenator implements Comparable<BillBuzzSenator>
     public void setShortName(String shortName)
     {
         this.shortName = shortName;
-    }
-
-    public List<BillBuzzParty> getParties()
-    {
-        return parties;
-    }
-
-    public void setParties(List<BillBuzzParty> parties)
-    {
-        this.parties = parties;
     }
 
     public Long getId()
