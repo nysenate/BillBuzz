@@ -56,7 +56,7 @@ Project Organization
 * ``gov.nysenate.billbuzz.disqus``: This package is a fully contained Disqus API client. Only the
 required functionality was implemented at time of writing.
 * ``gov.nysenate.billbuzz.model``: All BillBuzz data objects implemented as Beans for a simple 
-data persistence layer.
+data persistence layer via commons-dbutils.
 * ``gov.nysenate.billbuzz.scripts``: A collection of java scripts for setting up, running, and
 maintaining a BillBuzz installation.
 * ``gov.nysenate.billbuzz.util``: A collection of utilities for common BillBuzz tasks.
@@ -66,7 +66,6 @@ Data Model
 ---------------
 
 * Users have many subscriptions and a single confirmation per unresolved action (signup, update, unsubscribe).
-* When the ``UpdateSenators`` script finds new Senators they are created with 1 or more affiliations.
 * When the ``UpdatePosts`` script finds newly approved comments a BillBuzz update is created with 1 or more BillBuzz approvals.
 * Threads have many Posts which each have a single Author.
 * Threads represent a single bill with a single sponsoring senator. Not all threads have known or "real" senators as sponsors though.
