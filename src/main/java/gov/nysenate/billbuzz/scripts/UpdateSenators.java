@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.http.client.fluent.Request;
@@ -32,10 +33,18 @@ public class UpdateSenators extends BaseScript
         new UpdateSenators().run(args);
     }
 
+    public Options getOptions()
+    {
+        Options options = new Options();
+        options.addOption("y", "year", true, "The session year in YYYY format to update senator info on.");
+
+        return options;
+    }
+
     public void execute(CommandLine opts) throws IOException, SQLException
     {
         BillBuzzDAO dao = new BillBuzzDAO();
-        int session = dao.getSession();
+        int session = Integer.parseInt(opts.getOptionValue("year", String.valueOf(dao.getSession())));
 
         Response response = Request.Get("http://open.nysenate.gov/legislation/senators/"+session+".json").execute();
         JsonNode root = new ObjectMapper().readTree(response.returnContent().asString());
