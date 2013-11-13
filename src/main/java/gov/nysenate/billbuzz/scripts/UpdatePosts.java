@@ -121,7 +121,7 @@ public class UpdatePosts extends BaseScript
                 dao.savePost(bbPost);
                 dao.saveAuthor(bbPost.getAuthor());
                 if (post.getIsApproved()) {
-                    // Only create a new update if it has atleast 1 approval
+                    // Only create a new update if it has at least 1 approval
                     if (update == null) {
                         update = new BillBuzzUpdate();
                         update.setCreatedAt(new Date());
@@ -133,6 +133,6 @@ public class UpdatePosts extends BaseScript
                 }
             }
         }
-        System.out.println("done.");
+        logger.info("Done updating posts.");
     }
 }

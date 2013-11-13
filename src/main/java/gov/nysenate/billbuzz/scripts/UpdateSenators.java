@@ -45,6 +45,7 @@ public class UpdateSenators extends BaseScript
     {
         BillBuzzDAO dao = new BillBuzzDAO();
         int session = Integer.parseInt(opts.getOptionValue("year", String.valueOf(dao.getSession())));
+        logger.info("Updating senators for session: "+session);
 
         Response response = Request.Get("http://open.nysenate.gov/legislation/senators/"+session+".json").execute();
         JsonNode root = new ObjectMapper().readTree(response.returnContent().asString());
@@ -63,5 +64,6 @@ public class UpdateSenators extends BaseScript
                 senator.setId(dao.lastInsertId(runner));
             }
         }
+        logger.info("Done updating senators.");
     }
 }

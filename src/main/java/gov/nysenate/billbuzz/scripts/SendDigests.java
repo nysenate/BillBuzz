@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -56,9 +57,10 @@ public class SendDigests extends BaseScript
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
         List<BillBuzzApproval> approvals = getApprovals(runner);
         if (approvals.size() == 0) {
-            logger.info("No approvals to mail out. Shutting down.");
+            logger.info("No updates to mail out. Shutting down.");
             return;
         }
+        logger.info(approvals.size()+" new approvals found. Preparing digests...");
 
         // Get all known senators and organize them by name.
         // Add in budget and rules "senators" to cover "other" subscriptions.
@@ -84,6 +86,9 @@ public class SendDigests extends BaseScript
                 sponsorApprovals.get(sponsor).add(approval);
             }
         }
+        for (Entry<String, Set<BillBuzzApproval>> entry : sponsorApprovals.entrySet()) {
+            logger.info("\t"+entry.getKey()+": "+entry.getValue().size()+" approvals");
+        }
 
         for (BillBuzzUser user : getUsers(runner)) {
             logger.info("Gathering updates for: "+user.getEmail());
@@ -106,6 +111,7 @@ public class SendDigests extends BaseScript
                     logger.error("bad subscription category: "+subscription.getCategory()+" ["+subscription.getValue()+"]");
                 }
             }
+            logger.info(userSubscriptions.size()+" sponsor subscriptions found.");
 
             // Get a list of approved comments on bills sponsored by these people.
             // This organization scheme corresponds to the hierarchy used to render comments in the digest email.
@@ -154,6 +160,7 @@ public class SendDigests extends BaseScript
         for (Long updateId : updateIds) {
             runner.update("UPDATE billbuzz_update SET sentAt = ? WHERE id = ?", now, updateId);
         }
+        logger.info("Done sending digests.");
     }
 
     private List<BillBuzzUser> getUsers(QueryRunner runner) throws SQLException
