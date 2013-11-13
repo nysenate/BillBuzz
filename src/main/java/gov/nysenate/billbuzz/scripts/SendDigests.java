@@ -69,13 +69,15 @@ public class SendDigests extends BaseScript
         senators.add(new BillBuzzSenator("Budget", "budget", 0));
         senators.add(new BillBuzzSenator("Rules Committee", "rules", 0));
 
-        // Senators need to be organized by name
+        // Senators need to be organized by shortName; lowercase for consistency
         HashMap<String, BillBuzzSenator> senatorsByShortName = new HashMap<String, BillBuzzSenator>();
         for (BillBuzzSenator senator : senators) {
+            senator.setShortName(senator.getShortName().toLowerCase());
             senatorsByShortName.put(senator.getShortName(), senator);
         }
 
         // Organize approvals by sponsor; sponsors not in the senators listing are excluded.
+        // There is no IgnoreCase version of contains key so be careful with the casing.
         TreeMap<String, Set<BillBuzzApproval>> sponsorApprovals = new TreeMap<String, Set<BillBuzzApproval>>();
         for (BillBuzzApproval approval : approvals) {
             String sponsor = approval.getThread().getSponsor().toLowerCase();
