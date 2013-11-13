@@ -94,7 +94,7 @@ public class UpdatePosts extends BaseScript
         DisqusListResponse<DisqusPost> postResponse = disqus.forumsListPosts("forum=nysenateopenleg", "limit=100", "order=desc", "include=unapproved", "include=approved", "include=spam", "include=deleted", "include=flagged");
         processPosts: while (true) {
             for(DisqusPost post : postResponse.getResponse()) {
-                if (post.getCreatedAt().before(lastPostUpdate)) {
+                if (post.getCreatedAt().before(lastPostUpdate) || post.getCreatedAt().equals(lastPostUpdate)) {
                     break processPosts;
                 }
                 else {
