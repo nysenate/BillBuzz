@@ -10,11 +10,9 @@ import gov.nysenate.util.DB;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -46,28 +44,7 @@ public class Dump {
 		@SuppressWarnings("unchecked")
 	    Collection<Senator> senators = (Collection<Senator>)PMF.getDetachedObjects(Senator.class);
 		Map<String, Senator> senatorsByName = new HashMap<String, Senator>();
-		Map<String, Set<Senator>> senatorsByParty = new HashMap<String, Set<Senator>>();
-		senatorsByParty.put("conservative", new TreeSet<Senator>());
-		senatorsByParty.put("democrat", new TreeSet<Senator>());
-		senatorsByParty.put("republican", new TreeSet<Senator>());
-		senatorsByParty.put("independenceparty", new TreeSet<Senator>());
-		senatorsByParty.put("workingfamilies", new TreeSet<Senator>());
 		for(Senator senator : senators) {
-		    if (senator.isConservative()) {
-		        senatorsByParty.get("conservative").add(senator);
-		    }
-		    if (senator.isDemocrat()) {
-		        senatorsByParty.get("democrat").add(senator);
-		    }
-		    if (senator.isIndependenceParty() || senator.isIndependent() || senator.isIndependentParty()) {
-		        senatorsByParty.get("independenceparty").add(senator);
-		    }
-		    if (senator.isRepublican()) {
-		        senatorsByParty.get("republican").add(senator);
-		    }
-		    if (senator.isWorkingFamilies()) {
-		        senatorsByParty.get("workingfamilies").add(senator);
-		    }
 		    senatorsByName.put(senator.getOpenLegName(), senator);
 		}
 
@@ -75,11 +52,10 @@ public class Dump {
 		Collection<User> users = (Collection<User>) PMF.getDetachedObjects(User.class);
 		for(User user:users) {
 		    // Each user can have zero or more subscriptions in the categories below
-		    Map<String, List<String>> userSubscriptions = new HashMap<String, List<String>>();
-            userSubscriptions.put("all", new ArrayList<String>());
-            userSubscriptions.put("other", new ArrayList<String>());
-            userSubscriptions.put("party", new ArrayList<String>());
-            userSubscriptions.put("sponsor", new ArrayList<String>());
+            Map<String, Set<String>> userSubscriptions = new HashMap<String, Set<String>>();
+            userSubscriptions.put("all", new TreeSet<String>());
+            userSubscriptions.put("other", new TreeSet<String>());
+            userSubscriptions.put("sponsor", new TreeSet<String>());
 
             // Check other data flag
             if (user.getOtherData()) {
@@ -87,45 +63,17 @@ public class Dump {
             }
 
             // Check to see if they are subscribed to all updates
-			Set<Senator> subscriptions = new TreeSet<Senator>();
 			for(String subscription : user.getSubscriptions()) {
 			    if (subscription.equals("all")) {
 			        userSubscriptions.get("all").add("all");
 			        break;
 			    }
 			    else if (senatorsByName.containsKey(subscription)) {
-			        subscriptions.add(senatorsByName.get(subscription));
+			        userSubscriptions.get("sponsor").add(subscription);
 			    }
 			    else {
 			        System.out.println("Unknown subscription value: "+subscription);
 			    }
-			}
-
-			// Check if parties are totally covered, assume it was by mass selection
-			if (subscriptions.containsAll(senatorsByParty.get("workingfamilies"))) {
-			    userSubscriptions.get("party").add("workingfamilies");
-			}
-			if (subscriptions.containsAll(senatorsByParty.get("republican"))) {
-			    userSubscriptions.get("party").add("republican");
-            }
-			if (subscriptions.containsAll(senatorsByParty.get("democrat"))) {
-			    userSubscriptions.get("party").add("democrat");
-            }
-			if (subscriptions.containsAll(senatorsByParty.get("independenceparty"))) {
-			    userSubscriptions.get("party").add("independenceparty");
-            }
-			if (subscriptions.containsAll(senatorsByParty.get("conservative"))) {
-			    userSubscriptions.get("party").add("conservative");
-            }
-
-			// Remove party-line subscriptions to get their individual senator picks
-			for(String party : userSubscriptions.get("party")) {
-			    subscriptions.removeAll(senatorsByParty.get(party));
-			}
-
-			// Add sponsor subscriptions for their specific additions
-			for (Senator senator : subscriptions) {
-			    userSubscriptions.get("sponsor").add(senator.getOpenLegName());
 			}
 
 			// Insert Statements
