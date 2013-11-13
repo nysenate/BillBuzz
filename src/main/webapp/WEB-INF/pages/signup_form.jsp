@@ -99,7 +99,7 @@ It seems like you already have an account with us. We've sent you a link that ca
 		<p></p>
 	    <table>
 	        <tr>
-	            <td><input type="checkbox" name="other" value="other" <%=subscriptions.get("other").contains("other") ? "checked=\"yes\"" : ""%>></input></td>
+	            <td><input type="checkbox" name="other" value="other" <%=subscriptions.get("all").contains("all") || subscriptions.get("other").contains("other") ? "checked=\"yes\"" : ""%>></input></td>
 	            <td>Receive updates for budget bills and legislation from the Rules committee?</td>
 	        </tr>
 	    </table>
