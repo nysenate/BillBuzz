@@ -116,7 +116,7 @@ public class BillBuzzDAO
 
     public List<BillBuzzSenator> getSenators() throws SQLException
     {
-        return runner.query("SELECT * FROM billbuzz_senator WHERE active=1 ORDER BY shortName", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class));
+        return runner.query("SELECT * FROM billbuzz_senator WHERE active=1 group by shortName ORDER BY shortName asc, session desc", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class));
     }
 
     /**
