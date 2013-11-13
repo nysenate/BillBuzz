@@ -68,11 +68,21 @@ public class Dump {
 			        userSubscriptions.get("all").add("all");
 			        break;
 			    }
-			    else if (senatorsByName.containsKey(subscription)) {
-			        userSubscriptions.get("sponsor").add(subscription);
-			    }
 			    else {
-			        System.out.println("Unknown subscription value: "+subscription);
+			        // Fix some weird subscription values
+			        if (subscription.equalsIgnoreCase("omara")) {
+			            subscription = "O'Mara";
+			        }
+			        else if (subscription.equalsIgnoreCase("stewart")) {
+			            subscription = "Stewart-Cousins";
+			        }
+			        else if (subscription.equalsIgnoreCase("shirley")) {
+			            subscription = "Huntley";
+			        }
+			        else if (subscription.equalsIgnoreCase("ruth")) {
+			            subscription = "Hassell-Thompson";
+			        }
+			        userSubscriptions.get("sponsor").add(subscription);
 			    }
 			}
 
