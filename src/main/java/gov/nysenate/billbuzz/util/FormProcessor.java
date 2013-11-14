@@ -97,7 +97,12 @@ public class FormProcessor
    public static List<BillBuzzSubscription> getSubscriptions(HttpServletRequest request, Long userId, Date now) throws SQLException {
        String all = request.getParameter("all");
        String other = request.getParameter("other");
-       Set<String> sponsors = new TreeSet<String>(Arrays.asList(request.getParameterValues("senators")));
+       Set<String> sponsors = new TreeSet<String>();
+       String[] senators = request.getParameterValues("senators");
+       if (senators != null) {
+           sponsors.addAll(Arrays.asList(senators));
+       }
+
        List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
 
        if (all != null) {
