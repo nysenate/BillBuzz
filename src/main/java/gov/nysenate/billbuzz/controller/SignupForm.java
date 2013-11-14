@@ -66,32 +66,29 @@ public class SignupForm extends HttpServlet
     {
         try {
             String message = "";
-            Date createdAt = new Date();
+            Date now = new Date();
             BillBuzzDAO dao = new BillBuzzDAO();
-            BillBuzzUser user = FormProcessor.processSubscriptionForm(request, createdAt);
+            BillBuzzUser user = FormProcessor.processSubscriptionForm(request, now);
             List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
             if (user == null) {
                 message = "missing_userinfo";
-                subscriptions = FormProcessor.getSubscriptions(request, 0L, createdAt);
+                subscriptions = FormProcessor.getSubscriptions(request, 0L, now);
             }
             else if (user.getSubscriptions().isEmpty()) {
                 message = "missing_subscription";
             }
             else if (user.getConfirmedAt() == null) {
+                logger.info("Processing signup for: "+user.getFirstName()+" <"+user.getEmail()+">");
                 // Save subscriptions
                 subscriptions = user.getSubscriptions();
                 dao.replaceSubscriptions(subscriptions, user.getId());
 
-                BillBuzzConfirmation confirmation;
-                if (user.getCreatedAt().equals(createdAt)) {
-                    // Brand new user
-                    confirmation = new BillBuzzConfirmation(user.getId(), "signup", UUID.randomUUID().toString(), createdAt, null);
+                QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
+                BillBuzzConfirmation confirmation = runner.query("SELECT * FROM billbuzz_confirmation WHERE userId = ? AND action = 'signup' AND usedAt=NULL", new BeanHandler<BillBuzzConfirmation>(BillBuzzConfirmation.class), user.getId());
+                if (confirmation == null) {
+                    logger.info("Creating new signup confirmation for: "+user.getEmail());
+                    confirmation = new BillBuzzConfirmation(user.getId(), "signup", UUID.randomUUID().toString(), now, null);
                     dao.saveConfirmation(confirmation);
-                }
-                else {
-                    // Unconfirmed User
-                    QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
-                    confirmation = runner.query("SELECT * FROM billbuzz_confirmation WHERE userId = ? AND action = 'signup'", new BeanHandler<BillBuzzConfirmation>(BillBuzzConfirmation.class), user.getId());
                 }
 
                 VelocityContext context = new VelocityContext();
@@ -104,7 +101,7 @@ public class SignupForm extends HttpServlet
             }
             else {
                 // This user should be updating their account not signing up, send them update code
-                BillBuzzConfirmation confirmation = new BillBuzzConfirmation(user.getId(), "update", UUID.randomUUID().toString(), createdAt, null);
+                BillBuzzConfirmation confirmation = new BillBuzzConfirmation(user.getId(), "update", UUID.randomUUID().toString(), now, null);
                 dao.saveConfirmation(confirmation);
 
                 // Send update email
