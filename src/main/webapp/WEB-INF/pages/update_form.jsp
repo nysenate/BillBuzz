@@ -28,22 +28,27 @@ if (user != null) {
 %>
 <% if (message.equals("instruction")) { %>
 <div class="bb_main instruction">
-The form below has been filled with your current subscription preferences. Just modify them as necessary and submit them
+The form below has been filled with your current subscription preferences. Modify them as necessary and submit them
 to update your account.
 </div>
 <% } else if (message.equals("missing_userinfo")) { 
-    if (firstName == null || email == null) { %>
-        <div class="bb_main error">
-        Email and first name are required when registering an account with BillBuzz.
-        </div><%
-    } else { %>
-        <div class="bb_main error">
-        You must confirm your email address to continue with registration.
-        </div><%
-    }
+    if (firstName.trim().isEmpty() || email.trim().isEmpty()) { %>
+	    <div class="bb_main error">
+	    Email and first name are required to update your account.
+	    </div><%
+	} else if (email2.trim().isEmpty()) { %>
+	    <div class="bb_main error">
+	    A confirmation of your email address is required to update your account.
+	    </div><%
+	}
+	else { %>
+	    <div class="bb_main error">
+	    You're confirmation address must match your email address to update your account.
+	    </div><%
+	}
 } else if (message.equals("missing_subscription")) { %>
 <div class="bb_main error">
-At least one subscription is required to activate a BillBuzz account.
+At least one subscription is required to update your BillBuzz account. Please unsubscribe if you don't want BillBuzz updates.
 </div>
 <% } else if (message.equals("success")) { %>
 <div class="bb_main success">

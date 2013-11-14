@@ -75,7 +75,7 @@ public class FormProcessor
        String firstName = request.getParameter("firstName");
        String lastName = request.getParameter("lastName");
 
-       if (email == null || email.isEmpty() || firstName == null || firstName.isEmpty() || email2 == null || email2.isEmpty() || !email.equals(email2)) {
+       if (email == null || email.trim().isEmpty() || firstName == null || firstName.trim().isEmpty() || email2 == null || email2.trim().isEmpty() || !email.equals(email2)) {
            return null;
        }
 

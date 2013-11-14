@@ -21,15 +21,20 @@ Map<String, Set<String>> subscriptions = (Map<String, Set<String>>)request.getAt
 To sign up simply fill out the form below and select parties or individuals that you would like to receive updates for!
 </div>
 <% } else if (message.equals("missing_userinfo")) { 
-    if (firstName == null || email == null) { %>
+    if (firstName.trim().isEmpty() || email.trim().isEmpty()) { %>
         <div class="bb_main error">
         Email and first name are required when registering an account with BillBuzz.
         </div><%
-    } else { %>
+    } else if (email2.trim().isEmpty()) { %>
         <div class="bb_main error">
         You must confirm your email address to continue with registration.
         </div><%
     }
+    else { %>
+	    <div class="bb_main error">
+	    You're confirmation address must match your email address to continue with registration.
+	    </div><%
+	}
 } else if (message.equals("missing_subscription")) { %>
 <div class="bb_main error">
 At least one subscription is required to activate a BillBuzz account.
