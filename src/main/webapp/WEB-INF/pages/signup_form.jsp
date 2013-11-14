@@ -32,7 +32,7 @@ To sign up simply fill out the form below and select parties or individuals that
     }
     else { %>
 	    <div class="bb_main error">
-	    You're confirmation address must match your email address to continue with registration.
+	    Your confirmation address must match your email address to continue with registration.
 	    </div><%
 	}
 } else if (message.equals("missing_subscription")) { %>

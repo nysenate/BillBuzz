@@ -43,7 +43,7 @@ to update your account.
 	}
 	else { %>
 	    <div class="bb_main error">
-	    You're confirmation address must match your email address to update your account.
+	    Your confirmation address must match your email address to update your account.
 	    </div><%
 	}
 } else if (message.equals("missing_subscription")) { %>
