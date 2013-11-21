@@ -1,22 +1,31 @@
 package gov.nysenate.billbuzz.disqus;
 
 
-public class DisqusMedia
+public class DisqusMedia extends DisqusPrimaryObject
 {
     private String forum;
     private String thread;
     private String location;
     private String post;
-    private String thumbnailURL;
     private String type;
     private DisqusMediaMetadata metadata;
     private String description;
     private String title;
     private String url;
     private String mediaType;
-    private String html;
     private String resolvedUrl;
+
+    // Yes, they actually use both of these somehow
     private String thumbnailUrl;
+    private String thumbnailURL;
+    private int thumbnailWidth;
+    private int thumbnailHeight;
+
+    private String html;
+    private int htmlHeight;
+    private int htmlWidth;
+
+    private String providerName;
 
     public String getForum()
     {
@@ -56,16 +65,6 @@ public class DisqusMedia
     public void setPost(String post)
     {
         this.post = post;
-    }
-
-    public String getThumbnailURL()
-    {
-        return thumbnailURL;
-    }
-
-    public void setThumbnailURL(String thumbnailURL)
-    {
-        this.thumbnailURL = thumbnailURL;
     }
 
     public String getType()
@@ -148,6 +147,56 @@ public class DisqusMedia
         this.resolvedUrl = resolvedUrl;
     }
 
+    public int getHtmlHeight()
+    {
+        return htmlHeight;
+    }
+
+    public void setHtmlHeight(int htmlHeight)
+    {
+        this.htmlHeight = htmlHeight;
+    }
+
+    public int getThumbnailWidth()
+    {
+        return thumbnailWidth;
+    }
+
+    public void setThumbnailWidth(int thumbnailWidth)
+    {
+        this.thumbnailWidth = thumbnailWidth;
+    }
+
+    public String getThumbnailURL()
+    {
+        return thumbnailURL;
+    }
+
+    public void setThumbnailURL(String thumbnailURL)
+    {
+        this.thumbnailURL = thumbnailURL;
+    }
+
+    public int getThumbnailHeight()
+    {
+        return thumbnailHeight;
+    }
+
+    public void setThumbnailHeight(int thumbnailHeight)
+    {
+        this.thumbnailHeight = thumbnailHeight;
+    }
+
+    public int getHtmlWidth()
+    {
+        return htmlWidth;
+    }
+
+    public void setHtmlWidth(int htmlWidth)
+    {
+        this.htmlWidth = htmlWidth;
+    }
+
     public String getThumbnailUrl()
     {
         return thumbnailUrl;
@@ -156,5 +205,15 @@ public class DisqusMedia
     public void setThumbnailUrl(String thumbnailUrl)
     {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getProviderName()
+    {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName)
+    {
+        this.providerName = providerName;
     }
 }
