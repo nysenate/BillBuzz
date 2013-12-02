@@ -38,15 +38,16 @@ public class Setup extends BaseScript
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
 
         BillBuzzDAO dao = new BillBuzzDAO();
+        String disqusForum = "forum="+config.getValue("disqus.forum");
         Disqus disqus = new Disqus(
             config.getValue("disqus.public_key"),
             config.getValue("disqus.private_key"),
-            config.getValue("access_token")
+            config.getValue("disqus.access_token")
         );
 
         runner.update("TRUNCATE billbuzz_thread;");
         // Do this in chunks to avoid memory issues
-        DisqusListResponse<DisqusThread> threadResponse = disqus.forumsListThreads("forum=nysenateopenleg", "limit=100", "order=asc");
+        DisqusListResponse<DisqusThread> threadResponse = disqus.forumsListThreads(disqusForum, "limit=100", "order=asc");
         while (true) {
             for(DisqusThread thread : threadResponse.getResponse()) {
                 dao.saveThread(Disqus2BillBuzz.thread(thread));
@@ -66,7 +67,7 @@ public class Setup extends BaseScript
         runner.update("TRUNCATE billbuzz_post;");
         runner.update("TRUNCATE billbuzz_author;");
         // Do this in chunks to avoid memory issues
-        DisqusListResponse<DisqusPost> postResponse = disqus.forumsListPosts("forum=nysenateopenleg", "limit=100", "order=asc", "include=unapproved", "include=approved", "include=spam", "include=deleted", "include=flagged");
+        DisqusListResponse<DisqusPost> postResponse = disqus.forumsListPosts(disqusForum, "limit=100", "order=asc", "include=unapproved", "include=approved", "include=spam", "include=deleted", "include=flagged");
         while (true) {
             for(DisqusPost post : postResponse.getResponse()) {
                 BillBuzzPost bbPost = Disqus2BillBuzz.post(post);

@@ -48,10 +48,11 @@ public class UpdatePosts extends BaseScript
         BillBuzzDAO dao = new BillBuzzDAO();
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
 
+        String disqusForum = "forum="+config.getValue("disqus.forum");
         Disqus disqus = new Disqus(
             config.getValue("disqus.public_key"),
             config.getValue("disqus.private_key"),
-            config.getValue("access_token")
+            config.getValue("disqus.access_token")
         );
 
         // Get and save new threads. At the time of writing the since= parameter was broken as confirmed by the
@@ -59,7 +60,7 @@ public class UpdatePosts extends BaseScript
         // we find a thread at or before the last update time.
         int threads = 0;
         Date lastThreadUpdate = runner.query("SELECT createdAt FROM billbuzz_thread ORDER BY createdAt DESC LIMIT 1", new ScalarHandler<Date>("createdAt"));
-        DisqusListResponse<DisqusThread> threadResponse = disqus.forumsListThreads("forum=nysenateopenleg", "limit=100", "order=desc");
+        DisqusListResponse<DisqusThread> threadResponse = disqus.forumsListThreads(disqusForum, "limit=100", "order=desc");
         processThreads: while (true) {
             for(DisqusThread thread : threadResponse.getResponse()) {
                 if (thread.getCreatedAt().before(lastThreadUpdate)) {
@@ -91,7 +92,7 @@ public class UpdatePosts extends BaseScript
 
         // Get new posts since last time we updated; again since= is broken here. Use the sorted approach.
         Date lastPostUpdate = runner.query("SELECT createdAt FROM billbuzz_post ORDER BY createdAt DESC LIMIT 1", new ScalarHandler<Date>("createdAt"));
-        DisqusListResponse<DisqusPost> postResponse = disqus.forumsListPosts("forum=nysenateopenleg", "limit=100", "order=desc", "include=unapproved", "include=approved", "include=spam", "include=deleted", "include=flagged");
+        DisqusListResponse<DisqusPost> postResponse = disqus.forumsListPosts(disqusForum, "limit=100", "order=desc", "include=unapproved", "include=approved", "include=spam", "include=deleted", "include=flagged");
         processPosts: while (true) {
             for(DisqusPost post : postResponse.getResponse()) {
                 if (post.getCreatedAt().before(lastPostUpdate) || post.getCreatedAt().equals(lastPostUpdate)) {
