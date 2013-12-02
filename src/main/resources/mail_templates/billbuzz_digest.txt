@@ -11,7 +11,7 @@ $senator.name Legislation
 Comments on: $thread.title
 ----------------------------------------
 #foreach( $approval in $threadApprovals )
-On $dateFormat.format($approval.post.createdAt): $approval.author.username said:
+On $dateFormat.format($approval.post.createdAt): $approval.author.name said:
 
 $approval.post.message
 
