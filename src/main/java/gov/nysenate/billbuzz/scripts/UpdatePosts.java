@@ -63,7 +63,7 @@ public class UpdatePosts extends BaseScript
         DisqusListResponse<DisqusThread> threadResponse = disqus.forumsListThreads(disqusForum, "limit=100", "order=desc");
         processThreads: while (true) {
             for(DisqusThread thread : threadResponse.getResponse()) {
-                if (thread.getCreatedAt().before(lastThreadUpdate)) {
+                if (lastThreadUpdate != null && thread.getCreatedAt().before(lastThreadUpdate)) {
                     break processThreads;
                 }
                 else {
@@ -95,7 +95,7 @@ public class UpdatePosts extends BaseScript
         DisqusListResponse<DisqusPost> postResponse = disqus.forumsListPosts(disqusForum, "limit=100", "order=desc", "include=unapproved", "include=approved", "include=spam", "include=deleted", "include=flagged");
         processPosts: while (true) {
             for(DisqusPost post : postResponse.getResponse()) {
-                if (post.getCreatedAt().before(lastPostUpdate) || post.getCreatedAt().equals(lastPostUpdate)) {
+                if (lastPostUpdate != null && post.getCreatedAt().before(lastPostUpdate) || post.getCreatedAt().equals(lastPostUpdate)) {
                     break processPosts;
                 }
                 else {
