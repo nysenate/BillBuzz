@@ -107,10 +107,10 @@ public class SendDigests extends BaseScript
                     userSubscriptions.add(senatorsByShortName.get("budget"));
                 }
                 else if (subscription.getCategory().equals("sponsor")) {
-                    userSubscriptions.add(senatorsByShortName.get(subscription.getValue()));
+                    userSubscriptions.add(senatorsByShortName.get(subscription.getValue().toLowerCase()));
                 }
                 else {
-                    logger.error("bad subscription category: "+subscription.getCategory()+" ["+subscription.getValue()+"]");
+                    logger.error("bad subscription category: "+subscription.getCategory()+" ["+subscription.getValue().toLowerCase()+"]");
                 }
             }
             logger.info(userSubscriptions.size()+" sponsor subscriptions found.");
