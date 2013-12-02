@@ -144,13 +144,18 @@ public class SendDigests extends BaseScript
                 }
             }
 
-            // Send out a mailing to that user.
-            logger.info("Sending update to "+user.getEmail());
-            VelocityContext context = new VelocityContext();
-            context.put("user", user);
-            context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
-            context.put("userApprovals", userApprovals);
-            Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, context);
+            if (!userApprovals.isEmpty()) {
+                // Send out a mailing to that user.
+                logger.info("Sending update to "+user.getEmail());
+                VelocityContext context = new VelocityContext();
+                context.put("user", user);
+                context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
+                context.put("userApprovals", userApprovals);
+                Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, context);
+            }
+            else {
+                logger.info("No updates apply for: "+user.getEmail());
+            }
         }
 
         // Get all the distinct updateIds and mark them as sent.
