@@ -23,8 +23,8 @@
             <!-- Datanucleus Plugin -->
             <plugin>
                 <groupId>org.datanucleus</groupId>
-                <artifactId>datanucleus-maven-plugin</artifactId>
-                <version>3.2.0-m3</version>
+                <artifactId>maven-datanucleus-plugin</artifactId>
+                <version>3.2.0-m1</version>
                 <configuration>
                     <verbose>true</verbose>
                 </configuration>
@@ -60,17 +60,17 @@
         <dependency>
             <groupId>org.datanucleus</groupId>
             <artifactId>datanucleus-core</artifactId>
-            <version>3.2.0-m3</version>
+            <version>3.2.11</version>
         </dependency>
         <dependency>
             <groupId>org.datanucleus</groupId>
             <artifactId>datanucleus-api-jdo</artifactId>
-            <version>3.2.0-m3</version>
+            <version>3.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.datanucleus</groupId>
             <artifactId>datanucleus-rdbms</artifactId>
-            <version>3.2.0-m3</version>
+            <version>3.2.8</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
