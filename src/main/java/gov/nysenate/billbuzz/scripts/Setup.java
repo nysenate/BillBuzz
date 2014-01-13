@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class Setup extends BaseScript
 {
+    @SuppressWarnings("unused")
     private final Logger logger = Logger.getLogger(Setup.class);
 
     public static void main(String[] args) throws Exception
@@ -32,6 +33,7 @@ public class Setup extends BaseScript
         new Setup().run(args);
     }
 
+    @SuppressWarnings("unchecked")
     public void execute(CommandLine opts) throws IOException, SQLException, InterruptedException
     {
         Config config = Application.getConfig();

@@ -42,6 +42,7 @@ public class UpdatePosts extends BaseScript
         new UpdatePosts().run(args);
     }
 
+    @SuppressWarnings("unchecked")
     public void execute(CommandLine opts) throws IOException, SQLException, InterruptedException
     {
         Config config = Application.getConfig();

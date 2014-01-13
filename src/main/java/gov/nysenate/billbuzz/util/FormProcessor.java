@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 
 public class FormProcessor
 {
+    @SuppressWarnings("unused")
     private final static Logger logger = Logger.getLogger(FormProcessor.class);
 
     public static BillBuzzConfirmation getConfirmation(HttpServletRequest request) throws SQLException

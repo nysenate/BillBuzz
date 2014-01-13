@@ -33,21 +33,24 @@ User Workflows
 
 The primary workflow for registration and account modification is as follows below:
 
-* User Signup Form -> create inactive user and send automated confirmation email.
-* User Confirmation Page -> activate user.
-* Update Request Form -> send automated update authorization email.
-* Update Confirmation Form -> update user preferences and (re)activate user.
-* Unsubscribe Request Form -> send automated unsubscribe authorization email.
-* Unsubscribe Confirmation Page -> deactivate User
+* User Signup Form -> create inactive user and send automated confirmation email with link to
+  the user confirmation page.
+* User Confirmation Page -> activate user on page load.
+* Update Request Form -> send automated update authorization email with link to the user update
+  form.
+* Update Form -> update user preferences and (re)activate user on submit.
+* Unsubscribe Request Form -> send automated unsubscribe authorization email with link to the
+  unsubscribe confirmation page.
+* Unsubscribe Confirmation Page -> deactivate user on page load
 
 Covered edge case scenarios:
 
 * A user signs up repeatedly without confirmation: the same confirmation code is used so that
-prior confirmation links remain valid.
+  prior confirmation links remain valid.
 * A user attempting to update an unconfirmed account will be asked to first confirm/activate
-their account and try again.
+  their account and try again.
 * A user attempting to signup on a deactivated account will be asked to update their existing
-account instead.
+  account instead.
 * A user attempting to deactivate an unconfirmed account will get an "already inactive" response.
 
 
@@ -56,26 +59,31 @@ Project Organization
 
 * ``gov.nysenate.billbuzz.controller``: Each web page has its own dedicated controller here.
 * ``gov.nysenate.billbuzz.disqus``: This package is a fully contained Disqus API client. Only the
-required functionality was implemented at time of writing.
+  required functionality was implemented at time of writing.
 * ``gov.nysenate.billbuzz.model``: All BillBuzz data objects implemented as Beans for a simple 
-data persistence layer via commons-dbutils.
+  data persistence layer via commons-dbutils.
 * ``gov.nysenate.billbuzz.scripts``: A collection of java scripts for setting up, running, and
-maintaining a BillBuzz installation.
+  maintaining a BillBuzz installation.
 * ``gov.nysenate.billbuzz.util``: A collection of utilities for common BillBuzz tasks.
 
 
 Data Model
 ---------------
 
-* Users have many subscriptions and a single confirmation per unresolved action (signup, update, unsubscribe).
-* When the ``UpdatePosts`` script finds newly approved comments a BillBuzz update is created with 1 or more BillBuzz approvals.
+* Users have many subscriptions and a single confirmation per action taken (signup, update,
+  unsubscribe) with at most one unresolved confirmation per action type.
+* When the ``UpdatePosts`` script finds newly approved comments a BillBuzz update is created with
+  1 or more BillBuzz approvals.
 * Threads have many Posts which each have a single Author.
-* Threads represent a single bill with a single sponsoring senator. Not all threads have known or "real" senators as sponsors though.
+* Threads represent a single bill with a single sponsoring senator. Not all threads have known or
+  "real" senators as sponsors though; sometimes sponsor will be BUDGET or RULES.
 
 
 Miscellaneous Notes
 --------------------------
 
+* Disqus changes their API pretty frequently which breaks the XML parser. This is super annoying
+  and requires us to frequently update our data models.
 * DisqusAuthors don't always have ids due to anonymity. As such, BillBuzzAuthor ids can be either
-a unique DisqusID or the Disqus email hash value.
+  a unique DisqusID or the Disqus email hash value.
 * The Disqus2BillBuzz conversion can be pretty messy. Any data issues probably came from here somehow.
