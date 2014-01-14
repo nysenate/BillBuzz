@@ -88,17 +88,23 @@ public class Disqus2BillBuzz
                 JsonNode root = new ObjectMapper().readTree(content);
                 if (root.get("response").get("metadata").get("totalresults").asInt() == 1) {
                     JsonNode result = root.get("response").get("results").get(0);
-                    String sponsor = result.get("data").get("bill").get("sponsor").get("fullname").asText();
-                    if (sponsor.equalsIgnoreCase("BUDGET BILL")) {
-                        sponsor = "BUDGET";
-                    }
-                    else if (sponsor.toUpperCase().startsWith("RULES")) {
-                        sponsor = "RULES";
+                    JsonNode sponsorNode = result.get("data").get("bill").get("sponsor");
+                    if (!sponsorNode.isNull()) {
+                        String sponsor = sponsorNode.get("fullname").asText();
+                        if (sponsor.equalsIgnoreCase("BUDGET BILL")) {
+                            sponsor = "BUDGET";
+                        }
+                        else if (sponsor.toUpperCase().startsWith("RULES")) {
+                            sponsor = "RULES";
+                        }
+                        else {
+                            sponsor = sponsor.replace(" (MS)", "");
+                        }
+                        bbThread.setSponsor(sponsor);
                     }
                     else {
-                        sponsor = sponsor.replace(" (MS)", "");
+                        logger.error("Bill "+billId+" has no sponsor!");
                     }
-                    bbThread.setSponsor(sponsor);
                 }
                 else {
                     // Bill doesn't exist
