@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +35,9 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 public class Dump {
 
 	public static void main(String[] args) throws IOException, ConfigurationException, SQLException {
-	    Date now = new Date();
+	    // Use 2014 as the upgrade date.
+	    String now = "2014-01-01 00:00:00";
+
         Config config = new Config("app.config");
         QueryRunner runner = new QueryRunner(new DB(config, "db").getDataSource());
 
