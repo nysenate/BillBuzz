@@ -70,6 +70,8 @@ public class Dump {
 			for(String subscription : user.getSubscriptions()) {
 			    if (subscription.equals("all")) {
 			        userSubscriptions.get("all").add("all");
+			        userSubscriptions.get("other").clear();
+			        userSubscriptions.get("sponsor").clear();
 			        break;
 			    }
 			    else {
