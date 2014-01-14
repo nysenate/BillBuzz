@@ -148,7 +148,12 @@ public class Disqus2BillBuzz
         BillBuzzAuthor bbAuthor = new BillBuzzAuthor();
 
         if (author.getId() == null) {
-            bbAuthor.setId(author.getEmailHash());
+            if (author.getEmailHash() == null) {
+                bbAuthor.setId(author.getName());
+            }
+            else {
+                bbAuthor.setId(author.getEmailHash());
+            }
         }
         else {
             bbAuthor.setId(author.getId());
