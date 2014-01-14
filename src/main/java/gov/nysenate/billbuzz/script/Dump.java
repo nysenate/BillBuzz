@@ -40,6 +40,9 @@ public class Dump {
 
         Config config = new Config("app.config");
         QueryRunner runner = new QueryRunner(new DB(config, "db").getDataSource());
+        runner.update("TRUNCATE billbuzz_user");
+        runner.update("TRUNCATE billbuzz_confirmation");
+        runner.update("TRUNCATE billbuzz_subscription");
 
         // Get all the senators and collate them by name and party for reference below
 		@SuppressWarnings("unchecked")
