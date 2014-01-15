@@ -1,0 +1,6 @@
+UserAgent: *
+Disallow: /static/
+Disallow: /signup/confirm
+Disallow: /update/form
+Disallow: /unsubscribe/confirm
+
