@@ -3,7 +3,6 @@ package gov.nysenate.billbuzz.controller;
 import gov.nysenate.billbuzz.model.BillBuzzConfirmation;
 import gov.nysenate.billbuzz.model.BillBuzzSubscription;
 import gov.nysenate.billbuzz.model.BillBuzzUser;
-import gov.nysenate.billbuzz.util.Application;
 import gov.nysenate.billbuzz.util.BillBuzzDAO;
 import gov.nysenate.billbuzz.util.FormProcessor;
 import gov.nysenate.billbuzz.util.Mailer;
@@ -13,7 +12,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletException;
@@ -21,8 +19,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.mail.EmailException;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
@@ -85,14 +81,7 @@ public class SignupForm extends HttpServlet
                 // Save subscriptions
                 subscriptions = user.getSubscriptions();
                 dao.replaceSubscriptions(subscriptions, user.getId());
-
-                QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
-                BillBuzzConfirmation confirmation = runner.query("SELECT * FROM billbuzz_confirmation WHERE userId = ? AND action = 'signup' AND usedAt=NULL", new BeanHandler<BillBuzzConfirmation>(BillBuzzConfirmation.class), user.getId());
-                if (confirmation == null) {
-                    logger.info("Creating new signup confirmation for: "+user.getEmail());
-                    confirmation = new BillBuzzConfirmation(user.getId(), "signup", UUID.randomUUID().toString(), now, null);
-                    dao.saveConfirmation(confirmation);
-                }
+                BillBuzzConfirmation confirmation = dao.getOrCreateConfirmation("signup", user.getId(), true, now);
 
                 VelocityContext context = new VelocityContext();
                 context.put("user", user);
@@ -103,9 +92,9 @@ public class SignupForm extends HttpServlet
                 message = "success";
             }
             else {
-                // This user should be updating their account not signing up, send them update code
-                BillBuzzConfirmation confirmation = new BillBuzzConfirmation(user.getId(), "update", UUID.randomUUID().toString(), now, null);
-                dao.saveConfirmation(confirmation);
+                logger.info("Mailing confirmed user "+user.getFirstName()+" <"+user.getEmail()+"> a link to their update form.");
+                subscriptions = user.getSubscriptions();
+                BillBuzzConfirmation confirmation = dao.getOrCreateConfirmation("signup", user.getId(), true, now);
 
                 // Send update email
                 VelocityContext context = new VelocityContext();
