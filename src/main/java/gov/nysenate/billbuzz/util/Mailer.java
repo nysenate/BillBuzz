@@ -12,13 +12,18 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
+import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
 public class Mailer
 {
+    private static Logger logger = Logger.getLogger(Mailer.class);
+
     public static void send(String templateName, String subject, BillBuzzUser user, VelocityContext context) throws EmailException, MessagingException
     {
+        logger.info("Sending "+templateName+" email to "+user.getEmail());
+
         // Generate text message
         StringWriter textWriter = new StringWriter();
         Velocity.mergeTemplate(templateName+".txt", "UTF-8", context, textWriter);

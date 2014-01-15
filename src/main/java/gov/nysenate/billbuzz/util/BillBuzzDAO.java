@@ -23,9 +23,11 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
+import org.apache.log4j.Logger;
 
 public class BillBuzzDAO
 {
+    private final Logger logger = Logger.getLogger(BillBuzzDAO.class);
     private final QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
 
     public int getSession()
@@ -59,8 +61,13 @@ public class BillBuzzDAO
             if (createdAt == null) {
                 createdAt = new Date();
             }
-            confirmation = new BillBuzzConfirmation(userId, action, UUID.randomUUID().toString(), createdAt, null);
+            String code = UUID.randomUUID().toString();
+            logger.info("Creating new "+action+" confirmation for userId "+userId+": "+code);
+            confirmation = new BillBuzzConfirmation(userId, action, code, createdAt, null);
             saveConfirmation(confirmation);
+        }
+        else {
+            logger.info("Re-using existing "+action+" confirmation: "+confirmation.getCode());
         }
         return confirmation;
     }

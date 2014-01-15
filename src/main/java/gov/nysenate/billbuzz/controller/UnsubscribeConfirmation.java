@@ -29,6 +29,7 @@ public class UnsubscribeConfirmation extends HttpServlet
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        logger.info("Unsubscribe Confirmation Request: "+request.getQueryString());
         try {
             String message = "";
             BillBuzzDAO dao = new BillBuzzDAO();
@@ -37,22 +38,26 @@ public class UnsubscribeConfirmation extends HttpServlet
             String confirmationCode = request.getParameter("key");
             if (confirmationCode == null) {
                 message = "invalid";
+                logger.info("Missing required 'key' parameter for confirmation.");
             }
             else {
                 QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
                 confirmation = dao.loadConfirmation("unsubscribe", confirmationCode);
                 if (confirmation == null || confirmation.isExpired()) {
                     message = "invalid";
+                    logger.info("Confirmation code '"+confirmationCode+"' is invalid.");
                 }
                 else {
                     if (confirmation.getUser().isActivated()) {
                         message = "success";
+                        logger.info("Deactivating user "+confirmation.getUser().getEmail());
                         runner.update("UPDATE billbuzz_user SET activated = False WHERE id = ?", confirmation.getUserId());
                         confirmation.setUsedAt(new Date());
                         dao.saveConfirmation(confirmation);
                     }
                     else {
                         message = "inactive";
+                        logger.info("User "+confirmation.getUser().getEmail()+" is already deactivated");
                     }
                 }
             }

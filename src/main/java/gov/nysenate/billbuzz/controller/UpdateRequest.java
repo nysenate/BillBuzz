@@ -46,14 +46,17 @@ public class UpdateRequest extends HttpServlet
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        logger.info("Processing update request...");
         try {
             String message = "";
             BillBuzzUser user = FormProcessor.processRequestForm(request);
             if (user == null) {
                 message = "invalid_email";
+                logger.info("Returning to the user for missing or invalid user email.");
             }
             else {
                 message = "success";
+                logger.info("Mailing user "+user.getFirstName()+" <"+user.getEmail()+"> an update link.");
                 BillBuzzConfirmation confirmation = new BillBuzzDAO().getOrCreateConfirmation("update", user.getId(), true, null);
 
                 VelocityContext context = new VelocityContext();

@@ -64,6 +64,7 @@ public class SignupForm extends HttpServlet
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        logger.info("Processing subscription form...");
         try {
             String message = "";
             Date now = new Date();
@@ -72,9 +73,11 @@ public class SignupForm extends HttpServlet
             List<BillBuzzSubscription> subscriptions = new ArrayList<BillBuzzSubscription>();
             if (user == null) {
                 message = "missing_userinfo";
+                logger.info("Returning to the user for missing user info.");
                 subscriptions = FormProcessor.getSubscriptions(request, 0L, now);
             }
             else if (user.getSubscriptions().isEmpty()) {
+                logger.info("Returning to the user for missing subscription info.");
                 message = "missing_subscription";
             }
             else if (user.getConfirmedAt() == null) {

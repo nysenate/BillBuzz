@@ -35,6 +35,7 @@ public class SignupConfirmation extends HttpServlet
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        logger.info("Signup Confirmation Request: "+request.getQueryString());
         try {
             String message = "";
             BillBuzzDAO dao = new BillBuzzDAO();
@@ -44,11 +45,13 @@ public class SignupConfirmation extends HttpServlet
             String confirmationCode = request.getParameter("key");
             if (confirmationCode == null) {
                 message = "invalid";
+                logger.info("Missing required 'key' parameter for confirmation.");
             }
             else {
                 confirmation = dao.loadConfirmation("signup", confirmationCode);
                 if (confirmation == null || confirmation.isExpired()) {
                     message = "invalid";
+                    logger.info("Confirmation code '"+confirmationCode+"' is invalid.");
                 }
                 else {
                     subscriptions = dao.loadSubscriptions(confirmation.getUserId());
@@ -57,15 +60,18 @@ public class SignupConfirmation extends HttpServlet
                     if (confirmation.isUsed()) {
                         if (confirmation.getUser().isActivated()) {
                             message = "activated";
+                            logger.info("User "+confirmation.getUser().getEmail()+" is already activated");
                         }
                         else {
                             message = "reactivate";
+                            logger.info("Reactivating user "+confirmation.getUser().getEmail());
                             runner.update("UPDATE billbuzz_user SET activated = True WHERE id = ?", confirmation.getUserId());
                         }
                     }
                     else {
                         message = "success";
                         Date now = new Date();
+                        logger.info("Activating user "+confirmation.getUser().getEmail());
                         runner.update("UPDATE billbuzz_user SET activated = True, confirmedAt = ? WHERE id = ?", now, confirmation.getUserId());
                         confirmation.setUsedAt(now);
                         dao.saveConfirmation(confirmation);

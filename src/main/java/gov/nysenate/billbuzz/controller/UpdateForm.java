@@ -35,22 +35,29 @@ public class UpdateForm extends HttpServlet
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        logger.info("Generating update form: "+request.getQueryString());
         try {
             String message = "";
             BillBuzzDAO dao = new BillBuzzDAO();
             List<BillBuzzSubscription> subscriptions;
+            BillBuzzUser user;
             BillBuzzConfirmation confirmation = FormProcessor.getConfirmation(request);
 
             if (confirmation != null) {
                 message = "instruction";
+                logger.info("Rendering update form for user "+confirmation.getUser().getEmail());
                 subscriptions = dao.loadSubscriptions(confirmation.getUserId());
+                user = confirmation.getUser();
+
             }
             else {
                 message = "invalid";
+                logger.info("Missing or invalid confirmation code for update.");
+                user = new BillBuzzUser();
                 subscriptions = new ArrayList<BillBuzzSubscription>();
             }
 
-            request.setAttribute("user", confirmation.getUser());
+            request.setAttribute("user", user);
             request.setAttribute("message", message);
             request.setAttribute("confirmation", confirmation);
             request.setAttribute("senators", dao.getSenators(dao.getSession()));
@@ -69,6 +76,7 @@ public class UpdateForm extends HttpServlet
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        logger.info("Processing update form...");
         try {
             String message = "";
             Date createdAt = new Date();
@@ -79,9 +87,11 @@ public class UpdateForm extends HttpServlet
             BillBuzzUser formUser = FormProcessor.processSubscriptionForm(request, createdAt);
             if (confirmation == null) {
                 message = "invalid";
+                logger.info("Missing or invalid confirmation code for update.");
             }
             else if (formUser == null) {
                 message = "missing_userinfo";
+                logger.info("Returning to the user for missing user info.");
             }
             else {
                 // Overwrite stored values with form values
@@ -94,20 +104,24 @@ public class UpdateForm extends HttpServlet
 
                 if (user.getSubscriptions().isEmpty()) {
                     message = "missing_subscription";
+                    logger.info("Returning to the user for missing subscription info.");
                 }
                 else if (user.getConfirmedAt() == null) {
                     // Treat this update like a sign-up
                     message = "signup_required";
+                    logger.info("Redirecting unconfirmed user "+user.getEmail()+" to signup.");
                     request.getRequestDispatcher("/signup/form").forward(request, response);
                 }
                 else {
+                    message = "success";
+                    logger.info("Updating user info for "+user.getEmail());
+
                     // Update their goods.
                     dao.saveUser(user);
                     subscriptions = user.getSubscriptions();
                     dao.replaceSubscriptions(subscriptions, user.getId());
                     confirmation.setUsedAt(createdAt);
                     dao.saveConfirmation(confirmation);
-                    message = "success";
                 }
             }
 

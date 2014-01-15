@@ -42,17 +42,21 @@ public class UnsubscribeRequest extends HttpServlet
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        logger.info("Processing unsubscription form...");
         try {
             String message = "";
             BillBuzzUser user = FormProcessor.processRequestForm(request);
             if (user == null) {
                 message = "invalid_email";
+                logger.info("Returning to the user for missing or invalid user email.");
             }
             else if (!user.isActivated()) {
                 message = "inactive_user";
+                logger.info("User "+user.getEmail()+" is already deactivated.");
             }
             else {
                 message = "success";
+                logger.info("Mailing user "+user.getFirstName()+" <"+user.getEmail()+"> a link to confirm their deactivation.");
                 BillBuzzConfirmation confirmation = new BillBuzzDAO().getOrCreateConfirmation("unsubscribe", user.getId(), true, null);
 
                 VelocityContext context = new VelocityContext();

@@ -40,9 +40,12 @@ public class Application
     {
         try
         {
+            logger.info("------------------------------");
+            logger.info("    INITIALIZING BILLBUZZ     ");
+            logger.info("------------------------------");
+
             appInstance.config = new Config(propertyFileName);
             appInstance.db = new DB(appInstance.config, "mysqldb");
-            appInstance.mailer = new Mailer(appInstance.config, "mailer");
             Velocity.setProperty("file.resource.loader.path", appInstance.config.getValue("mailer.template_dir"));
             Velocity.init();
             return true;
@@ -55,7 +58,7 @@ public class Application
         return false;
     }
 
-    public static boolean shutdown() throws IOException
+    public static void shutdown() throws IOException
     {
         try {
             appInstance.db.getDataSource().purge();
@@ -64,7 +67,6 @@ public class Application
         catch(Exception e) {
             logger.info("Failed to purge and close data connections.");
         }
-        return true;
     }
 
     public static Config getConfig() {
