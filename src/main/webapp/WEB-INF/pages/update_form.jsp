@@ -25,12 +25,21 @@ if (user != null) {
         email2 = user.getEmail();
     }
 }
+
+boolean renderForm = true;
+
 %>
 <% if (message.equals("instruction")) { %>
 <div class="bb_main instruction">
 The form below has been filled with your current subscription preferences. Modify them as necessary and submit them
 to update your account.
 </div>
+<% } else if (message.equals("invalid")) {
+    renderForm = false; %>
+    <div class="bb_main error">
+    Invalid confirmation key. Please verify that you have copied the link correctly and email support
+    at <a href="mailto:billbuzz@nysenate.gov">billbuzz@nysenate.gov</a> if the problem persists.
+    </div>
 <% } else if (message.equals("missing_userinfo")) { 
     if (firstName.trim().isEmpty() || email.trim().isEmpty()) { %>
 	    <div class="bb_main error">
@@ -56,6 +65,7 @@ That's it, your subscription has been updated to reflect the preferences checked
 </div> 
 <% } %>
 <br/>
+<% if (renderForm) { %>
 <div class="bb_main">
 <form id="subscriptionForm" method="POST" action="<%=request.getContextPath()%>/update/form">
 <input type="hidden" name="key" value="<%=(confirmation == null ? "" : confirmation.getCode())%>" />
@@ -125,4 +135,5 @@ That's it, your subscription has been updated to reflect the preferences checked
     </div>
 </form>
 </div>
+<% } %>
 <%@ include file="/WEB-INF/parts/footer.jsp"%>
