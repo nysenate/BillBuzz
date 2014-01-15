@@ -57,6 +57,13 @@ public class Application
 
     public static boolean shutdown() throws IOException
     {
+        try {
+            appInstance.db.getDataSource().purge();
+            appInstance.db.getDataSource().close(true);
+        }
+        catch(Exception e) {
+            logger.info("Failed to purge and close data connections.");
+        }
         return true;
     }
 
