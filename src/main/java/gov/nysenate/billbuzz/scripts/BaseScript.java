@@ -45,7 +45,6 @@ abstract public class BaseScript
      */
     public void run(String[] args) throws Exception
     {
-
         Options options = getOptions();
         options.addOption("h", "help", false, "Print this message");
         Option environment = new Option("e", "environment", true, "Path to a configuration file for this environment");
@@ -58,6 +57,10 @@ abstract public class BaseScript
                 printUsage(options);
                 System.exit(0);
             } else {
+                logger.info("Running with options:");
+                for (Option option : opts.getOptions()) {
+                    logger.info("\t"+option);
+                }
                 File propertiesFile = new File(opts.getOptionValue("environment"));
                 if (!propertiesFile.canRead()) {
                     logger.fatal("Cannot read: "+propertiesFile);
