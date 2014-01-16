@@ -21,6 +21,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 /**
  * Checks the OpenLegislation senators listing for the current session for new senators.
  *
+ * TODO: Can this automatically mark senators as inactive? Right now its a manual process.
+ *
  * @author GraylinKim
  *
  */
@@ -47,6 +49,8 @@ public class UpdateSenators extends BaseScript
         int session = Integer.parseInt(opts.getOptionValue("year", String.valueOf(dao.getSession())));
         logger.info("Updating senators for session: "+session);
 
+        String url = "http://open.nysenate.gov/legislation/senators/"+session+".json";
+        logger.info("Fetching senator information from: "+url);
         Response response = Request.Get("http://open.nysenate.gov/legislation/senators/"+session+".json").execute();
         JsonNode root = new ObjectMapper().readTree(response.returnContent().asString());
         Iterator<JsonNode> senatorIterator = root.getElements();

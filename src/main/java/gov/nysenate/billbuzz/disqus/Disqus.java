@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.fluent.Request;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -29,6 +30,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 @SuppressWarnings("unchecked")
 public class Disqus
 {
+    private final Logger logger = Logger.getLogger(Disqus.class);
+
     public static class ForumListResponse extends DisqusListResponse<DisqusForum> {}
     public static class ThreadListResponse extends DisqusListResponse<DisqusThread> {}
     public static class PostListResponse extends DisqusListResponse<DisqusPost> {}
@@ -117,6 +120,7 @@ public class Disqus
     public DisqusObjectResponse<?> getResponse(String method, Class<? extends DisqusObjectResponse<?>> responseType, String...args) throws IOException
     {
         String url = String.format(TEMPLATE, method, PUBLIC_KEY, SECRET_KEY, ACCESS_TOKEN, StringUtils.join(args, "&"));
+        logger.info("Fetching: "+url);
         String responseString = Request.Get(url).execute().returnContent().asString();
         ObjectMapper mapper = new ObjectMapper();
         mapper.getDeserializationConfig().withDateFormat(dateFormat);
@@ -129,6 +133,7 @@ public class Disqus
     public DisqusListResponse<?> getListResponse(String method, Class<? extends DisqusListResponse<?>> responseType, String...args) throws IOException
     {
         String url = String.format(TEMPLATE, method, PUBLIC_KEY, SECRET_KEY, ACCESS_TOKEN, StringUtils.join(args, "&"));
+        logger.info("Fetching: "+url);
         String responseString = Request.Get(url).execute().returnContent().asString();
         ObjectMapper mapper = new ObjectMapper();
         mapper.getDeserializationConfig().withDateFormat(dateFormat);

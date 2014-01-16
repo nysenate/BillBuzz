@@ -125,8 +125,10 @@ public class UpdatePosts extends BaseScript
                 if (post.getIsApproved()) {
                     // Only create a new update if it has at least 1 approval
                     if (update == null) {
+                        Date now = new Date();
+                        logger.info("Creating new update for: "+now);
                         update = new BillBuzzUpdate();
-                        update.setCreatedAt(new Date());
+                        update.setCreatedAt(now);
                         dao.saveUpdate(update);
                     }
                     logger.info("New Approval: "+post.getId()+" - "+post.getCreatedAt());

@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 
@@ -88,6 +89,7 @@ public class SendDigests extends BaseScript
                 sponsorApprovals.get(sponsor).add(approval);
             }
         }
+        logger.info("New approvals by sponsor:");
         for (Entry<String, Set<BillBuzzApproval>> entry : sponsorApprovals.entrySet()) {
             logger.info("\t"+entry.getKey()+": "+entry.getValue().size()+" approvals");
         }
@@ -110,13 +112,14 @@ public class SendDigests extends BaseScript
                     userSubscriptions.add(senatorsByShortName.get(subscription.getValue().toLowerCase()));
                 }
                 else {
-                    logger.error("bad subscription category: "+subscription.getCategory()+" ["+subscription.getValue().toLowerCase()+"]");
+                    logger.error("\tbad subscription category: "+subscription.getCategory()+" ["+subscription.getValue().toLowerCase()+"]");
                 }
             }
-            logger.info(userSubscriptions.size()+" sponsor subscriptions found.");
+            logger.info("\t"+userSubscriptions.size()+" sponsor subscriptions found: "+StringUtils.join(userSubscriptions.toArray()));
 
             // Get a list of approved comments on bills sponsored by these people.
             // This organization scheme corresponds to the hierarchy used to render comments in the digest email.
+            int userApprovalsCount = 0;
             Map<BillBuzzSenator, Map<BillBuzzThread, Set<BillBuzzApproval>>> userApprovals = new TreeMap<BillBuzzSenator, Map<BillBuzzThread, Set<BillBuzzApproval>>>();
             for (BillBuzzSenator senator : userSubscriptions) {
                 if (sponsorApprovals.containsKey(senator.getShortName())) {
@@ -135,6 +138,7 @@ public class SendDigests extends BaseScript
                             threadApprovals = new TreeSet<BillBuzzApproval>();
                             senatorApprovals.put(approval.getThread(), threadApprovals);
                         }
+                        userApprovalsCount++;
                         threadApprovals.add(approval);
                     }
                     userApprovals.put(senator, senatorApprovals);
@@ -146,7 +150,7 @@ public class SendDigests extends BaseScript
 
             if (!userApprovals.isEmpty()) {
                 // Send out a mailing to that user.
-                logger.info("Sending update to "+user.getEmail());
+                logger.info("Sending update to "+user.getEmail()+" with "+userApprovalsCount+" approvals from "+userApprovals.size()+" sponsors.");
                 VelocityContext context = new VelocityContext();
                 context.put("user", user);
                 context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
