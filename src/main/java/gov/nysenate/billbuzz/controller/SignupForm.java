@@ -45,7 +45,7 @@ public class SignupForm extends HttpServlet
         try {
             BillBuzzDAO dao = new BillBuzzDAO();
             request.setAttribute("message", "instruction");
-            request.setAttribute("senators", dao.getSenators(dao.getSession()));
+            request.setAttribute("senators", dao.getSessionSenators(dao.getSession()));
             request.setAttribute("subscriptions", FormProcessor.getSubscriptionMap(new ArrayList<BillBuzzSubscription>()));
             request.getRequestDispatcher("/WEB-INF/pages/signup_form.jsp").forward(request, response);
         }
@@ -109,7 +109,7 @@ public class SignupForm extends HttpServlet
             request.setAttribute("user", user);
             request.setAttribute("message", message);
             request.setAttribute("subscriptions", FormProcessor.getSubscriptionMap(subscriptions));
-            request.setAttribute("senators", dao.getSenators(dao.getSession()));
+            request.setAttribute("senators", dao.getSessionSenators(dao.getSession()));
             request.getRequestDispatcher("/WEB-INF/pages/signup_form.jsp").forward(request, response);
         }
         catch (SQLException e) {

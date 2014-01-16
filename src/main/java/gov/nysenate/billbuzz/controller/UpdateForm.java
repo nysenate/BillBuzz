@@ -60,7 +60,7 @@ public class UpdateForm extends HttpServlet
             request.setAttribute("user", user);
             request.setAttribute("message", message);
             request.setAttribute("confirmation", confirmation);
-            request.setAttribute("senators", dao.getSenators(dao.getSession()));
+            request.setAttribute("senators", dao.getSessionSenators(dao.getSession()));
             request.setAttribute("subscriptions", FormProcessor.getSubscriptionMap(subscriptions));
             request.getRequestDispatcher("/WEB-INF/pages/update_form.jsp").forward(request, response);
         }
@@ -128,7 +128,7 @@ public class UpdateForm extends HttpServlet
             request.setAttribute("user", user);
             request.setAttribute("message", message);
             request.setAttribute("confirmation", confirmation);
-            request.setAttribute("senators", dao.getSenators(dao.getSession()));
+            request.setAttribute("senators", dao.getSessionSenators(dao.getSession()));
             request.setAttribute("subscriptions", FormProcessor.getSubscriptionMap(subscriptions));
             request.getRequestDispatcher("/WEB-INF/pages/update_form.jsp").forward(request, response);
         }
