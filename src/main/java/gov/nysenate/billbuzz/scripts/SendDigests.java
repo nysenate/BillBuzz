@@ -116,7 +116,7 @@ public class SendDigests extends BaseScript
                 }
             }
             if (userSubscriptions.size() == senators.size()) {
-                logger.info("User is subscribed to all approvals");
+                logger.info("\tUser is subscribed to all approvals");
             }
             else {
                 logger.info("\t"+userSubscriptions.size()+" sponsor subscriptions found: "+StringUtils.join(userSubscriptions.toArray(), ", "));
@@ -155,7 +155,7 @@ public class SendDigests extends BaseScript
 
             if (!userApprovals.isEmpty()) {
                 // Send out a mailing to that user.
-                logger.info("Sending update to "+user.getEmail()+" with "+userApprovalsCount+" approvals from "+userApprovals.size()+" sponsors.");
+                logger.info("\tSending update to "+user.getEmail()+" with "+userApprovalsCount+" approvals from "+userApprovals.size()+" sponsors.");
                 VelocityContext context = new VelocityContext();
                 context.put("user", user);
                 context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
@@ -163,7 +163,7 @@ public class SendDigests extends BaseScript
                 Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, context);
             }
             else {
-                logger.info("No updates apply for: "+user.getEmail());
+                logger.info("\tNo updates apply for: "+user.getEmail());
             }
         }
 
