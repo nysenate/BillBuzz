@@ -115,7 +115,7 @@ public class SendDigests extends BaseScript
                     logger.error("\tbad subscription category: "+subscription.getCategory()+" ["+subscription.getValue().toLowerCase()+"]");
                 }
             }
-            logger.info("\t"+userSubscriptions.size()+" sponsor subscriptions found: "+StringUtils.join(userSubscriptions.toArray()));
+            logger.info("\t"+userSubscriptions.size()+" sponsor subscriptions found: "+StringUtils.join(userSubscriptions.toArray(), ", "));
 
             // Get a list of approved comments on bills sponsored by these people.
             // This organization scheme corresponds to the hierarchy used to render comments in the digest email.
