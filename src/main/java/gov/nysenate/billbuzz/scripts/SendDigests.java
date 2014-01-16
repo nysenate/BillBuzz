@@ -27,6 +27,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +50,13 @@ public class SendDigests extends BaseScript
     public static void main(String[] args) throws Exception
     {
         new SendDigests().run(args);
+    }
+
+    protected Options getOptions()
+    {
+        Options options = new Options();
+        options.addOption("dryrun", false, "Prevents the digests from actually being mailed.");
+        return options;
     }
 
     public void execute(CommandLine opts) throws Exception
@@ -156,11 +164,13 @@ public class SendDigests extends BaseScript
             if (!userApprovals.isEmpty()) {
                 // Send out a mailing to that user.
                 logger.info("\tSending update to "+user.getEmail()+" with "+userApprovalsCount+" approvals from "+userApprovals.size()+" sponsors.");
-                VelocityContext context = new VelocityContext();
-                context.put("user", user);
-                context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
-                context.put("userApprovals", userApprovals);
-                Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, context);
+                if (!opts.hasOption("dryrun")) {
+                    VelocityContext context = new VelocityContext();
+                    context.put("user", user);
+                    context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
+                    context.put("userApprovals", userApprovals);
+                    Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, context);
+                }
             }
             else {
                 logger.info("\tNo updates apply for: "+user.getEmail());
@@ -169,12 +179,14 @@ public class SendDigests extends BaseScript
 
         // Get all the distinct updateIds and mark them as sent.
         // This allows for the possibility of running multiple updates in between SendDigests runs.
-        Set<Long> updateIds = new TreeSet<Long>();
-        for(BillBuzzApproval approval : approvals) {
-            updateIds.add(approval.getUpdateId());
-        }
-        for (Long updateId : updateIds) {
-            runner.update("UPDATE billbuzz_update SET sentAt = ? WHERE id = ?", now, updateId);
+        if (!opts.hasOption("dryrun")) {
+            Set<Long> updateIds = new TreeSet<Long>();
+            for(BillBuzzApproval approval : approvals) {
+                updateIds.add(approval.getUpdateId());
+            }
+            for (Long updateId : updateIds) {
+                runner.update("UPDATE billbuzz_update SET sentAt = ? WHERE id = ?", now, updateId);
+            }
         }
         logger.info("Done sending digests.");
     }
