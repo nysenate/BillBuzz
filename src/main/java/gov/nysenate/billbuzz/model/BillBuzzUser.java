@@ -112,7 +112,7 @@ public class BillBuzzUser
     public boolean equals(Object other)
     {
         if (other instanceof BillBuzzUser) {
-            return id == ((BillBuzzUser)other).getId();
+            return id.equals(((BillBuzzUser)other).getId());
         }
         else {
             return false;
