@@ -1,6 +1,6 @@
 UserAgent: *
 Disallow: /static/
 Disallow: /signup/confirm
-Disallow: /update/form
+Disallow: /update
 Disallow: /unsubscribe/confirm
 
