@@ -79,5 +79,8 @@ public class BillBuzzSenator implements Comparable<BillBuzzSenator>
         this.active = active;
     }
 
-
+    public String toString()
+    {
+        return this.getShortName();
+    }
 }
