@@ -70,7 +70,7 @@ public class SendDigests extends BaseScript
         senators.add(new BillBuzzSenator("Budget", "budget", 0));
         senators.add(new BillBuzzSenator("Rules Committee", "rules", 0));
 
-        // Senators need to be organized by shortName; lowercase for consistency
+        // Senators need to be organized by shortName; lower-case for consistency
         HashMap<String, BillBuzzSenator> senatorsByShortName = new HashMap<String, BillBuzzSenator>();
         for (BillBuzzSenator senator : senators) {
             senator.setShortName(senator.getShortName().toLowerCase());
@@ -115,7 +115,12 @@ public class SendDigests extends BaseScript
                     logger.error("\tbad subscription category: "+subscription.getCategory()+" ["+subscription.getValue().toLowerCase()+"]");
                 }
             }
-            logger.info("\t"+userSubscriptions.size()+" sponsor subscriptions found: "+StringUtils.join(userSubscriptions.toArray(), ", "));
+            if (userSubscriptions.size() == senators.size()) {
+                logger.info("User is subscribed to all approvals");
+            }
+            else {
+                logger.info("\t"+userSubscriptions.size()+" sponsor subscriptions found: "+StringUtils.join(userSubscriptions.toArray(), ", "));
+            }
 
             // Get a list of approved comments on bills sponsored by these people.
             // This organization scheme corresponds to the hierarchy used to render comments in the digest email.

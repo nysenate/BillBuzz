@@ -137,6 +137,9 @@ public class UpdatePosts extends BaseScript
                 }
             }
         }
+        else {
+            logger.info("No new approvals.");
+        }
         logger.info("Done updating posts.");
     }
 }
