@@ -19,6 +19,7 @@ import java.util.TreeSet;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This script dumps users and subscriptions from the old data schema to new one. The old schema
@@ -79,16 +80,16 @@ public class Dump {
 			        if (subscription.equalsIgnoreCase("omara")) {
 			            subscription = "O'Mara";
 			        }
-			        else if (subscription.equalsIgnoreCase("stewart")) {
+			        else if (subscription.equalsIgnoreCase("stewart") || subscription.equalsIgnoreCase("stewart-cousins")) {
 			            subscription = "Stewart-Cousins";
 			        }
 			        else if (subscription.equalsIgnoreCase("shirley")) {
 			            subscription = "Huntley";
 			        }
-			        else if (subscription.equalsIgnoreCase("ruth")) {
+			        else if (subscription.equalsIgnoreCase("ruth") || subscription.equalsIgnoreCase("hassell-thompson")) {
 			            subscription = "Hassell-Thompson";
 			        }
-			        userSubscriptions.get("sponsor").add(subscription);
+			        userSubscriptions.get("sponsor").add(StringUtils.capitalize(subscription));
 			    }
 			}
 
