@@ -1,7 +1,7 @@
 #!/bin/bash
 source $(dirname "$0")/utils.sh
 
-BASE="$ROOTDIR/target/BillBuzz2-$VERSION/WEB-INF"
+BASE="$ROOTDIR/target/BillBuzz-$VERSION/WEB-INF"
 SCRIPT=$1; shift
 
 if [ ! $SCRIPT ]; then
