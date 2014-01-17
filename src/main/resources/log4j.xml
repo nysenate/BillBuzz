@@ -28,10 +28,6 @@
         </filter>
     </appender>
 
-    <logger name="gov.nysenate.openleg.util.Storage">
-        <level value="info"/>
-    </logger>
-
     <root>
         <priority value="info"></priority>
         <appender-ref ref="stdout"/>
