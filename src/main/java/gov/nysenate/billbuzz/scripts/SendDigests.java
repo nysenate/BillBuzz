@@ -56,12 +56,19 @@ public class SendDigests extends BaseScript
     {
         Options options = new Options();
         options.addOption("dryrun", false, "Prevents the digests from actually being mailed.");
+        options.addOption("startat", true, "Starts the digest mailing from the indicated user id.");
         return options;
     }
 
     public void execute(CommandLine opts) throws Exception
     {
         Date now = new Date();
+
+        // Always start from user id = 0 (all users) unless told otherwise.
+        int startAt = 0;
+        if (opts.hasOption("startat")) {
+            startAt = Integer.parseInt(opts.getOptionValue("startat"));
+        }
 
         QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
         List<BillBuzzApproval> approvals = getApprovals(runner);
@@ -102,7 +109,7 @@ public class SendDigests extends BaseScript
             logger.info("\t"+entry.getKey()+": "+entry.getValue().size()+" approvals");
         }
 
-        for (BillBuzzUser user : getUsers(runner)) {
+        for (BillBuzzUser user : getUsers(runner, startAt)) {
             logger.info("Gathering updates for: "+user.getEmail());
 
             // For every user, get a list of subscribed senators.
@@ -197,7 +204,7 @@ public class SendDigests extends BaseScript
         logger.info("Done sending digests.");
     }
 
-    private List<BillBuzzUser> getUsers(QueryRunner runner) throws SQLException
+    private List<BillBuzzUser> getUsers(QueryRunner runner, int startAt) throws SQLException
     {
         return runner.query(
                 "SELECT billbuzz_user.id as userId," +
@@ -215,6 +222,7 @@ public class SendDigests extends BaseScript
                 "FROM billbuzz_user, billbuzz_subscription " +
                 "WHERE billbuzz_user.id = billbuzz_subscription.userId" +
                 "  AND billbuzz_user.activated = 1 " +
+                "  AND billbuzz_user.id >= ? " +
                 "ORDER BY userId",
                 new ResultSetHandler<List<BillBuzzUser>>() {
                     public List<BillBuzzUser> handle(ResultSet rs) throws SQLException
@@ -237,7 +245,8 @@ public class SendDigests extends BaseScript
                         users.add(currentUser);
                         return users;
                     }
-                }
+                },
+                startAt
         );
     }
 
