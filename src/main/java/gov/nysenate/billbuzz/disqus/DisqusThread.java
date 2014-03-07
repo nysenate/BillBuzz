@@ -23,6 +23,7 @@ public class DisqusThread extends DisqusPrimaryObject
 
     private Integer likes;
     private Integer dislikes;
+    private String highlightedPost;
 
     private String author;
     private Integer userScore;
@@ -197,5 +198,15 @@ public class DisqusThread extends DisqusPrimaryObject
     public void setCategory(String category)
     {
         this.category = category;
+    }
+
+    public String getHighlightedPost()
+    {
+        return highlightedPost;
+    }
+
+    public void setHighlightedPost(String highlightedPost)
+    {
+        this.highlightedPost = highlightedPost;
     }
 }
