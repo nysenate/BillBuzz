@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -136,6 +137,7 @@ public class Disqus
         logger.info("Fetching: "+url);
         String responseString = Request.Get(url).execute().returnContent().asString();
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.getDeserializationConfig().withDateFormat(dateFormat);
         DisqusListResponse<?> response = mapper.readValue(responseString, responseType);
         response.setMethod(method);
