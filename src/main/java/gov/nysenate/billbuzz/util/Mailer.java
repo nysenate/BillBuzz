@@ -4,6 +4,7 @@ import gov.nysenate.billbuzz.model.BillBuzzUser;
 import gov.nysenate.util.Config;
 
 import java.io.StringWriter;
+import java.util.Properties;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
@@ -58,6 +59,18 @@ public class Mailer
         email.setFrom(config.getValue("mailer.from.address"), config.getValue("mailer.from.name"));
         email.setCharset("UTF-8");
         email.setContent(content);
-        email.send();
+
+        // Email requests should timeout
+        Properties props = email.getMailSession().getProperties();
+        props.setProperty("mail.smtp.connectiontimeout", "10000");
+        props.setProperty("mail.smtp.timeout", "10000");
+
+        try {
+            email.send();
+        }
+        catch (Exception e) {
+            // Try again! If we fail again just give up.
+            email.send();
+        }
     }
 }
