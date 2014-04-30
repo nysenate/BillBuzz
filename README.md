@@ -54,6 +54,14 @@ Covered edge case scenarios:
 * A user attempting to deactivate an unconfirmed account will get an "already inactive" response.
 
 
+Admin Workflows
+--------------------
+
+Sometimes a digest mailing will die. Using the logs, determine the last user that recieved an email.
+Then run the SendDigest script with the --startat option with the next user's id. --dryrun can be
+used to make sure that the mailing will have the desired effect.
+
+
 Project Organization
 ------------------------
 
@@ -82,8 +90,11 @@ Data Model
 Miscellaneous Notes
 --------------------------
 
-* Disqus changes their API pretty frequently which breaks the XML parser. This is super annoying
-  and requires us to frequently update our data models.
+* Disqus changes their API pretty frequently which could possibly break the XML parser. Make sure to setup
+  alerts on cronjob errors.
 * DisqusAuthors don't always have ids due to anonymity. As such, BillBuzzAuthor ids can be either
-  a unique DisqusID or the Disqus email hash value.
-* The Disqus2BillBuzz conversion can be pretty messy. Any data issues probably came from here somehow.
+  a unique DisqusID or the Disqus email hash value. This is possibly incorrect behavior but shouldn't
+  affect our mailings at all. It just means our data might be poorly normalized.
+* The Disqus2BillBuzz conversion can be pretty messy. Any data issues probably be traced back to that
+  step somehow.
+* Heavy use of maps and inconsistent casing has lead to mailing errors in the past. Be careful.
