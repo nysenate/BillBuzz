@@ -19,4 +19,4 @@ $approval.post.message
 #end
 #end
 
-Please visit the http://billbuzz.nysenate.gov/ to modify or delete your subscription.
+Please visit http://${request.serverName}:${request.serverPort}${request.contextPath}/ to modify or delete your subscription.

@@ -1,3 +1,3 @@
 Thanks for signing up for BillBuzz.  To finalize your subscription please click the following link:
 
-http://${request.serverName}:${request.serverPort}/${request.contextPath}/signup/confirm?key=${confirmation.code}
+http://${request.serverName}:${request.serverPort}${request.contextPath}/signup/confirm?key=${confirmation.code}

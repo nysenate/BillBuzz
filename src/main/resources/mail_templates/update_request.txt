@@ -1,5 +1,5 @@
 It looks like you're trying to update your subscription, to do so please click the link below and follow the instructions:
 
-http://${request.serverName}:${request.serverPort}/${request.contextPath}/update/form?key=${confirmation.code}
+http://${request.serverName}:${request.serverPort}${request.contextPath}/update/form?key=${confirmation.code}
 
 If you have any questions please contact us at billbuzz@nysenate.gov or reply to this email.

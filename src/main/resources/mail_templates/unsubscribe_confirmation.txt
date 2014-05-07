@@ -1,5 +1,5 @@
 Please click the link below to remove yourself from BillBuzz:
 
-http://${request.serverName}:${request.serverPort}/${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}
+http://${request.serverName}:${request.serverPort}${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}
 
 If you have any questions please contact us at billbuzz@nysenate.gov or reply to this email.
