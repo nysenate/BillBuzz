@@ -6,6 +6,7 @@
     <version>2.0</version>
     <packaging>war</packaging>
     <build>
+        <finalName>${project.artifactId}##${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
