@@ -9,9 +9,9 @@ links to verify all user actions.
 Requirements
 --------------------
 
-* Maven - mvn2 required.
-* Tomcat - tomcat7 required.
-* Java - java7 preferred, java6 compatible.
+* Maven - Maven2 required.
+* Tomcat - Tomcat7 required.
+* Java - Java7 required.
 
 
 Installation
@@ -20,11 +20,11 @@ Installation
 * Clone the repository.
 * Run ``bin/setup.sh`` to do a local maven install of the ``nysenate-java-utils`` dependency.
 * Create a new database and load the ``src/main/resources/schema.sql`` file.
-* Copy ``src/main/resource/example.properties`` to ``app.properties`` and fill in blanks as documented.
+* In ``src/main/resources/`` copy ``example.properties`` to ``app.properties`` and fill in blanks as documented.
 * ``mvn clean package``
 * bin/run.sh UpdateSenators -e src/main/resource/app.properties --year 2009 // repeat for 2011, 2013, etc
 * bin/run.sh Setup -e src/main/resource/app.properties
-* Copy target/BillBuzz-1.0.war to the tomcat docRoot and deploy.
+* Copy target/BillBuzz-1.0.war to the Tomcat docRoot and deploy.
 * Set up ``UpdateSenators``, ``UpdatePosts``, and ``SendDigests`` on daily cron jobs running in that order.
 
 
