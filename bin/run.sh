@@ -1,7 +1,7 @@
 #!/bin/bash
 source $(dirname "$0")/utils.sh
 
-BASE="$ROOTDIR/target/BillBuzz-$VERSION/WEB-INF"
+BASE="$ROOTDIR/target/BillBuzz##$VERSION/WEB-INF"
 SCRIPT=$1; shift
 
 if [ ! $SCRIPT ]; then
@@ -9,5 +9,5 @@ if [ ! $SCRIPT ]; then
 fi
 
 # TODO: This memory size should be an adjustable parameter
-java -Xmx1024m -Xms16m -cp $BASE/classes/:$BASE/lib/* gov.nysenate.billbuzz.scripts.$SCRIPT $@
+java -Xmx1024m -Xms16m -cp "$BASE/classes/:$BASE/lib/*" gov.nysenate.billbuzz.scripts.$SCRIPT $@
 
