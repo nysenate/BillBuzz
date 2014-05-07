@@ -18,7 +18,7 @@ Map<String, Set<String>> subscriptions = (Map<String, Set<String>>)request.getAt
 %>
 <% if (message.equals("instruction")) { %>
 <div class="bb_main instruction">
-To sign up simply fill out the form below and select parties or individuals that you would like to receive updates for!
+To sign up, simply fill out the form below and select the senators that you would like to receive updates for.
 </div>
 <% } else if (message.equals("missing_userinfo")) { 
     if (firstName.trim().isEmpty() || email.trim().isEmpty()) { %>
@@ -41,7 +41,7 @@ At least one subscription is required to activate a BillBuzz account.
 </div>
 <% } else if (message.equals("success")) { %>
 <div class="bb_main success">
-We've sent you a email with a link to confirm your subscription to the parties and senators checked below.
+We've sent you an email with a link to confirm your subscription to the senators checked below.
 </div>
 <% } else if (message.equals("update_required")) { %>
 <div class="bb_main error">
