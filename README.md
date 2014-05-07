@@ -28,6 +28,27 @@ Installation
 * Set up ``UpdateSenators``, ``UpdatePosts``, and ``SendDigests`` on daily cron jobs running in that order.
 
 
+The Data Process
+-------------------
+
+billbuzz_senator has a unique entry for each senator per 2 year session. This table is maintained via the
+UpdateSenators script which grabs the latest senator data from NYSenate.gov. Any senator that is currently
+active in the current session but not in the latest senator info is marked as inactive and removed from the
+subscription listings on the website.
+
+The UpdatePosts script is responsible for keeping our local database of disqus comments and authors up to
+date and creating new approvals and updates as necessary. Each bill on OpenLegislation that has been viewed
+in a browser has a corresponding Disqus thread. Every post by every author to these threads is tracked in
+the database under the corresponding tables. When we pull new posts down they are all saved to the database.
+If any comments were approved a new update record is created and linked approval records are created for each
+approved comment. After pulling new comments, we fetch updates for all older comments that have no recorded
+action taken (marked approved, spam, or deleted) and see if any actions were taken since last time we checked.
+All updated comments are saved to the database, any new approvals have corresponding records created.
+
+The SendDigests script combines the approvals and subscription entries for active billbuzz users to generate
+individual mailings for each user.
+
+
 User Workflows
 -------------------
 
