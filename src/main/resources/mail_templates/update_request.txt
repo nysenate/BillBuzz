@@ -1,4 +1,4 @@
-It looks like you're trying to update your subscription, to do so please click the link below and follow the instructions:
+It looks like you're trying to update your subscription, to do so please use the link below and follow the instructions:
 
 http://${request.serverName}:${request.serverPort}${request.contextPath}/update/form?key=${confirmation.code}
 

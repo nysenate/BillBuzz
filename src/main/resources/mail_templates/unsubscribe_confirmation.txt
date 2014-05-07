@@ -1,4 +1,4 @@
-Please click the link below to remove yourself from BillBuzz:
+Please use the link below to remove yourself from BillBuzz:
 
 http://${request.serverName}:${request.serverPort}${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}
 
