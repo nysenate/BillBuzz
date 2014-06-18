@@ -1,13 +1,25 @@
-#!/bin/bash
-source $(dirname "$0")/utils.sh
+#!/bin/sh
 
-BASE="$ROOTDIR/target/BillBuzz##$VERSION/WEB-INF"
-SCRIPT=$1; shift
+prog=`basename $0`
+script_dir=`dirname $0`
+root_dir=`cd "$script_dir"/..; echo $PWD`
+pom_file="$root_dir/pom.xml"
 
-if [ ! $SCRIPT ]; then
-    echo "Script name is a required argument.";
+if [ ! -r "$pom_file" ]; then
+  echo "$prog: $pom_file: Maven POM file not found" >&2
+  exit 1
 fi
 
-# TODO: This memory size should be an adjustable parameter
-java -Xmx1024m -Xms16m -cp "$BASE/classes/:$BASE/lib/*" gov.nysenate.billbuzz.scripts.$SCRIPT $@
+app_ver=`php -r '$x=simplexml_load_file($argv[1]); echo $x->version;' $pom_file`
+base_dir="$root_dir/target/BillBuzz##$app_ver/WEB-INF"
+
+SCRIPT=$1
+shift
+
+if [ ! "$SCRIPT" ]; then
+  echo "$prog: Script name is a required argument." >&2
+  exit 1
+fi
+
+java -Xmx1024m -Xms16m -cp "$base_dir/classes/:$base_dir/lib/*" gov.nysenate.billbuzz.scripts.$SCRIPT -e $base_dir/classes/app.properties $@
 
