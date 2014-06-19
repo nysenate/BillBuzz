@@ -40,7 +40,7 @@ public class Mailer
 
         // Create the html part of the email
         MimeBodyPart htmlMsg = new MimeBodyPart();
-        htmlMsg.setContent(htmlWriter.toString(), "text/html;");
+        htmlMsg.setContent(htmlWriter.toString(), "text/html");
         htmlMsg.setDisposition("inline");
 
         // Populate the email content

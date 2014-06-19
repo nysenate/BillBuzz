@@ -8,7 +8,7 @@
           </td>
           <td align="center">
           </td>
-          <td align = "right">
+          <td align="right">
             <a href="http://www.nysenate.gov">NYSenate.gov</a>
           </td>
         </tr>

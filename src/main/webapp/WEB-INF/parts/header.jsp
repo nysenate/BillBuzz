@@ -42,7 +42,7 @@
             </tr>
           </table>
         </div>
-        <div class="nav-bar">
+        <div class="nav-bar" align="center">
         <a href="<%=request.getContextPath()+"/signup/form"%>" class="nav-button-<%=request.getParameter("page").equals("signup") ? "on" : "off"%>">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;
         <a href="<%=request.getContextPath()+"/update/request"%>" class="nav-button-<%=request.getParameter("page").equals("update") ? "on" : "off"%>">Update your Subscription</a>&nbsp;&nbsp;|&nbsp;&nbsp;
         <a href="<%=request.getContextPath()+"/unsubscribe/request"%>" class="nav-button-<%=request.getParameter("page").equals("unsubscribe") ? "on" : "off"%>">Unsubscribe</a>
