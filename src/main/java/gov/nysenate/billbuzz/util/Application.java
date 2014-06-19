@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 public class Application
 {
@@ -38,20 +39,21 @@ public class Application
 
     public static boolean bootstrap(String propertyFileName)
     {
-        try
-        {
+        try {
             logger.info("------------------------------");
             logger.info("    INITIALIZING BILLBUZZ     ");
             logger.info("------------------------------");
 
             appInstance.config = new Config(propertyFileName);
             appInstance.db = new DB(appInstance.config, "mysqldb");
-            Velocity.setProperty("file.resource.loader.path", appInstance.config.getValue("mailer.template_dir"));
+            // Set the location of the mailing templates, and disable logging.
+            Velocity.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, appInstance.config.getValue("mailer.template_dir"));
+            Velocity.setProperty(RuntimeConstants.RUNTIME_LOG, "/tmp/velocity.log");
+            Velocity.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.NullLogSystem");
             Velocity.init();
             return true;
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             logger.fatal("An exception occurred while building dependencies");
             logger.fatal(ex.getMessage(), ex);
         }
@@ -69,11 +71,13 @@ public class Application
         }
     }
 
-    public static Config getConfig() {
+    public static Config getConfig()
+    {
         return appInstance.config;
     }
 
-    public static DB getDB() {
+    public static DB getDB()
+    {
         return appInstance.db;
     }
 }
