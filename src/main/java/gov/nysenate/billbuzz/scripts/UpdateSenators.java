@@ -46,7 +46,7 @@ public class UpdateSenators extends BaseScript
     public void execute(CommandLine opts) throws IOException, SQLException
     {
         BillBuzzDAO dao = new BillBuzzDAO();
-        int session = Integer.parseInt(opts.getOptionValue("year", String.valueOf(dao.getSession())));
+        int session = Integer.parseInt(opts.getOptionValue("year", String.valueOf(dao.getSessionYear())));
         logger.info("Updating senators for session: "+session);
 
         String url = "http://open.nysenate.gov/legislation/senators/"+session+".json";
@@ -64,7 +64,7 @@ public class UpdateSenators extends BaseScript
             BillBuzzSenator senator = runner.query("SELECT * FROM billbuzz_senator WHERE shortName=? and session=?", new BeanHandler<BillBuzzSenator>(BillBuzzSenator.class), shortName, session);
             if (senator == null) {
                 senator = new BillBuzzSenator(name, shortName, session);
-                runner.update("INSERT INTO billbuzz_senator (name, shortName, active, session) VALUES (?, ?, ?, ?)", senator.getName(), senator.getShortName(), senator.isActive(), senator.getSession());
+                runner.update("INSERT INTO billbuzz_senator (name, shortName, active, session) VALUES (?, ?, ?, ?)", senator.getName(), senator.getShortName(), senator.isActive(), senator.getSessionYear());
                 senator.setId(dao.lastInsertId(runner));
             }
         }
