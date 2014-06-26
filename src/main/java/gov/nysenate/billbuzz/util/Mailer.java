@@ -103,8 +103,8 @@ public class Mailer
 
     // Email requests should timeout
     Properties props = email.getMailSession().getProperties();
-    props.setProperty("mail.smtp.connectiontimeout", config.getValue("mailer.connectiontimeout"));
-    props.setProperty("mail.smtp.timeout", config.getValue("mailer.timeout"));
+    props.setProperty("mail.smtp.connectiontimeout", config.getValue("mailer.connection_timeout"));
+    props.setProperty("mail.smtp.timeout", config.getValue("mailer.read_timeout"));
 
     try {
       email.send();
