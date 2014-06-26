@@ -32,7 +32,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.velocity.VelocityContext;
+
 
 /**
  * Gets all unsent BillBuzzApproval objects from the database and sends them
@@ -178,11 +178,7 @@ public class SendDigests extends BaseScript
                 // Send out a mailing to that user.
                 logger.info("\tSending update to "+user.getEmail()+" with "+userApprovalsCount+" approvals from "+userApprovals.size()+" sponsors.");
                 if (!opts.hasOption("dryrun")) {
-                    VelocityContext context = new VelocityContext();
-                    context.put("user", user);
-                    context.put("dateFormat", new SimpleDateFormat("MMMM dd yyyy 'at' hh:mm a"));
-                    context.put("userApprovals", userApprovals);
-                    Mailer.send("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, context);
+                    Mailer.sendDigest("billbuzz_digest", "BillBuzz for "+new SimpleDateFormat("EEE, MMM dd").format(now), user, userApprovals);
                 }
             }
             else {
