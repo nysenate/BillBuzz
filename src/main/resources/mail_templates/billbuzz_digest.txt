@@ -1,4 +1,5 @@
-Greetings, $user.firstName. Here's the latest buzz on your subscribed legislation:
+Greetings, $user.firstName.  Here's the latest 'buzz' on your
+subscribed legislation:
 
 
 #foreach( $senator in $userApprovals.keySet() )
@@ -19,4 +20,8 @@ $approval.post.message
 #end
 #end
 
-Please visit http://${request.serverName}:${request.serverPort}${request.contextPath}/ to modify or delete your subscription.
+Please visit $siteUrl/ to modify or delete your subscription.
+
+If you have any questions, please contact us at $fromAddress,
+or simply reply to this email.
+

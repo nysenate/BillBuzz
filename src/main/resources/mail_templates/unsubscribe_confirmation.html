@@ -4,10 +4,15 @@
 <title>Finalize your BillBuzz Cancellation</title>
 </head>
 <body>
+<p>
 Please click the link below to remove yourself from BillBuzz:
-<br/>
-<a href="http://${request.serverName}:${request.serverPort}${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}">http://${request.serverName}:${request.serverPort}${request.contextPath}/unsubscribe/confirm?key=${confirmation.code}</a>
-<br/>
-If you have any questions please contact us at <a href="mailto:billbuzz@nysenate.gov">billbuzz@nysenate.gov</a> or reply to this email.
+</p>
+<p>
+<a href="$siteUrl/unsubscribe/confirm?key=${confirmation.code}">$siteUrl/unsubscribe/confirm?key=${confirmation.code}</a>
+</p>
+<p>
+If you have any questions, please contact us at
+<a href="mailto:$fromAddress">$fromAddress</a>, or simply reply to this email.
+</p>
 </body>
 </html>

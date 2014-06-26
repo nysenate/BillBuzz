@@ -4,10 +4,16 @@
 <title>BillBuzz Update Link</title>
 </head>
 <body>
-It looks like you're trying to update your subscription.  To do so, please click the link below and follow the instructions:
-<br/>
-<a href="http://${request.serverName}:${request.serverPort}${request.contextPath}/update/form?key=${confirmation.code}">http://${request.serverName}:${request.serverPort}${request.contextPath}/update/form?key=${confirmation.code}</a>
-<br/>
-If you have any questions please contact us at <a href="mailto:billbuzz@nysenate.gov">billbuzz@nysenate.gov</a> or reply to this email.
+<p>
+It looks like you're trying to update your subscription.  To do so, please
+click the link below and follow the instructions:
+</p>
+<p>
+<a href="$siteUrl/update/form?key=${confirmation.code}">$siteUrl/update/form?key=${confirmation.code}</a>
+</p>
+<p>
+If you have any questions, please contact us at
+<a href="mailto:$fromAddress">$fromAddress</a>, or simply reply to this email.
+</p>
 </body>
 </html>

@@ -1,7 +1,13 @@
 #if( ${user.activated} )
-You already have an active BillBuzz account. Click the link below to update your subscription preferences.
+You already have an active BillBuzz account. Click the link below to
+update your subscription preferences.
 #else
-Your Billbuzz subscription is currently deactivated. Use the link below to reactivate it with new subscriptions.
+Your Billbuzz subscription is currently deactivated. Use the link below
+to reactivate it with new subscriptions.
 #end 
 
-http://${request.serverName}:${request.serverPort}${request.contextPath}/update/form?key=${confirmation.code}
+$siteUrl/update/form?key=${confirmation.code}
+
+If you have any questions, please contact us at $fromAddress,
+or simply reply to this email.
+

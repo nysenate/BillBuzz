@@ -4,8 +4,11 @@
 <title>Billbuzz Update</title>
 </head>
 <body>
-Greetings, $user.firstName. Here's the latest buzz on your subscribed legislation:
-<br/>
+<p>
+Greetings, $user.firstName. Here's the latest 'buzz' on your subscribed
+legislation:
+</p>
+<p>
 <table>
 #foreach( $senator in $userApprovals.keySet() )
     #set($senatorApprovals = $userApprovals.get($senator))
@@ -40,7 +43,13 @@ Greetings, $user.firstName. Here's the latest buzz on your subscribed legislatio
     #end
 #end
 </table>
-<br/>
-Please visit the <a href="http://${request.serverName}:${request.serverPort}${request.contextPath}/">BillBuzz homepage</a> to modify or delete your subscription.
+</p>
+<p>
+Please visit the <a href="$siteUrl/">BillBuzz homepage</a> to modify or delete your subscription.
+</p>
+<p>
+If you have any questions, please contact us at
+<a href="mailto:$fromAddress">$fromAddress</a>, or simply reply to this email.
+</p>
 </body>
 </html>
