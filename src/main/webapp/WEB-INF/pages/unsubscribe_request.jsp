@@ -7,7 +7,8 @@ String email = request.getParameter("email");
 String message = (String)request.getAttribute("message");
 if (message.equals("instruction")) { %>
 <div class="bb_main instruction">
-Enter your email below and we'll send you a link that can be used to cancel your subscription.
+Enter your email below and we'll send you a link that can be used to
+cancel your subscription.
 </div>
 <% } else if (message.equals("invalid_email")) { %>
 <div class="bb_main error">
@@ -15,11 +16,12 @@ This email was not found in our system.
 </div>
 <% } else if (message.equals("inactive_user")) { %>
 <div class="bb_main error">
-You account has already been deactivated.
+Your account has already been deactivated.
 </div>
 <% } else if (message.equals("success")) { %>
 <div class="bb_main success">
-We've sent you an email. Just click the link in the email confirm cancellation of your subscription.
+We've sent you an email.  Just click the link in the email to confirm the
+cancellation of your subscription.
 </div>
 <% } %>
 <br/>

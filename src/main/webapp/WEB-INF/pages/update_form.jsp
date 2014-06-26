@@ -61,7 +61,8 @@ At least one subscription is required to update your BillBuzz account. Please un
 </div>
 <% } else if (message.equals("success")) { %>
 <div class="bb_main success">
-That's it, your subscription has been updated to reflect the preferences checked displayed below.
+That's it!  Your subscription has been updated to reflect the preferences
+displayed below.
 </div> 
 <% } %>
 <br/>
@@ -92,7 +93,7 @@ That's it, your subscription has been updated to reflect the preferences checked
     <table>
         <tr>
             <td><input type="checkbox" name="all" value="all" <%=subscriptions.get("all").contains("all") ? "checked=\"yes\"" : ""%>></input></td>
-            <td>Subscribe to all comments on senate legislation.</td>
+            <td>Subscribe to all comments on NY Senate legislation.</td>
         </tr>
     </table>
     <br/>
