@@ -20,11 +20,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 
 /**
- * Checks the OpenLegislation senators listing for the current session for new senators.
+ * Checks the OpenLegislation senators listing for the current session for
+ * new senators.
  *
- * TODO: Can this automatically mark senators as inactive? Right now its a manual process.
+ * TODO: Can this automatically mark senators as inactive? Right now it's a
+ * manual process.
  *
  * @author GraylinKim
+ * @author Ken Zalewski <zalewski@nysenate.gov>
  *
  */
 public class UpdateSenators extends BaseScript
@@ -40,19 +43,19 @@ public class UpdateSenators extends BaseScript
   {
     Options options = new Options();
     options.addOption("y", "year", true, "The session year in YYYY format to update senator info on.");
-
     return options;
   }
+
 
   public void execute(CommandLine opts) throws IOException, SQLException
   {
     BillBuzzDAO dao = new BillBuzzDAO();
-    int session = Integer.parseInt(opts.getOptionValue("year", String.valueOf(dao.getSessionYear())));
-    logger.info("Updating senators for session: "+session);
+    int sessionYear = Integer.parseInt(opts.getOptionValue("year", String.valueOf(dao.getSessionYear())));
+    logger.info("Updating senators for sessionYear: "+sessionYear);
 
-    String url = "http://open.nysenate.gov/legislation/senators/"+session+".json";
+    String url = "http://open.nysenate.gov/legislation/senators/"+sessionYear+".json";
     logger.info("Fetching senator information from: "+url);
-    Response response = Request.Get("http://open.nysenate.gov/legislation/senators/"+session+".json").execute();
+    Response response = Request.Get(url).execute();
     JsonNode root = new ObjectMapper().readTree(response.returnContent().asString());
     Iterator<JsonNode> senatorIterator = root.getElements();
 
@@ -60,12 +63,12 @@ public class UpdateSenators extends BaseScript
       JsonNode senatorNode = senatorIterator.next();
       String name = senatorNode.get("name").asText();
       String shortName = senatorNode.get("shortName").asText();
-      logger.info("Updating "+name+": "+shortName+"-"+session);
+      logger.info("Updating "+name+": "+shortName+"-"+sessionYear);
       QueryRunner runner = new QueryRunner(Application.getDB().getDataSource());
-      BillBuzzSenator senator = runner.query("SELECT * FROM billbuzz_senator WHERE shortName=? and session=?", new BeanHandler<BillBuzzSenator>(BillBuzzSenator.class), shortName, session);
+      BillBuzzSenator senator = runner.query("SELECT * FROM billbuzz_senator WHERE shortName=? and sessionYear=?", new BeanHandler<BillBuzzSenator>(BillBuzzSenator.class), shortName, sessionYear);
       if (senator == null) {
-        senator = new BillBuzzSenator(name, shortName, session);
-        runner.update("INSERT INTO billbuzz_senator (name, shortName, active, session) VALUES (?, ?, ?, ?)", senator.getName(), senator.getShortName(), senator.isActive(), senator.getSessionYear());
+        senator = new BillBuzzSenator(name, shortName, sessionYear);
+        runner.update("INSERT INTO billbuzz_senator (name, shortName, active, sessionYear) VALUES (?, ?, ?, ?)", senator.getName(), senator.getShortName(), senator.isActive(), senator.getSessionYear());
         senator.setId(dao.lastInsertId(runner));
       }
     }

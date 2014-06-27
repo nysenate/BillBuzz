@@ -120,12 +120,12 @@ public class BillBuzzDAO
   public List<BillBuzzSenator> getSessionSenators(int sessionYear)
                  throws SQLException
   {
-    return runner.query("SELECT * FROM billbuzz_senator WHERE session=? and active=1 ORDER BY shortName", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class), sessionYear);
+    return runner.query("SELECT * FROM billbuzz_senator WHERE sessionYear=? and active=1 ORDER BY shortName", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class), sessionYear);
   }
 
   public List<BillBuzzSenator> getSenators() throws SQLException
   {
-    return runner.query("SELECT * FROM billbuzz_senator GROUP BY shortName ORDER BY shortName asc, session desc", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class));
+    return runner.query("SELECT * FROM billbuzz_senator GROUP BY shortName ORDER BY shortName asc, sessionYear desc", new BeanListHandler<BillBuzzSenator>(BillBuzzSenator.class));
   }
 
   /**
@@ -194,7 +194,7 @@ public class BillBuzzDAO
    */
   public void saveSenator(BillBuzzSenator senator) throws SQLException
   {
-    runner.update("REPLACE INTO billbuzz_senator (id, name, shortName, session) VALUES (?, ?, ?, ?)", senator.getId(), senator.getName(), senator.getShortName(), senator.getSessionYear());
+    runner.update("REPLACE INTO billbuzz_senator (id, name, shortName, sessionYear) VALUES (?, ?, ?, ?)", senator.getId(), senator.getName(), senator.getShortName(), senator.getSessionYear());
     if (senator.getId() == null) {
       senator.setId(this.lastInsertId(runner));
     }
