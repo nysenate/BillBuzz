@@ -88,8 +88,8 @@ CREATE TABLE billbuzz_senator (
     name varchar(255),
     active boolean,
     shortName varchar(255),
-    session int(11),
-    UNIQUE KEY (shortname, session)
+    sessionYear int(11),
+    UNIQUE KEY (shortname, sessionYear)
 );
 
 DROP TABLE IF EXISTS billbuzz_update;
