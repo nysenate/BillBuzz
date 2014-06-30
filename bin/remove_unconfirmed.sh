@@ -8,7 +8,16 @@
 # Date: 2014-06-30
 # 
 
-sql="delete from billbuzz_user where activated=0 and confirmedat is null and createdat < date_sub(now(), interval 7 day);"
+sql="
+delete from billbuzz_user
+where activated=0
+      and confirmedat is null
+      and createdat < date_sub(now(), interval 7 day);
+delete from billbuzz_confirmation
+where userid not in ( select id from billbuzz_user );
+delete from billbuzz_subscription
+where userid not in ( select id from billbuzz_user );
+"
 
 echo "$sql" | mysql billbuzz -u billbuzzadmin -p
 
