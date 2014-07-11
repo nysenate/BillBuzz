@@ -1,9 +1,7 @@
 *.class
-*.jar
 *.properties
 *.log
 target
-
 
 .settings
 .classpath
