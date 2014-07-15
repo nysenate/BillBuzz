@@ -1,8 +1,15 @@
+*~
 *.class
-*.properties
-*.log
-target
+*.jar
 
-.settings
+*.cfg
+*.ini
+*.log
+*.properties
+*.xml
+
+build
+target
 .classpath
 .project
+.settings
