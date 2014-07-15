@@ -8,7 +8,8 @@
   <repositories>
     <repository>
       <id>gov.nysenate</id>
-      <url>http://dev.nysenate.gov/maven</url>
+      <name>NY Senate Maven Repository</name>
+      <url>http://dev.nysenate.gov/maven/repo</url>
     </repository>
   </repositories>
 
