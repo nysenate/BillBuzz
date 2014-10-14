@@ -35,7 +35,7 @@
     <log4j.version>1.2.17</log4j.version>
     <mysql-connector.version>5.1.31</mysql-connector.version>
     <nysenate-java-utils.version>1.0.2</nysenate-java-utils.version>
-    <tomcat.version>7.0.54</tomcat.version>
+    <tomcat.version>7.0.56</tomcat.version>
     <velocity.version>1.7</velocity.version>
   </properties>
 
